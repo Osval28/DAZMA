@@ -9,7 +9,9 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 @AnalyzeClasses(packages = "co.dazma.api", importOptions = ImportOption.DoNotIncludeTests.class)
 class ArchitectureTest {
-
+    public String getClassName() {
+        return this.getClass().getSimpleName();
+    }
     @ArchTest
     static final ArchRule dominioNoDependeDeOtrasCapasNiFrameworks =
             noClasses().that().resideInAPackage("..domain..")
