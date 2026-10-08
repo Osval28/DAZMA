@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>27</java.version>
+  		<sonar.organization>osval28</sonar.organization>
 	</properties>
 	<dependencies>
 		<dependency>
