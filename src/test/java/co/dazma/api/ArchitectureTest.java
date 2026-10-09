@@ -47,7 +47,7 @@ class ArchitectureTest {
                     .allowEmptyShould(true);
 
     @ArchTest
-    static final ArchRule sinInyeccionPorCampo = NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
+    static final ArchRule sinInyeccionPorCampo = NO_CLASSES_SHOULD_USE_FIELD_INJECTION.allowEmptyShould(true);
 
     @ArchTest
     static final ArchRule sinExcepcionesGenericas = NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
