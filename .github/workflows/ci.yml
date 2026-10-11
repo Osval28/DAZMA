@@ -116,5 +116,6 @@ jobs:
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          IMG_URL=$(printf '%s@%s' "$IMAGEN" "$GITHUB_SHA" | sed -e 's|/|%2F|g' -e 's|@|%40|g')
-          curl -fsS -X POST "${RENDER_DEPLOY_HOOK_URL}&imgURL=${IMG_URL}"
+          IMG_URL="$IMAGEN:$GITHUB_SHA"
+          echo "$IMG_URL"
+          curl -sS --fail-with-body -X POST "${RENDER_DEPLOY_HOOK_URL}&imgURL=${IMG_URL}"
