@@ -17,7 +17,7 @@
 	<properties>
         <tomcat.version>11.0.26</tomcat.version>
         <jackson-bom.version>3.1.7</jackson-bom.version>
-		<java.version>27</java.version>
+		<java.version>25</java.version>
 		<sonar.organization>osval28</sonar.organization>
 		<sonar.projectKey>Osval28_DAZMA</sonar.projectKey>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
