@@ -11,7 +11,7 @@ public class UserMapper {
 
     public static User fromEntitytoModel(UserEntity userEntity) {
         return new User(userEntity.getId(), userEntity.getName(),userEntity.getPhone(),userEntity.getMunicipality(),userEntity.getState(),
-                userEntity.getExternal_id(),userEntity.getRole());
+                userEntity.getExternalId(),userEntity.getRole());
     }
 
 

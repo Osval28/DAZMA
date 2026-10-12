@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "app_users")
 
 public class UserEntity {
 
@@ -24,7 +24,7 @@ public class UserEntity {
     private String municipality;
 
     @Column(unique = true)
-    private String external_id;
+    private String externalId;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -34,12 +34,12 @@ public class UserEntity {
 
     protected UserEntity() {}
 
-    public UserEntity(UUID id, String name, String phone, String municipality, String external_id, Role role, State state) {
+    public UserEntity(UUID id, String name, String phone, String municipality, String externalId, Role role, State state) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.municipality = municipality;
-        this.external_id = external_id;
+        this.externalId = externalId;
         this.role = role;
         this.state = state;
     }
@@ -63,8 +63,8 @@ public class UserEntity {
     }
 
 
-    public String getExternal_id() {
-        return external_id;
+    public String getExternalId() {
+        return externalId;
     }
 
 
