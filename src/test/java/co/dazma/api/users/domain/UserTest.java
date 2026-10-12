@@ -54,5 +54,11 @@ class UserTest {
         assertEquals("uid-123", user.getExternalId());
     }
 
+    @Test
+    void canOperateReturnsFalseForInactiveUser() {
+        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        user.deactivate();
 
+        assertFalse(user.canOperate());
+    }
 }
