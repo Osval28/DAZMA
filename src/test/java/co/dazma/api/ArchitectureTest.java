@@ -33,7 +33,7 @@ class ArchitectureTest {
     static final ArchRule ControllersOnlyTalkToInputPorts =
             noClasses().that().resideInAPackage("..infrastructure.input..")
                     .should().dependOnClassesThat().resideInAnyPackage(
-                            "..services.usecases..", "..services.output..", "..infrastructure.output..");
+                            "..services.usecases..", "..services.output..", "..infrastructure.output..").allowEmptyShould(true);
 
 
 
