@@ -47,7 +47,9 @@ public class User {
     }
 
     public boolean canOperate()
-    {return state == State.ACTIVE; }
+    {
+        return state == State.ACTIVE;
+    }
 
     public UUID getId() {
         return id;
@@ -77,8 +79,6 @@ public class User {
         return externalId;
     }
 
-    public void deactivate() {
-        suspend();
-    }
+
 
 }

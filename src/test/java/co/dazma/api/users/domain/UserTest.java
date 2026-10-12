@@ -57,7 +57,7 @@ class UserTest {
     @Test
     void canOperateReturnsFalseForInactiveUser() {
         User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
-        user.deactivate();
+        user.suspend();
 
         assertFalse(user.canOperate());
     }
