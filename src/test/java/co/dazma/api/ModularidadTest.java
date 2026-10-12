@@ -9,12 +9,12 @@ class ModularidadTest {
     private final ApplicationModules modulos = ApplicationModules.of(DazmaApplication.class);
 
     @Test
-    void respetaLosLimitesEntreModulos() {
+    void respectBoundariesBetweenModules() {
         modulos.verify();
     }
 
     @Test
-    void generaDocumentacionDeModulos() {
+    void generateModulesDocumentation() {
         new Documenter(modulos).writeDocumentation();
     }
 }
