@@ -7,10 +7,9 @@ class UserTest {
 
     @Test
     void registeredUserShouldBeActiveAndHaveUserRole() {
-        // preparar y ejecutar
+
         User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
 
-        // verificar
         assertEquals(State.ACTIVE, user.getState());
         assertEquals(Role.USER, user.getRole());
         assertNotNull(user.getId());
@@ -18,7 +17,7 @@ class UserTest {
 
     @Test
     void cannotRegisterUserWithEmptyName() {
-        assertThrows(NotEnoughArgumentsException.class,
+        assertThrows(MissingRequiredFieldException.class,
                 () -> User.register("", "3001234567", "Rionegro", "uid-123"));
     }
 
@@ -28,6 +27,7 @@ class UserTest {
         user.suspend();
 
         assertThrows(IllegalStateException.class, () -> user.suspend());
+        assertThrows(UserAlreadySuspendedException.class, () -> user.suspend());
     }
 
     @Test
@@ -35,6 +35,7 @@ class UserTest {
         User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
 
         assertThrows(IllegalStateException.class, () -> user.reactivate());
+        assertThrows(UserNotSuspendedException.class, () -> user.reactivate());
     }
 
     @Test

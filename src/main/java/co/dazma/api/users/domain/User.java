@@ -32,17 +32,17 @@ public class User {
 
     private static void requireText(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
-            throw new NotEnoughArgumentsException(fieldName);
+            throw new MissingRequiredFieldException(fieldName);
         }
     }
 
     public void suspend() {
-        if (state == State.SUSPENDED) throw new IllegalStateException("Ya está suspendido");
+        if (state == State.SUSPENDED) throw new UserAlreadySuspendedException();
         state = State.SUSPENDED;
     }
 
     public void reactivate() {
-        if (state != State.SUSPENDED) throw new IllegalStateException("No está suspendido");
+        if (state != State.SUSPENDED) throw new UserNotSuspendedException();
         state = State.ACTIVE;
     }
 
