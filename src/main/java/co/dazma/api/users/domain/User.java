@@ -46,7 +46,8 @@ public class User {
         state = State.ACTIVE;
     }
 
-    public boolean canOperate() { return state == State.ACTIVE; }
+    public boolean canOperate()
+    {return state == State.ACTIVE; }
 
     public UUID getId() {
         return id;
