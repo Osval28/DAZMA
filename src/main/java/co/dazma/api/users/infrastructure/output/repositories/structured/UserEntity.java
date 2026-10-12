@@ -14,22 +14,24 @@ public class UserEntity {
     @Id
     private UUID id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String phone;
 
-    @Column
+    @Column(nullable = false)
     private String municipality;
 
-    @Column(unique = true)
+    @Column(name = "external_id", nullable = false, unique = true)
     private String externalId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private State state;
 
     protected UserEntity() {}
