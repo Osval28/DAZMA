@@ -77,4 +77,8 @@ public class User {
         return externalId;
     }
 
+    public void deactivate() {
+        suspend();
+    }
+
 }
