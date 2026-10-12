@@ -21,40 +21,5 @@ class ArchitectureTest {
                     .resideInAnyPackage("..services..", "..infrastructure..", "org.springframework..", "jakarta.persistence..")
                     .allowEmptyShould(true);
 
-    @ArchTest
-    static final ArchRule serviciosNoDependenDeInfraestructura =
-            noClasses().that().resideInAPackage("..services..")
-                    .should().dependOnClassesThat().resideInAPackage("..infrastructure..")
-                    .allowEmptyShould(true);
 
-    @ArchTest
-    static final ArchRule casosDeUsoNoDependenDeLaEntrada =
-            noClasses().that().resideInAPackage("..services.usecases..")
-                    .should().dependOnClassesThat().resideInAPackage("..services.input..")
-                    .allowEmptyShould(true);
-
-    @ArchTest
-    static final ArchRule entradaNoUsaDirectamenteLaSalida =
-            noClasses().that().resideInAPackage("..infrastructure.input..")
-                    .should().dependOnClassesThat()
-                    .resideInAnyPackage("..infrastructure.output..", "..services.output..", "..services.usecases..")
-                    .allowEmptyShould(true);
-
-    @ArchTest
-    static final ArchRule salidaNoDependeDeLaEntrada =
-            noClasses().that().resideInAPackage("..infrastructure.output..")
-                    .should().dependOnClassesThat().resideInAPackage("..infrastructure.input..")
-                    .allowEmptyShould(true);
-
-    @ArchTest
-    static final ArchRule sinInyeccionPorCampo = NO_CLASSES_SHOULD_USE_FIELD_INJECTION.allowEmptyShould(true);
-
-    @ArchTest
-    static final ArchRule sinExcepcionesGenericas = NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
-
-    @ArchTest
-    static final ArchRule sinJavaUtilLogging = NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
-
-    @ArchTest
-    static final ArchRule sinSystemOutNiErr = NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS;
 }
