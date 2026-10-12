@@ -30,7 +30,7 @@ class ArchitectureTest {
                     .should().onlyDependOnClassesThat().resideInAnyPackage("java..", "..domain..");
 
     @ArchTest
-    static final ArchRule ControllersOnlyTalkToInputPorts =
+    static final ArchRule ServicesDoNotUsePersistenceDirectly =
             noClasses().that().resideInAPackage("..infrastructure.input..")
                     .should().dependOnClassesThat().resideInAnyPackage(
                             "..services.usecases..", "..services.output..", "..infrastructure.output..").allowEmptyShould(true);
