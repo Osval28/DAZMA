@@ -3,11 +3,11 @@ package co.dazma.api.users.domain;
 import java.util.UUID;
 
 public class User {
-    private UUID id;
+    private final UUID id;
     private String name;
     private String phone;
     private String municipality;
-    private String externalId;
+    private final String externalId;
     private State state;
     private Role role;
 
@@ -22,59 +22,58 @@ public class User {
         this.externalId = externalId;
     }
 
-    public UUID getId() {
-        return id;
+    public static User register(String name, String phone, String municipality, String externalId) {
+        requireText(externalId, "externalId");
+        requireText(name, "name");
+        requireText(phone, "phone");
+        requireText(municipality, "municipality");
+        return new User(UUID.randomUUID(), name, phone, municipality, State.ACTIVE, externalId, Role.USER);
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    private static void requireText(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new NotEnoughArgumentsException(fieldName);
+        }
+    }
+
+    public void suspend() {
+        if (state == State.SUSPENDED) throw new IllegalStateException("Ya está suspendido");
+        state = State.SUSPENDED;
+    }
+
+    public void reactivate() {
+        if (state != State.SUSPENDED) throw new IllegalStateException("No está suspendido");
+        state = State.ACTIVE;
+    }
+
+    public boolean canOperate() { return state == State.ACTIVE; }
+
+    public UUID getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getPhone() {
         return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getMunicipality() {
         return municipality;
     }
 
-    public void setMunicipality(String municipality) {
-        this.municipality = municipality;
-    }
-
-    public State getEstado() {
+    public State getState() {
         return state;
-    }
-
-    public void setEstado(State state) {
-        this.state = state;
     }
 
     public Role getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
-    }
 }
