@@ -9,11 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -23,6 +26,9 @@ class PostgresUserRepositoryIntegrationTest {
 
     @Autowired
     private UserRepositoryPort userRepository;
+
+    @Autowired
+    private SpringDataUserRepository springDataRepository;
 
     @Test
     void shouldPersistAndFindAUserUsingPostgres() {
@@ -45,5 +51,33 @@ class PostgresUserRepositoryIntegrationTest {
         assertEquals("Rionegro", foundUser.get().getMunicipality());
         assertEquals(Role.USER, foundUser.get().getRole());
         assertEquals(State.ACTIVE, foundUser.get().getState());
+    }
+
+    @Test
+    void shouldRejectDuplicatedExternalIds() {
+        UserEntity firstUser = new UserEntity(
+                UUID.randomUUID(),
+                "Ana",
+                "3001234567",
+                "Rionegro",
+                "duplicated-firebase-id",
+                Role.USER,
+                State.ACTIVE
+        );
+        UserEntity secondUser = new UserEntity(
+                UUID.randomUUID(),
+                "Luis",
+                "3017654321",
+                "Medellin",
+                "duplicated-firebase-id",
+                Role.USER,
+                State.ACTIVE
+        );
+        springDataRepository.saveAndFlush(firstUser);
+
+        assertThrows(
+                DataIntegrityViolationException.class,
+                () -> springDataRepository.saveAndFlush(secondUser)
+        );
     }
 }
