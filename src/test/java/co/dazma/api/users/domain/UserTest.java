@@ -55,8 +55,10 @@ class UserTest {
     }
 
     @Test
-    void canOperateReturnsFalseForNonActiveUser() {
-        User user =  User.register("Ana", "3001234567", "Rionegro", "uid-123");
+    void canOperateReturnsFalseForInactiveUser() {
+        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        user.deactivate();
+
         assertFalse(user.canOperate());
     }
 }
