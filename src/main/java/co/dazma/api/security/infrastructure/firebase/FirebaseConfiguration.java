@@ -1,10 +1,16 @@
 package co.dazma.api.security.infrastructure.firebase;
 
+import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
+import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
+import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
+import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
+import co.dazma.api.security.services.usecases.AuthenticateIdentityService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,5 +40,34 @@ public class FirebaseConfiguration {
     @Bean
     public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
         return FirebaseAuth.getInstance(firebaseApp);
+    }
+
+    @Bean
+    public IdentityTokenVerifier identityTokenVerifier(FirebaseAuth firebaseAuth) {
+        return new FirebaseIdentityTokenVerifier(firebaseAuth);
+    }
+
+    @Bean
+    public AuthenticateIdentityUseCase authenticateIdentityUseCase(
+            IdentityTokenVerifier identityTokenVerifier
+    ) {
+        return new AuthenticateIdentityService(identityTokenVerifier);
+    }
+
+    @Bean
+    public FirebaseAuthenticationFilter firebaseAuthenticationFilter(
+            AuthenticateIdentityUseCase authenticateIdentityUseCase
+    ) {
+        return new FirebaseAuthenticationFilter(authenticateIdentityUseCase);
+    }
+
+    @Bean
+    public FilterRegistrationBean<FirebaseAuthenticationFilter> firebaseAuthenticationFilterRegistration(
+            FirebaseAuthenticationFilter filter
+    ) {
+        FilterRegistrationBean<FirebaseAuthenticationFilter> registration =
+                new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 }
