@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockCookie;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,6 +63,18 @@ class SecurityConfigurationTest {
     @Test
     void shouldRejectProtectedEndpointWithoutToken() throws Exception {
         mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRegistrationBody()))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(registerUserUseCase);
+        verifyNoInteractions(authenticateIdentityUseCase);
+    }
+
+    @Test
+    void shouldNotAuthenticateUsingACookie() throws Exception {
+        mockMvc.perform(post("/api/users")
+                        .cookie(new MockCookie("authentication", "valid-token"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
                 .andExpect(status().isUnauthorized());

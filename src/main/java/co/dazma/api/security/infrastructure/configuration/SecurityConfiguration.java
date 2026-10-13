@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     @Bean
+    @SuppressWarnings("java:S4502") // Safe while authentication is stateless and only accepts an explicit Bearer header, never cookies.
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             ObjectProvider<FirebaseAuthenticationFilter> firebaseFilterProvider
