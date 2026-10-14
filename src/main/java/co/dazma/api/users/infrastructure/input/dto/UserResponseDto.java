@@ -13,7 +13,7 @@ public record UserResponseDto(
         String role
 ) {
 
-    public static UserResponseDto fromDomain(User user) {
+    public static UserResponseDto fromModel(User user) {
         return new UserResponseDto(
                 user.getId(),
                 user.getName(),
