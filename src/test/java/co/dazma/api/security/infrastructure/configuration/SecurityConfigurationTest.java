@@ -1,0 +1,177 @@
+package co.dazma.api.security.infrastructure.configuration;
+
+import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
+import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
+import co.dazma.api.users.domain.User;
+import co.dazma.api.users.infrastructure.input.controllers.UserController;
+import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockCookie;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = {
+        UserController.class,
+        SecurityConfigurationTest.HealthController.class
+})
+@Import({SecurityConfiguration.class, SecurityConfigurationTest.FilterTestConfiguration.class})
+@ImportAutoConfiguration({
+        SecurityAutoConfiguration.class,
+        ServletWebSecurityAutoConfiguration.class
+})
+class SecurityConfigurationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private RegisterUserUseCase registerUserUseCase;
+
+    @MockitoBean
+    private AuthenticateIdentityUseCase authenticateIdentityUseCase;
+
+    @Test
+    void shouldAllowHealthEndpointWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(status().isOk());
+
+        verifyNoInteractions(authenticateIdentityUseCase);
+    }
+
+    @Test
+    void shouldRejectProtectedEndpointWithoutToken() throws Exception {
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRegistrationBody()))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(registerUserUseCase);
+        verifyNoInteractions(authenticateIdentityUseCase);
+    }
+
+    @Test
+    void shouldNotAuthenticateUsingACookie() throws Exception {
+        mockMvc.perform(post("/api/users")
+                        .cookie(new MockCookie("authentication", "valid-token"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRegistrationBody()))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(registerUserUseCase);
+        verifyNoInteractions(authenticateIdentityUseCase);
+    }
+
+    @Test
+    void shouldRejectProtectedEndpointWhenTokenIsInvalid() throws Exception {
+        when(authenticateIdentityUseCase.authenticate("invalid-token"))
+                .thenThrow(new InvalidIdentityTokenException());
+
+        mockMvc.perform(post("/api/users")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer invalid-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRegistrationBody()))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(registerUserUseCase);
+    }
+
+    @Test
+    void shouldUseFirebaseUidAsPrincipalWhenTokenIsValid() throws Exception {
+        User registeredUser = User.register(
+                "Ana",
+                "3001234567",
+                "Rionegro",
+                "firebase-user-123"
+        );
+        when(authenticateIdentityUseCase.authenticate("valid-token"))
+                .thenReturn("firebase-user-123");
+        when(registerUserUseCase.registerUser(
+                "Ana",
+                "3001234567",
+                "Rionegro",
+                "firebase-user-123"
+        )).thenReturn(registeredUser);
+
+        mockMvc.perform(post("/api/users")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer valid-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRegistrationBody()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Ana"))
+                .andExpect(jsonPath("$.role").value("USER"));
+
+        verify(registerUserUseCase).registerUser(
+                "Ana",
+                "3001234567",
+                "Rionegro",
+                "firebase-user-123"
+        );
+    }
+
+    private static String validRegistrationBody() {
+        return """
+                {
+                  "name": "Ana",
+                  "phone": "3001234567",
+                  "municipality": "Rionegro"
+                }
+                """;
+    }
+
+    @RestController
+    public static class HealthController {
+
+        @GetMapping("/actuator/health")
+        String health() {
+            return "UP";
+        }
+    }
+
+    @TestConfiguration(proxyBeanMethods = false)
+    static class FilterTestConfiguration {
+
+        @Bean
+        FirebaseAuthenticationFilter firebaseAuthenticationFilter(
+                AuthenticateIdentityUseCase authenticateIdentityUseCase
+        ) {
+            return new FirebaseAuthenticationFilter(authenticateIdentityUseCase);
+        }
+
+        @Bean
+        FilterRegistrationBean<FirebaseAuthenticationFilter> firebaseAuthenticationFilterRegistration(
+                FirebaseAuthenticationFilter filter
+        ) {
+            FilterRegistrationBean<FirebaseAuthenticationFilter> registration =
+                    new FilterRegistrationBean<>(filter);
+            registration.setEnabled(false);
+            return registration;
+        }
+
+        @Bean
+        HealthController healthController() {
+            return new HealthController();
+        }
+    }
+}

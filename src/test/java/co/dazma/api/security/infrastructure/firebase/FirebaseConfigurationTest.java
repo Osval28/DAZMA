@@ -1,16 +1,23 @@
 package co.dazma.api.security.infrastructure.firebase;
 
+import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
+import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
+import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
+import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
+import co.dazma.api.security.services.usecases.AuthenticateIdentityService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -77,5 +84,22 @@ class FirebaseConfigurationTest {
             assertSame(expectedAuth, result);
             firebaseAuthMock.verify(() -> FirebaseAuth.getInstance(firebaseApp));
         }
+    }
+
+    @Test
+    void shouldAssembleFirebaseAuthenticationComponents() {
+        FirebaseAuth firebaseAuth = mock(FirebaseAuth.class);
+
+        IdentityTokenVerifier verifier = configuration.identityTokenVerifier(firebaseAuth);
+        AuthenticateIdentityUseCase useCase = configuration.authenticateIdentityUseCase(verifier);
+        FirebaseAuthenticationFilter filter = configuration.firebaseAuthenticationFilter(useCase);
+        FilterRegistrationBean<FirebaseAuthenticationFilter> registration =
+                configuration.firebaseAuthenticationFilterRegistration(filter);
+
+        assertInstanceOf(FirebaseIdentityTokenVerifier.class, verifier);
+        assertInstanceOf(AuthenticateIdentityService.class, useCase);
+        assertInstanceOf(FirebaseAuthenticationFilter.class, filter);
+        assertSame(filter, registration.getFilter());
+        org.junit.jupiter.api.Assertions.assertFalse(registration.isEnabled());
     }
 }
