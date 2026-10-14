@@ -12,4 +12,4 @@ COPY --from=capas /app/extraido/snapshot-dependencies/ ./
 COPY --from=capas /app/extraido/application/ ./
 USER dazma
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-Duser.timezone=UTC", "org.springframework.boot.loader.launch.JarLauncher"]
