@@ -4,6 +4,8 @@ import co.dazma.api.TestcontainersConfiguration;
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
 import co.dazma.api.users.domain.User;
+import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities.UserEntityJPA;
+import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.repositories.SpringDataUserRepository;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,23 +59,23 @@ class PostgresUserRepositoryIntegrationTest {
 
     @Test
     void shouldRejectDuplicatedExternalIds() {
-        UserEntity firstUser = new UserEntity(
+        UserEntityJPA firstUser = new UserEntityJPA(
                 UUID.randomUUID(),
                 "Ana",
                 "3001234567",
                 "Rionegro",
                 "duplicated-firebase-id",
-                Role.USER,
-                State.ACTIVE
+                State.ACTIVE,
+                Role.USER
         );
-        UserEntity secondUser = new UserEntity(
+        UserEntityJPA secondUser = new UserEntityJPA(
                 UUID.randomUUID(),
                 "Luis",
                 "3017654321",
                 "Medellin",
                 "duplicated-firebase-id",
-                Role.USER,
-                State.ACTIVE
+                State.ACTIVE,
+                Role.USER
         );
         springDataRepository.saveAndFlush(firstUser);
 
