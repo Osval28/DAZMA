@@ -1,4 +1,4 @@
-package co.dazma.api.users.infrastructure.output.repositories.structured.mapper;
+package co.dazma.api.shared.infrastructure;
 
 public interface JpaMapper <J, E> {
     J toJpaEntity(E entity);

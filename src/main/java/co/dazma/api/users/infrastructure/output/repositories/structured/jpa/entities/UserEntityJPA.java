@@ -28,22 +28,22 @@ public class UserEntityJPA {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private State state;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private State state;
+    private Role role;
 
     protected UserEntityJPA() {}
 
-    public UserEntityJPA(UUID id, String name, String phone, String municipality, String externalId, Role role, State state) {
+    public UserEntityJPA(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.municipality = municipality;
         this.externalId = externalId;
-        this.role = role;
         this.state = state;
+        this.role = role;
     }
 
     public UUID getId() {
