@@ -3,8 +3,14 @@ package co.dazma.api.users.infrastructure.output.repositories.structured;
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
 import co.dazma.api.users.domain.User;
+import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities.UserEntityJPA;
+import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.repositories.SpringDataUserRepository;
+import co.dazma.api.users.infrastructure.output.repositories.structured.mapper.MapStructDomainMapper;
+import co.dazma.api.users.infrastructure.output.repositories.structured.mapper.MapStructJpaMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -24,20 +30,24 @@ class PostgresUserRepositoryAdapterTest {
     @BeforeEach
     void setUp() {
         springDataRepository = mock(SpringDataUserRepository.class);
-        adapter = new PostgresUserRepositoryAdapter(springDataRepository);
+        adapter = new PostgresUserRepositoryAdapter(
+                springDataRepository,
+                Mappers.getMapper(MapStructDomainMapper.class),
+                Mappers.getMapper(MapStructJpaMapper.class)
+        );
     }
 
     @Test
     void shouldFindUserByExternalIdAndReturnDomainUser() {
         UUID id = UUID.randomUUID();
-        UserEntity entity = new UserEntity(
+        UserEntityJPA entity = new UserEntityJPA(
                 id,
                 "Ana",
                 "3001234567",
                 "Rionegro",
                 "firebase-123",
-                Role.USER,
-                State.ACTIVE
+                State.ACTIVE,
+                Role.USER
         );
         when(springDataRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(entity));
@@ -71,7 +81,7 @@ class PostgresUserRepositoryAdapterTest {
                 "Rionegro",
                 "firebase-123"
         );
-        when(springDataRepository.save(any(UserEntity.class)))
+        when(springDataRepository.save(any(UserEntityJPA.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         User savedUser = adapter.save(user);
@@ -83,6 +93,31 @@ class PostgresUserRepositoryAdapterTest {
         assertEquals(user.getExternalId(), savedUser.getExternalId());
         assertEquals(user.getRole(), savedUser.getRole());
         assertEquals(user.getState(), savedUser.getState());
-        verify(springDataRepository).save(any(UserEntity.class));
+        verify(springDataRepository).save(any(UserEntityJPA.class));
+    }
+
+    @Test
+    void shouldMapDomainUserToJpaEntityBeforeSaving() {
+        User user = User.register(
+                "Ana",
+                "3001234567",
+                "Rionegro",
+                "firebase-123"
+        );
+        when(springDataRepository.save(any(UserEntityJPA.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        adapter.save(user);
+
+        ArgumentCaptor<UserEntityJPA> captor = ArgumentCaptor.forClass(UserEntityJPA.class);
+        verify(springDataRepository).save(captor.capture());
+        UserEntityJPA saved = captor.getValue();
+        assertEquals(user.getId(), saved.getId());
+        assertEquals(user.getName(), saved.getName());
+        assertEquals(user.getPhone(), saved.getPhone());
+        assertEquals(user.getMunicipality(), saved.getMunicipality());
+        assertEquals(user.getExternalId(), saved.getExternalId());
+        assertEquals(user.getRole(), saved.getRole());
+        assertEquals(user.getState(), saved.getState());
     }
 }
