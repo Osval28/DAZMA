@@ -17,13 +17,13 @@ public class PostgresUserRepositoryAdapter implements UserRepositoryPort {
     @Override
     public Optional<User> findByExternalId(String externalId) {
         return springDataUserRepository.findByExternalId(externalId)
-                .map(UserMapper::fromEntitytoModel);
+                .map(UserMapper::toModel);
     }
 
     @Override
     public User save(User user) {
-        UserEntity entityToSave = UserMapper.fromModeltoEntity(user);
+        UserEntity entityToSave = UserMapper.toEntity(user);
         entityToSave = springDataUserRepository.save(entityToSave);
-        return UserMapper.fromEntitytoModel(entityToSave);
+        return UserMapper.toModel(entityToSave);
     }
 }

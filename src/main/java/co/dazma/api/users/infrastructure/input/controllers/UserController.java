@@ -32,6 +32,6 @@ public class UserController {
                 principal.getName()
         );
 
-        return UserResponseDto.fromDomain(registeredUser);
+        return UserResponseDto.fromModel(registeredUser);
     }
 }
