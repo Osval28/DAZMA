@@ -5,8 +5,8 @@ import co.dazma.api.users.domain.State;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities.UserEntityJPA;
 import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.repositories.SpringDataUserRepository;
-import co.dazma.api.users.infrastructure.output.repositories.structured.mapper.MapStructDomainMapper;
-import co.dazma.api.users.infrastructure.output.repositories.structured.mapper.MapStructJpaMapper;
+import co.dazma.api.users.infrastructure.output.repositories.structured.mapper.UserMapStructDomainMapper;
+import co.dazma.api.users.infrastructure.output.repositories.structured.mapper.UserMapStructJpaMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -22,18 +22,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class PostgresUserRepositoryAdapterTest {
+class PostgresqlUserRepositoryAdapterTest {
 
     private SpringDataUserRepository springDataRepository;
-    private PostgresUserRepositoryAdapter adapter;
+    private PostgresqlUserRepositoryAdapter adapter;
 
     @BeforeEach
     void setUp() {
         springDataRepository = mock(SpringDataUserRepository.class);
-        adapter = new PostgresUserRepositoryAdapter(
+        adapter = new PostgresqlUserRepositoryAdapter(
                 springDataRepository,
-                Mappers.getMapper(MapStructDomainMapper.class),
-                Mappers.getMapper(MapStructJpaMapper.class)
+                Mappers.getMapper(UserMapStructDomainMapper.class),
+                Mappers.getMapper(UserMapStructJpaMapper.class)
         );
     }
 

@@ -57,7 +57,7 @@ class RegisterUserServiceTest {
         when(userRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(existingUser));
 
-        assertThrows(
+        UserAlreadyRegisteredException exception = assertThrows(
                 UserAlreadyRegisteredException.class,
                 () -> registerUserService.registerUser(
                         "Ana",
@@ -67,6 +67,7 @@ class RegisterUserServiceTest {
                 )
         );
 
+        assertEquals("USER_ALREADY_REGISTERED", exception.code());
         verify(userRepository, never()).save(any(User.class));
     }
 }

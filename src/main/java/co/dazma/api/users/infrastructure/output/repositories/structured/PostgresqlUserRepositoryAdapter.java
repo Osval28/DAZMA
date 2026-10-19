@@ -12,14 +12,14 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public class PostgresUserRepositoryAdapter implements UserRepositoryPort {
+public class PostgresqlUserRepositoryAdapter implements UserRepositoryPort {
 
     private final SpringDataUserRepository springDataUserRepository;
     private final DomainMapper<UserEntity, User> domainMapper;
     private final JpaMapper <UserEntityJPA, UserEntity> jpaMapper;
 
-    public PostgresUserRepositoryAdapter(SpringDataUserRepository springDataUserRepository,
-                                         DomainMapper<UserEntity, User> domainMapper, JpaMapper<UserEntityJPA,
+    public PostgresqlUserRepositoryAdapter(SpringDataUserRepository springDataUserRepository,
+                                           DomainMapper<UserEntity, User> domainMapper, JpaMapper<UserEntityJPA,
                                          UserEntity> jpaMapper) {
         this.springDataUserRepository = springDataUserRepository;
         this.domainMapper = domainMapper;

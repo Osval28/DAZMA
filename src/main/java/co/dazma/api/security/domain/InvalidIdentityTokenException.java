@@ -1,12 +1,14 @@
 package co.dazma.api.security.domain;
 
-public class InvalidIdentityTokenException extends RuntimeException {
+import co.dazma.api.shared.domain.errors.DomainException;
+
+public class InvalidIdentityTokenException extends DomainException {
 
     public InvalidIdentityTokenException() {
-        super("El token de identidad no es valido");
+        super(SecurityErrorCode.IDENTITY_TOKEN_INVALID);
     }
 
     public InvalidIdentityTokenException(Throwable cause) {
-        super("El token de identidad no es valido", cause);
+        super(SecurityErrorCode.IDENTITY_TOKEN_INVALID, cause);
     }
 }

@@ -1,20 +1,20 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.shared.infrastructure.DomainMapper;
-import co.dazma.api.users.domain.User;
+import co.dazma.api.shared.infrastructure.JpaMapper;
 import co.dazma.api.users.infrastructure.output.repositories.structured.entities.UserEntity;
+import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities.UserEntityJPA;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.ERROR)
-public interface MapStructDomainMapper extends DomainMapper<UserEntity, User> {
+public interface UserMapStructJpaMapper extends JpaMapper<UserEntityJPA, UserEntity> {
 
     @Override
-    User toDomain(UserEntity entity);
+    UserEntity toEntity(UserEntityJPA jpaEntity);
 
     @Override
-    UserEntity toEntity(User domain);
+    UserEntityJPA toJpaEntity(UserEntity entity);
 
 }

@@ -1,6 +1,8 @@
 package co.dazma.api.security.infrastructure.configuration;
 
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
+import co.dazma.api.security.infrastructure.input.errors.ApiAccessDeniedHandler;
+import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,9 @@ public class SecurityConfiguration {
     @SuppressWarnings("java:S4502") // Safe while authentication is stateless and only accepts an explicit Bearer header, never cookies.
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            ObjectProvider<FirebaseAuthenticationFilter> firebaseFilterProvider
+            ObjectProvider<FirebaseAuthenticationFilter> firebaseFilterProvider,
+            ApiAuthenticationEntryPoint authenticationEntryPoint,
+            ApiAccessDeniedHandler accessDeniedHandler
     ) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
@@ -26,9 +30,10 @@ public class SecurityConfiguration {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(
-                        (request, response, exception) -> response.sendError(401)
-                ))
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/api/**").authenticated()

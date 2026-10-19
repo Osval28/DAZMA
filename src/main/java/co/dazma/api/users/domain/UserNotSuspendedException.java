@@ -1,7 +1,10 @@
 package co.dazma.api.users.domain;
 
-public class UserNotSuspendedException extends IllegalStateException {
+import co.dazma.api.shared.domain.errors.DomainException;
+
+public class UserNotSuspendedException extends DomainException {
+
     public UserNotSuspendedException() {
-        super("El usuario no está suspendido");
+        super(UserErrorCode.NOT_SUSPENDED);
     }
 }
