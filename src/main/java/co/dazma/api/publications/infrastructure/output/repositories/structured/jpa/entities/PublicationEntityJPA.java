@@ -1,20 +1,18 @@
-package co.dazma.api.publications.infrastructure.output.repositories.structured;
+package co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities;
 
+import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "publications", schema = "app_publications")
-public class PublicationEntity {
+public class PublicationEntityJPA {
 
     @Id
     private UUID id;
@@ -42,10 +40,25 @@ public class PublicationEntity {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    protected PublicationEntity() {
+    @Column(name = "price", nullable = false)
+    private Integer price;
+
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("position ASC")
+    private List<PublicationPhotoEntityJPA> photos = new ArrayList<PublicationPhotoEntityJPA>();
+
+    public void addPhoto(PublicationPhotoEntityJPA photo) {
+        photo.assignTo(this);
+        photos.add(photo);
     }
 
-    public PublicationEntity(
+    public List<PublicationPhotoEntityJPA> getPhotos() {
+        return photos;
+    }
+    protected PublicationEntityJPA() {
+    }
+
+    public PublicationEntityJPA(
             UUID id,
             UUID ownerId,
             String name,
@@ -53,7 +66,8 @@ public class PublicationEntity {
             String description,
             String city,
             PublicationStatus status,
-            Instant createdAt
+            Instant createdAt,
+            Integer price
     ) {
         this.id = id;
         this.ownerId = ownerId;
@@ -63,6 +77,7 @@ public class PublicationEntity {
         this.city = city;
         this.status = status;
         this.createdAt = createdAt;
+        this.price = price;
     }
 
     public UUID getId() {
@@ -95,5 +110,9 @@ public class PublicationEntity {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public Integer getPrice() {
+        return price;
     }
 }

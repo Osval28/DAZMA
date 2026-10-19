@@ -9,9 +9,10 @@ CREATE TABLE app_publications.publications (
     city        VARCHAR(255) NOT NULL,
     status      VARCHAR(20)  NOT NULL,
     created_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+    price       INTEGER      NOT NULL,
 
-    CONSTRAINT fk_publications_owner
-        FOREIGN KEY (owner_id) REFERENCES app_users.users(id),
+    CONSTRAINT chk_publications_price
+        CHECK (price > 0),
     CONSTRAINT chk_publications_name
         CHECK (BTRIM(name) <> ''),
     CONSTRAINT chk_publications_type

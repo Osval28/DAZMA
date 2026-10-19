@@ -17,6 +17,7 @@ public class Publication {
     private final PublicationStatus status;
     private final List<PublicationPhoto> photos;
     private final Instant createdAt;
+    private final Integer price;
 
     private Publication(
             UUID id,
@@ -27,7 +28,8 @@ public class Publication {
             String city,
             PublicationStatus status,
             List<PublicationPhoto> photos,
-            Instant createdAt
+            Instant createdAt,
+            Integer price
     ) {
         requireValue(id, "La publicación debe tener un identificador");
         requireValue(ownerId, "La publicación debe tener un propietario");
@@ -37,8 +39,11 @@ public class Publication {
         requireText(city, "La ciudad de la publicación es obligatoria");
         requireValue(status, "El estado de la publicación es obligatorio");
         requireValue(createdAt, "La fecha de creación es obligatoria");
+        requireValue(price, "El precio de la publicación es obligatorio");
         validatePhotos(photos);
-
+        if (price <= 0) {
+            throw new InvalidPublicationException("El precio de la publicación no puede ser cero ni negativo");
+        }
         this.id = id;
         this.ownerId = ownerId;
         this.name = name.trim();
@@ -48,6 +53,7 @@ public class Publication {
         this.status = status;
         this.photos = List.copyOf(photos);
         this.createdAt = createdAt;
+        this.price = price;
     }
 
     public static Publication publish(
@@ -56,7 +62,9 @@ public class Publication {
             PublicationType type,
             String description,
             String city,
-            List<PublicationPhoto> photos
+            List<PublicationPhoto> photos,
+            Instant createdAt,
+            Integer price
     ) {
         return new Publication(
                 UUID.randomUUID(),
@@ -67,7 +75,8 @@ public class Publication {
                 city,
                 PublicationStatus.PUBLISHED,
                 photos,
-                Instant.now()
+                createdAt,
+                price
         );
     }
 
@@ -80,7 +89,8 @@ public class Publication {
             String city,
             PublicationStatus status,
             List<PublicationPhoto> photos,
-            Instant createdAt
+            Instant createdAt,
+            Integer price
     ) {
         return new Publication(
                 id,
@@ -91,7 +101,8 @@ public class Publication {
                 city,
                 status,
                 photos,
-                createdAt
+                createdAt,
+                price
         );
     }
 
@@ -161,5 +172,8 @@ public class Publication {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+    public Integer getPrice() {
+        return price;
     }
 }

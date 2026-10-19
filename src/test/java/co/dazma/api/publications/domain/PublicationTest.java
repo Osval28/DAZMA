@@ -12,11 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PublicationTest {
 
+    private static final Instant CREATED_AT = Instant.parse("2026-10-18T12:00:00Z");
+    private static final int PRICE = 850_000;
+
     @Test
     void shouldPublishAValidPublication() {
         UUID ownerId = UUID.randomUUID();
         PublicationPhoto photo = photo(0);
-        Instant beforeCreation = Instant.now();
 
         Publication publication = Publication.publish(
                 ownerId,
@@ -24,7 +26,9 @@ class PublicationTest {
                 PublicationType.EXCHANGE,
                 "  Bicicleta en buen estado  ",
                 "  Rionegro  ",
-                List.of(photo)
+                List.of(photo),
+                CREATED_AT,
+                PRICE
         );
 
         assertNotNull(publication.getId());
@@ -35,10 +39,8 @@ class PublicationTest {
         assertEquals("Rionegro", publication.getCity());
         assertEquals(PublicationStatus.PUBLISHED, publication.getStatus());
         assertEquals(List.of(photo), publication.getPhotos());
-        assertNotNull(publication.getCreatedAt());
-        org.junit.jupiter.api.Assertions.assertFalse(
-                publication.getCreatedAt().isBefore(beforeCreation)
-        );
+        assertEquals(CREATED_AT, publication.getCreatedAt());
+        assertEquals(PRICE, publication.getPrice());
     }
 
     @Test
@@ -51,7 +53,9 @@ class PublicationTest {
                         PublicationType.EXCHANGE,
                         "En buen estado",
                         "Rionegro",
-                        List.of(photo(0))
+                        List.of(photo(0)),
+                        CREATED_AT,
+                        PRICE
                 )
         );
     }
@@ -68,7 +72,9 @@ class PublicationTest {
                         PublicationType.EXCHANGE,
                         "Descripción",
                         "Rionegro",
-                        List.of(photo(0))
+                        List.of(photo(0)),
+                        CREATED_AT,
+                        PRICE
                 )
         );
         assertThrows(
@@ -79,7 +85,9 @@ class PublicationTest {
                         PublicationType.EXCHANGE,
                         " ",
                         "Rionegro",
-                        List.of(photo(0))
+                        List.of(photo(0)),
+                        CREATED_AT,
+                        PRICE
                 )
         );
         assertThrows(
@@ -90,7 +98,9 @@ class PublicationTest {
                         PublicationType.EXCHANGE,
                         "Descripción",
                         " ",
-                        List.of(photo(0))
+                        List.of(photo(0)),
+                        CREATED_AT,
+                        PRICE
                 )
         );
     }
@@ -105,7 +115,9 @@ class PublicationTest {
                         null,
                         "Descripción",
                         "Rionegro",
-                        List.of(photo(0))
+                        List.of(photo(0)),
+                        CREATED_AT,
+                        PRICE
                 )
         );
     }
@@ -120,7 +132,9 @@ class PublicationTest {
                         PublicationType.EXCHANGE,
                         "Descripción",
                         "Rionegro",
-                        List.of()
+                        List.of(),
+                        CREATED_AT,
+                        PRICE
                 )
         );
     }
@@ -164,6 +178,42 @@ class PublicationTest {
         );
     }
 
+    @Test
+    void shouldRejectMissingCreationDate() {
+        assertThrows(
+                InvalidPublicationException.class,
+                () -> Publication.publish(
+                        UUID.randomUUID(),
+                        "Bicicleta",
+                        PublicationType.EXCHANGE,
+                        "Descripción",
+                        "Rionegro",
+                        List.of(photo(0)),
+                        null,
+                        PRICE
+                )
+        );
+    }
+
+    @Test
+    void shouldRejectMissingOrNonPositivePrice() {
+        for (Integer invalidPrice : new Integer[]{null, 0, -1}) {
+            assertThrows(
+                    InvalidPublicationException.class,
+                    () -> Publication.publish(
+                            UUID.randomUUID(),
+                            "Bicicleta",
+                            PublicationType.EXCHANGE,
+                            "Descripción",
+                            "Rionegro",
+                            List.of(photo(0)),
+                            CREATED_AT,
+                            invalidPrice
+                    )
+            );
+        }
+    }
+
     private Publication validPublication(List<PublicationPhoto> photos) {
         return Publication.publish(
                 UUID.randomUUID(),
@@ -171,7 +221,9 @@ class PublicationTest {
                 PublicationType.EXCHANGE,
                 "Descripción",
                 "Rionegro",
-                photos
+                photos,
+                CREATED_AT,
+                PRICE
         );
     }
 
