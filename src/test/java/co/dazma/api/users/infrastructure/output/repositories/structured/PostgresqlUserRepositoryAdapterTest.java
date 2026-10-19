@@ -22,15 +22,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class PostgresUserRepositoryAdapterTest {
+class PostgresqlUserRepositoryAdapterTest {
 
     private SpringDataUserRepository springDataRepository;
-    private PostgresUserRepositoryAdapter adapter;
+    private PostgresqlUserRepositoryAdapter adapter;
 
     @BeforeEach
     void setUp() {
         springDataRepository = mock(SpringDataUserRepository.class);
-        adapter = new PostgresUserRepositoryAdapter(
+        adapter = new PostgresqlUserRepositoryAdapter(
                 springDataRepository,
                 Mappers.getMapper(UserMapStructDomainMapper.class),
                 Mappers.getMapper(UserMapStructJpaMapper.class)
