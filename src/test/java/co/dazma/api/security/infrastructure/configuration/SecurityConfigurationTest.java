@@ -1,11 +1,16 @@
 package co.dazma.api.security.infrastructure.configuration;
 
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.infrastructure.input.errors.ApiAccessDeniedHandler;
+import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
+import co.dazma.api.security.infrastructure.input.errors.SecurityProblemWriter;
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.infrastructure.input.controllers.UserController;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
+import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -30,13 +35,22 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {
         UserController.class,
         SecurityConfigurationTest.HealthController.class
 })
-@Import({SecurityConfiguration.class, SecurityConfigurationTest.FilterTestConfiguration.class})
+@Import({
+        SecurityConfiguration.class,
+        SecurityConfigurationTest.FilterTestConfiguration.class,
+        ApiAuthenticationEntryPoint.class,
+        ApiAccessDeniedHandler.class,
+        SecurityProblemWriter.class,
+        ApiProblemFactory.class,
+        ErrorMessageResolver.class
+})
 @ImportAutoConfiguration({
         SecurityAutoConfiguration.class,
         ServletWebSecurityAutoConfiguration.class
@@ -65,7 +79,15 @@ class SecurityConfigurationTest {
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title").value("Autenticación requerida"))
+                .andExpect(jsonPath("$.detail").value(
+                        "Se requiere autenticación para acceder a este recurso."
+                ))
+                .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"))
+                .andExpect(jsonPath("$.instance").value("/api/users"));
 
         verifyNoInteractions(registerUserUseCase);
         verifyNoInteractions(authenticateIdentityUseCase);
@@ -77,7 +99,9 @@ class SecurityConfigurationTest {
                         .cookie(new MockCookie("authentication", "valid-token"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"));
 
         verifyNoInteractions(registerUserUseCase);
         verifyNoInteractions(authenticateIdentityUseCase);
@@ -92,7 +116,13 @@ class SecurityConfigurationTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer invalid-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title").value("Autenticación requerida"))
+                .andExpect(jsonPath("$.detail").value("El token de identidad no es válido."))
+                .andExpect(jsonPath("$.code").value("IDENTITY_TOKEN_INVALID"))
+                .andExpect(jsonPath("$.instance").value("/api/users"));
 
         verifyNoInteractions(registerUserUseCase);
     }
@@ -130,6 +160,24 @@ class SecurityConfigurationTest {
         );
     }
 
+    @Test
+    void shouldReturnForbiddenProblemWhenAuthenticatedUserAccessesDeniedRoute() throws Exception {
+        when(authenticateIdentityUseCase.authenticate("valid-token"))
+                .thenReturn("firebase-user-123");
+
+        mockMvc.perform(get("/denied")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer valid-token"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.title").value("Operación no permitida"))
+                .andExpect(jsonPath("$.detail").value(
+                        "El usuario autenticado no tiene permiso para realizar esta operación."
+                ))
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"))
+                .andExpect(jsonPath("$.instance").value("/denied"));
+    }
+
     private static String validRegistrationBody() {
         return """
                 {
@@ -154,9 +202,13 @@ class SecurityConfigurationTest {
 
         @Bean
         FirebaseAuthenticationFilter firebaseAuthenticationFilter(
-                AuthenticateIdentityUseCase authenticateIdentityUseCase
+                AuthenticateIdentityUseCase authenticateIdentityUseCase,
+                ApiAuthenticationEntryPoint authenticationEntryPoint
         ) {
-            return new FirebaseAuthenticationFilter(authenticateIdentityUseCase);
+            return new FirebaseAuthenticationFilter(
+                    authenticateIdentityUseCase,
+                    authenticationEntryPoint
+            );
         }
 
         @Bean

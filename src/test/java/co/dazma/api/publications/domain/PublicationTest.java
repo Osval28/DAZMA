@@ -45,7 +45,7 @@ class PublicationTest {
 
     @Test
     void shouldRejectMissingOwner() {
-        assertThrows(
+        InvalidPublicationException exception = assertThrows(
                 InvalidPublicationException.class,
                 () -> Publication.publish(
                         null,
@@ -58,6 +58,9 @@ class PublicationTest {
                         PRICE
                 )
         );
+
+        assertEquals("PUBLICATION_OWNER_REQUIRED", exception.code());
+        assertEquals("publication.owner.required", exception.messageKey());
     }
 
     @Test

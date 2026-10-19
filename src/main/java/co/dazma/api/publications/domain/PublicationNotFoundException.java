@@ -1,10 +1,12 @@
 package co.dazma.api.publications.domain;
 
+import co.dazma.api.shared.domain.errors.DomainException;
+
 import java.util.UUID;
 
-public class PublicationNotFoundException extends RuntimeException {
+public class PublicationNotFoundException extends DomainException {
 
     public PublicationNotFoundException(UUID publicationId) {
-        super("No existe una publicación disponible con el identificador: " + publicationId);
+        super(PublicationErrorCode.NOT_FOUND, publicationId);
     }
 }

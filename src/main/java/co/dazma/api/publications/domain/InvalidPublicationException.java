@@ -1,8 +1,10 @@
 package co.dazma.api.publications.domain;
 
-public class InvalidPublicationException extends IllegalArgumentException {
+import co.dazma.api.shared.domain.errors.DomainException;
 
-    public InvalidPublicationException(String message) {
-        super(message);
+public class InvalidPublicationException extends DomainException {
+
+    public InvalidPublicationException(PublicationErrorCode errorCode, Object... arguments) {
+        super(errorCode, arguments);
     }
 }

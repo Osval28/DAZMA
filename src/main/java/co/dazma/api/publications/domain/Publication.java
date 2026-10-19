@@ -31,18 +31,18 @@ public class Publication {
             Instant createdAt,
             Integer price
     ) {
-        requireValue(id, "La publicación debe tener un identificador");
-        requireValue(ownerId, "La publicación debe tener un propietario");
-        requireText(name, "El nombre de la publicación es obligatorio");
-        requireValue(type, "El tipo de publicación es obligatorio");
-        requireText(description, "La descripción de la publicación es obligatoria");
-        requireText(city, "La ciudad de la publicación es obligatoria");
-        requireValue(status, "El estado de la publicación es obligatorio");
-        requireValue(createdAt, "La fecha de creación es obligatoria");
-        requireValue(price, "El precio de la publicación es obligatorio");
+        requireValue(id, PublicationErrorCode.ID_REQUIRED);
+        requireValue(ownerId, PublicationErrorCode.OWNER_REQUIRED);
+        requireText(name, PublicationErrorCode.NAME_REQUIRED);
+        requireValue(type, PublicationErrorCode.TYPE_REQUIRED);
+        requireText(description, PublicationErrorCode.DESCRIPTION_REQUIRED);
+        requireText(city, PublicationErrorCode.CITY_REQUIRED);
+        requireValue(status, PublicationErrorCode.STATUS_REQUIRED);
+        requireValue(createdAt, PublicationErrorCode.CREATED_AT_REQUIRED);
+        requireValue(price, PublicationErrorCode.VALUE_REQUIRED);
         validatePhotos(photos);
         if (price <= 0) {
-            throw new InvalidPublicationException("El precio de la publicación no puede ser cero ni negativo");
+            throw new InvalidPublicationException(PublicationErrorCode.VALUE_NOT_POSITIVE);
         }
         this.id = id;
         this.ownerId = ownerId;
@@ -108,33 +108,33 @@ public class Publication {
 
     private static void validatePhotos(List<PublicationPhoto> photos) {
         if (photos == null || photos.isEmpty()) {
-            throw new InvalidPublicationException("La publicación debe tener al menos una fotografía");
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_REQUIRED);
         }
         if (photos.stream().anyMatch(photo -> photo == null)) {
-            throw new InvalidPublicationException("La lista de fotografías no puede contener valores nulos");
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTO_NULL);
         }
 
         Set<UUID> photoIds = new HashSet<>();
         Set<Integer> positions = new HashSet<>();
         for (PublicationPhoto photo : photos) {
             if (!photoIds.add(photo.getId())) {
-                throw new InvalidPublicationException("Una fotografía no puede repetirse en la publicación");
+                throw new InvalidPublicationException(PublicationErrorCode.PHOTO_DUPLICATED);
             }
             if (!positions.add(photo.getPosition())) {
-                throw new InvalidPublicationException("Dos fotografías no pueden ocupar la misma posición");
+                throw new InvalidPublicationException(PublicationErrorCode.PHOTO_POSITION_DUPLICATED);
             }
         }
     }
 
-    private static void requireText(String value, String message) {
+    private static void requireText(String value, PublicationErrorCode errorCode) {
         if (value == null || value.isBlank()) {
-            throw new InvalidPublicationException(message);
+            throw new InvalidPublicationException(errorCode);
         }
     }
 
-    private static void requireValue(Object value, String message) {
+    private static void requireValue(Object value, PublicationErrorCode errorCode) {
         if (value == null) {
-            throw new InvalidPublicationException(message);
+            throw new InvalidPublicationException(errorCode);
         }
     }
 

@@ -41,7 +41,9 @@ class UserTest {
                 () -> User.register(name, phone, municipality, externalId)
         );
 
-        assertEquals("Falta el campo: " + missingField, exception.getMessage());
+        assertEquals("USER_REQUIRED_FIELD_MISSING", exception.code());
+        assertEquals("user.required-field.missing", exception.messageKey());
+        assertArrayEquals(new Object[]{missingField}, exception.arguments());
     }
 
     @Test
@@ -49,16 +51,24 @@ class UserTest {
         User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
         user.suspend();
 
-        assertThrows(IllegalStateException.class, () -> user.suspend());
-        assertThrows(UserAlreadySuspendedException.class, () -> user.suspend());
+        UserAlreadySuspendedException exception = assertThrows(
+                UserAlreadySuspendedException.class,
+                user::suspend
+        );
+
+        assertEquals("USER_ALREADY_SUSPENDED", exception.code());
     }
 
     @Test
     void cannotReactivateActiveUser() {
         User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
 
-        assertThrows(IllegalStateException.class, () -> user.reactivate());
-        assertThrows(UserNotSuspendedException.class, () -> user.reactivate());
+        UserNotSuspendedException exception = assertThrows(
+                UserNotSuspendedException.class,
+                user::reactivate
+        );
+
+        assertEquals("USER_NOT_SUSPENDED", exception.code());
     }
 
     @Test

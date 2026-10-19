@@ -10,13 +10,13 @@ public class PublicationPhoto {
 
     public PublicationPhoto(UUID id, String objectKey, int position) {
         if (id == null) {
-            throw new InvalidPublicationException("La fotografía debe tener un identificador");
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTO_ID_REQUIRED);
         }
         if (objectKey == null || objectKey.isBlank()) {
-            throw new InvalidPublicationException("La fotografía debe tener una referencia de almacenamiento");
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTO_STORAGE_REFERENCE_REQUIRED);
         }
         if (position < 0) {
-            throw new InvalidPublicationException("La posición de la fotografía no puede ser negativa");
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTO_POSITION_INVALID);
         }
 
         this.id = id;
