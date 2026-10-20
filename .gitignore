@@ -21,3 +21,6 @@ target/
 
 ### VS Code ###
 .vscode/
+
+### Perfil local ###
+src/main/resources/application-local.properties
