@@ -18,9 +18,11 @@ public abstract class DomainException extends RuntimeException {
         );
 
         this.errorCode = errorCode;
-        this.arguments = arguments == null
-                ? new Object[0]
-                : arguments.clone();
+        if (arguments == null) {
+            this.arguments = new Object[0];
+        } else {
+            this.arguments = arguments.clone();
+        }
     }
 
     public String code() {
