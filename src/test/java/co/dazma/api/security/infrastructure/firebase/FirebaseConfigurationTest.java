@@ -15,10 +15,12 @@ import org.mockito.MockedStatic;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -28,7 +30,7 @@ import static org.mockito.Mockito.when;
 class FirebaseConfigurationTest {
 
     private final FirebaseConfiguration configuration = new FirebaseConfiguration();
-
+    private static final String SERVICE_ACCOUNT_JSON = "{}";
     @Test
     void shouldInitializeFirebaseWhenThereIsNoExistingApplication() throws IOException {
         GoogleCredentials credentials = mock(GoogleCredentials.class);
@@ -39,17 +41,18 @@ class FirebaseConfigurationTest {
         try (MockedStatic<GoogleCredentials> credentialsMock = mockStatic(GoogleCredentials.class);
              MockedStatic<FirebaseOptions> firebaseOptionsMock = mockStatic(FirebaseOptions.class);
              MockedStatic<FirebaseApp> firebaseAppMock = mockStatic(FirebaseApp.class)) {
-            credentialsMock.when(GoogleCredentials::getApplicationDefault).thenReturn(credentials);
+            credentialsMock.when(() -> GoogleCredentials.fromStream(any(InputStream.class)))
+                    .thenReturn(credentials);
             firebaseOptionsMock.when(FirebaseOptions::builder).thenReturn(optionsBuilder);
             when(optionsBuilder.setCredentials(credentials)).thenReturn(optionsBuilder);
             when(optionsBuilder.build()).thenReturn(options);
             firebaseAppMock.when(FirebaseApp::getApps).thenReturn(List.of());
             firebaseAppMock.when(() -> FirebaseApp.initializeApp(options)).thenReturn(expectedApp);
 
-            FirebaseApp result = configuration.firebaseApp();
+            FirebaseApp result = configuration.firebaseApp(SERVICE_ACCOUNT_JSON);
 
             assertSame(expectedApp, result);
-            credentialsMock.verify(GoogleCredentials::getApplicationDefault);
+            credentialsMock.verify(() -> GoogleCredentials.fromStream(any(InputStream.class)));
             verify(optionsBuilder).setCredentials(credentials);
             firebaseAppMock.verify(() -> FirebaseApp.initializeApp(options));
         }
@@ -64,10 +67,10 @@ class FirebaseConfigurationTest {
             firebaseAppMock.when(FirebaseApp::getApps).thenReturn(List.of(existingApp));
             firebaseAppMock.when(FirebaseApp::getInstance).thenReturn(existingApp);
 
-            FirebaseApp result = configuration.firebaseApp();
+            FirebaseApp result = configuration.firebaseApp(SERVICE_ACCOUNT_JSON);
 
             assertSame(existingApp, result);
-            credentialsMock.verify(GoogleCredentials::getApplicationDefault, never());
+            credentialsMock.verify(() -> GoogleCredentials.fromStream(any(InputStream.class)), never());
             firebaseAppMock.verify(FirebaseApp::getInstance);
         }
     }
