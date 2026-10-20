@@ -1,6 +1,7 @@
 package co.dazma.api.security.infrastructure.firebase;
 
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
+import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
@@ -56,9 +57,13 @@ public class FirebaseConfiguration {
 
     @Bean
     public FirebaseAuthenticationFilter firebaseAuthenticationFilter(
-            AuthenticateIdentityUseCase authenticateIdentityUseCase
+            AuthenticateIdentityUseCase authenticateIdentityUseCase,
+            ApiAuthenticationEntryPoint authenticationEntryPoint
     ) {
-        return new FirebaseAuthenticationFilter(authenticateIdentityUseCase);
+        return new FirebaseAuthenticationFilter(
+                authenticateIdentityUseCase,
+                authenticationEntryPoint
+        );
     }
 
     @Bean

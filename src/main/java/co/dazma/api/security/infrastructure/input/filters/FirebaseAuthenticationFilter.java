@@ -1,6 +1,7 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,15 +15,27 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final AuthenticateIdentityUseCase authenticateIdentityUseCase;
+    private final ApiAuthenticationEntryPoint authenticationEntryPoint;
 
-    public FirebaseAuthenticationFilter(AuthenticateIdentityUseCase authenticateIdentityUseCase) {
-        this.authenticateIdentityUseCase = authenticateIdentityUseCase;
+    public FirebaseAuthenticationFilter(
+            AuthenticateIdentityUseCase authenticateIdentityUseCase,
+            ApiAuthenticationEntryPoint authenticationEntryPoint
+    ) {
+        this.authenticateIdentityUseCase = Objects.requireNonNull(
+                authenticateIdentityUseCase,
+                "El caso de uso de autenticación es obligatorio"
+        );
+        this.authenticationEntryPoint = Objects.requireNonNull(
+                authenticationEntryPoint,
+                "El punto de entrada de autenticación es obligatorio"
+        );
     }
 
     @Override
@@ -53,7 +66,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (InvalidIdentityTokenException exception) {
             SecurityContextHolder.clearContext();
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+            authenticationEntryPoint.commenceInvalidToken(request, response, exception);
         }
     }
 }

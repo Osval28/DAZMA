@@ -1,0 +1,235 @@
+openapi: 3.1.0
+info:
+  title: DAZMA Publications API
+  version: 1.0.0
+  description: Contrato para crear y consultar el detalle de una publicación
+
+paths:
+  /api/publications:
+    post:
+      tags: [Publications]
+      summary: Crear una publicación
+      description: |
+        Crea una publicación para el usuario autenticado. El propietario se obtiene
+        del token de Firebase; el cliente no puede escogerlo en el cuerpo de la solicitud.
+        Cada identificador de foto debe corresponder a una carga previamente autorizada,
+        completada y perteneciente al mismo usuario.
+      operationId: createPublication
+      security:
+        - firebaseBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePublicationRequest'
+            example:
+              name: Bicicleta de montaña
+              type: EXCHANGE
+              description: Bicicleta en buen estado para intercambiar por una consola.
+              city: Rionegro
+              photoUploadIds:
+                - 5fc930d6-c24c-4e60-91ed-a82c3b7f5275
+      responses:
+        '201':
+          description: Publicación creada correctamente.
+          headers:
+            Location:
+              description: Dirección del detalle de la publicación creada.
+              schema:
+                type: string
+                example: /api/publications/7db541ee-42e3-4b75-8f79-210886414e3a
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/UploadConflict'
+
+  /api/publications/{publicationId}:
+    get:
+      tags: [Publications]
+      summary: Consultar el detalle de una publicación
+      description: |
+        Devuelve la información pública necesaria para mostrar la publicación.
+        Este detalle será el punto desde el cual un usuario autenticado podrá iniciar
+        posteriormente una conversación con el propietario.
+      operationId: getPublicationById
+      security: []
+      parameters:
+        - name: publicationId
+          in: path
+          required: true
+          description: Identificador de la publicación.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detalle de la publicación.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    firebaseBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token de identidad emitido por Firebase Authentication.
+
+  responses:
+    BadRequest:
+      description: La solicitud tiene campos faltantes o valores inválidos.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+    Unauthorized:
+      description: No se proporcionó un token de identidad válido.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+    Forbidden:
+      description: El usuario autenticado no puede operar en la plataforma.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+    UploadConflict:
+      description: Una o más cargas no están disponibles para crear la publicación.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+    NotFound:
+      description: La publicación no existe o no está disponible públicamente.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+
+  schemas:
+    CreatePublicationRequest:
+      type: object
+      additionalProperties: false
+      required: [name, type, description, city, photoUploadIds]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Nombre con el que se mostrará la publicación.
+        type:
+          $ref: '#/components/schemas/PublicationType'
+        description:
+          type: string
+          minLength: 1
+          description: Información del artículo y de lo que espera el propietario.
+        city:
+          type: string
+          minLength: 1
+          description: Ciudad asociada con la publicación.
+        photoUploadIds:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Identificadores de fotos previamente cargadas y verificadas.
+          items:
+            type: string
+            format: uuid
+
+    PublicationResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, type, description, city, status, owner, photos, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/PublicationType'
+        description:
+          type: string
+        city:
+          type: string
+        status:
+          $ref: '#/components/schemas/PublicationStatus'
+        owner:
+          $ref: '#/components/schemas/PublicationOwner'
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicationPhoto'
+        createdAt:
+          type: string
+          format: date-time
+
+    PublicationOwner:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    PublicationPhoto:
+      type: object
+      additionalProperties: false
+      required: [id, url, position]
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        position:
+          type: integer
+          minimum: 0
+
+    PublicationType:
+      type: string
+      description: Tipo de negocio que busca el propietario.
+      enum: [PURCHASE, EXCHANGE]
+
+    PublicationStatus:
+      type: string
+      enum: [PUBLISHED]
+
+    ProblemResponse:
+      type: object
+      description: Respuesta uniforme para errores de la API.
+      required: [status, title, detail]
+      properties:
+        status:
+          type: integer
+          example: 400
+        title:
+          type: string
+          example: Invalid publication
+        detail:
+          type: string
+          example: The city field is required.
+        code:
+          type: string
+          example: PUBLICATION_INVALID
+        instance:
+          type: string
+          example: /api/publications
+

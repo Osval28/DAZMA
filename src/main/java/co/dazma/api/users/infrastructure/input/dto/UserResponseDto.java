@@ -4,16 +4,9 @@ import co.dazma.api.users.domain.User;
 
 import java.util.UUID;
 
-public record UserResponseDto(
-        UUID id,
-        String name,
-        String phone,
-        String municipality,
-        String state,
-        String role
-) {
+public record UserResponseDto(UUID id, String name, String phone, String municipality, String state, String role) {
 
-    public static UserResponseDto fromDomain(User user) {
+    public static UserResponseDto fromModel(User user) {
         return new UserResponseDto(
                 user.getId(),
                 user.getName(),

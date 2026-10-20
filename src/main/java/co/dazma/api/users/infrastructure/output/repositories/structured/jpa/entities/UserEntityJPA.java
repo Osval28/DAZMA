@@ -1,4 +1,4 @@
-package co.dazma.api.users.infrastructure.output.repositories.structured;
+package co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities;
 
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
@@ -9,7 +9,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "users", schema = "app_users")
 
-public class UserEntity {
+public class UserEntityJPA {
 
     @Id
     private UUID id;
@@ -28,22 +28,22 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private State state;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private State state;
+    private Role role;
 
-    protected UserEntity() {}
+    protected UserEntityJPA() {}
 
-    public UserEntity(UUID id, String name, String phone, String municipality, String externalId, Role role, State state) {
+    public UserEntityJPA(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.municipality = municipality;
         this.externalId = externalId;
-        this.role = role;
         this.state = state;
+        this.role = role;
     }
 
     public UUID getId() {

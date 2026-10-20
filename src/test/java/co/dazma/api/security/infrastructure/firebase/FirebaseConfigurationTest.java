@@ -1,6 +1,7 @@
 package co.dazma.api.security.infrastructure.firebase;
 
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
+import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
@@ -89,10 +90,15 @@ class FirebaseConfigurationTest {
     @Test
     void shouldAssembleFirebaseAuthenticationComponents() {
         FirebaseAuth firebaseAuth = mock(FirebaseAuth.class);
+        ApiAuthenticationEntryPoint authenticationEntryPoint =
+                mock(ApiAuthenticationEntryPoint.class);
 
         IdentityTokenVerifier verifier = configuration.identityTokenVerifier(firebaseAuth);
         AuthenticateIdentityUseCase useCase = configuration.authenticateIdentityUseCase(verifier);
-        FirebaseAuthenticationFilter filter = configuration.firebaseAuthenticationFilter(useCase);
+        FirebaseAuthenticationFilter filter = configuration.firebaseAuthenticationFilter(
+                useCase,
+                authenticationEntryPoint
+        );
         FilterRegistrationBean<FirebaseAuthenticationFilter> registration =
                 configuration.firebaseAuthenticationFilterRegistration(filter);
 

@@ -1,7 +1,10 @@
 package co.dazma.api.users.domain;
 
-public class UserAlreadySuspendedException extends IllegalStateException {
+import co.dazma.api.shared.domain.errors.DomainException;
+
+public class UserAlreadySuspendedException extends DomainException {
+
     public UserAlreadySuspendedException() {
-        super("El usuario ya está suspendido");
+        super(UserErrorCode.ALREADY_SUSPENDED);
     }
 }

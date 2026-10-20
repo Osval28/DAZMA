@@ -1,9 +1,9 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 class FirebaseAuthenticationFilterTest {
 
     private AuthenticateIdentityUseCase authenticateIdentityUseCase;
+    private ApiAuthenticationEntryPoint authenticationEntryPoint;
     private FirebaseAuthenticationFilter filter;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -34,7 +35,11 @@ class FirebaseAuthenticationFilterTest {
     @BeforeEach
     void setUp() {
         authenticateIdentityUseCase = mock(AuthenticateIdentityUseCase.class);
-        filter = new FirebaseAuthenticationFilter(authenticateIdentityUseCase);
+        authenticationEntryPoint = mock(ApiAuthenticationEntryPoint.class);
+        filter = new FirebaseAuthenticationFilter(
+                authenticateIdentityUseCase,
+                authenticationEntryPoint
+        );
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
         filterChain = mock(FilterChain.class);
@@ -72,13 +77,14 @@ class FirebaseAuthenticationFilterTest {
     @Test
     void shouldReturnUnauthorizedWhenBearerTokenIsInvalid() throws Exception {
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer invalid-token");
+        InvalidIdentityTokenException exception = new InvalidIdentityTokenException();
         when(authenticateIdentityUseCase.authenticate("invalid-token"))
-                .thenThrow(new InvalidIdentityTokenException());
+                .thenThrow(exception);
 
         filter.doFilter(request, response, filterChain);
 
-        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
         assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(authenticationEntryPoint).commenceInvalidToken(request, response, exception);
         verify(filterChain, never()).doFilter(request, response);
     }
 }

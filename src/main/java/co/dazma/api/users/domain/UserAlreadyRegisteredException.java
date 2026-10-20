@@ -1,8 +1,10 @@
 package co.dazma.api.users.domain;
 
-public class UserAlreadyRegisteredException extends IllegalStateException {
+import co.dazma.api.shared.domain.errors.DomainException;
+
+public class UserAlreadyRegisteredException extends DomainException {
 
     public UserAlreadyRegisteredException() {
-        super("El usuario ya tiene un perfil registrado");
+        super(UserErrorCode.ALREADY_REGISTERED);
     }
 }
