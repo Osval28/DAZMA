@@ -19,6 +19,14 @@ public enum UserErrorCode implements ErrorCode {
     NOT_SUSPENDED(
             "USER_NOT_SUSPENDED",
             "user.not-suspended"
+    ),
+    NOT_FOUND(
+            "USER_NOT_FOUND",
+            "user.not-found"
+    ),
+    CANNOT_OPERATE(
+            "USER_CANNOT_OPERATE",
+            "user.cannot-operate"
     );
 
     private final String code;

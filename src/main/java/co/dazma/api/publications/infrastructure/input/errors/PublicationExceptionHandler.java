@@ -2,6 +2,7 @@ package co.dazma.api.publications.infrastructure.input.errors;
 
 import co.dazma.api.publications.domain.InvalidPublicationException;
 import co.dazma.api.publications.domain.PublicationNotFoundException;
+import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
 import co.dazma.api.shared.domain.errors.DomainException;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +45,19 @@ public class PublicationExceptionHandler {
                 exception,
                 HttpStatus.NOT_FOUND,
                 "error.title.not-found",
+                request
+        );
+    }
+
+    @ExceptionHandler(PublicationPhotoNotAvailableException.class)
+    public ResponseEntity<ProblemDetail> handlePhotoNotAvailable(
+            PublicationPhotoNotAvailableException exception,
+            HttpServletRequest request
+    ) {
+        return createResponse(
+                exception,
+                HttpStatus.CONFLICT,
+                "error.title.conflict",
                 request
         );
     }
