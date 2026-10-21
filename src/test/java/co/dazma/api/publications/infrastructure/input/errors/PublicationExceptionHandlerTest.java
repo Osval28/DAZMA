@@ -3,6 +3,7 @@ package co.dazma.api.publications.infrastructure.input.errors;
 import co.dazma.api.publications.domain.InvalidPublicationException;
 import co.dazma.api.publications.domain.PublicationErrorCode;
 import co.dazma.api.publications.domain.PublicationNotFoundException;
+import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,5 +65,27 @@ class PublicationExceptionHandlerTest {
         assertEquals("Recurso no encontrado", response.getBody().getTitle());
         assertEquals("PUBLICATION_NOT_FOUND", response.getBody().getProperties().get("code"));
         assertEquals("/api/publications/" + publicationId, response.getBody().getInstance().toString());
+    }
+
+    @Test
+    void shouldReturnConflictWhenUploadedPhotoIsNotAvailable() {
+        UUID photoId = UUID.randomUUID();
+
+        ResponseEntity<ProblemDetail> response = handler.handlePhotoNotAvailable(
+                new PublicationPhotoNotAvailableException(photoId),
+                request
+        );
+
+        assertEquals(409, response.getStatusCode().value());
+        assertEquals("Conflicto con el estado actual", response.getBody().getTitle());
+        assertEquals(
+                "La fotografía " + photoId
+                        + " no fue cargada o no pertenece al usuario autenticado.",
+                response.getBody().getDetail()
+        );
+        assertEquals(
+                "PUBLICATION_PHOTO_UPLOAD_NOT_AVAILABLE",
+                response.getBody().getProperties().get("code")
+        );
     }
 }

@@ -5,7 +5,9 @@ import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.users.domain.MissingRequiredFieldException;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
 import co.dazma.api.users.domain.UserAlreadySuspendedException;
+import co.dazma.api.users.domain.UserCannotOperateException;
 import co.dazma.api.users.domain.UserNotSuspendedException;
+import co.dazma.api.users.domain.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -98,6 +100,38 @@ class UserExceptionHandlerTest {
                 "Conflicto con el estado actual",
                 "El usuario no está suspendido.",
                 "USER_NOT_SUSPENDED"
+        );
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenTheAuthenticatedUserHasNoProfile() {
+        ResponseEntity<ProblemDetail> response = handler.handleNotFound(
+                new UserNotFoundException(),
+                request
+        );
+
+        assertProblem(
+                response,
+                404,
+                "Recurso no encontrado",
+                "No existe un perfil registrado para el usuario autenticado.",
+                "USER_NOT_FOUND"
+        );
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenTheUserCannotOperate() {
+        ResponseEntity<ProblemDetail> response = handler.handleCannotOperate(
+                new UserCannotOperateException(),
+                request
+        );
+
+        assertProblem(
+                response,
+                403,
+                "Operación no permitida",
+                "El usuario autenticado está suspendido y no puede realizar esta operación.",
+                "USER_CANNOT_OPERATE"
         );
     }
 

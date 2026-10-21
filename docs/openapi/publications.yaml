@@ -5,6 +5,47 @@ info:
   description: Contrato para crear y consultar el detalle de una publicación
 
 paths:
+  /api/publications/photos/upload-authorizations:
+    post:
+      tags: [Publication photos]
+      summary: Autorizar la carga de una fotografía
+      description: |
+        Genera una autorización temporal para cargar directamente una fotografía al
+        almacenamiento. El propietario se obtiene del token de Firebase; el cliente
+        solo informa el tipo y el tamaño del archivo que pretende cargar.
+
+        La carga debe realizarse mediante una solicitud PUT a `uploadUrl`, antes de
+        `expiresAt` y usando el mismo `Content-Type` enviado en esta solicitud. El
+        cliente debe conservar `photoId`, pues lo utilizará después al crear la
+        publicación.
+      operationId: authorizePublicationPhotoUpload
+      security:
+        - firebaseBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizePublicationPhotoUploadRequest'
+            example:
+              contentType: image/jpeg
+              contentLength: 245000
+      responses:
+        '201':
+          description: Autorización temporal creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationPhotoUploadAuthorization'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/AuthenticatedUserNotFound'
+
   /api/publications:
     post:
       tags: [Publications]
@@ -28,6 +69,7 @@ paths:
               type: EXCHANGE
               description: Bicicleta en buen estado para intercambiar por una consola.
               city: Rionegro
+              price: 900000
               photoUploadIds:
                 - 5fc930d6-c24c-4e60-91ed-a82c3b7f5275
       responses:
@@ -42,7 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicationResponse'
+                $ref: '#/components/schemas/CreatePublicationResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -119,12 +161,52 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/ProblemResponse'
+    AuthenticatedUserNotFound:
+      description: El usuario autenticado todavía no existe en DAZMA.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
 
   schemas:
+    AuthorizePublicationPhotoUploadRequest:
+      type: object
+      additionalProperties: false
+      required: [contentType, contentLength]
+      properties:
+        contentType:
+          type: string
+          description: Tipo MIME de la fotografía que se enviará al almacenamiento.
+          examples: [image/jpeg]
+        contentLength:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Tamaño exacto del archivo en bytes.
+          examples: [245000]
+
+    PublicationPhotoUploadAuthorization:
+      type: object
+      additionalProperties: false
+      required: [photoId, uploadUrl, expiresAt]
+      properties:
+        photoId:
+          type: string
+          format: uuid
+          description: Identificador que deberá conservarse para crear la publicación.
+        uploadUrl:
+          type: string
+          format: uri
+          description: Dirección temporal que acepta la carga mediante HTTP PUT.
+        expiresAt:
+          type: string
+          format: date-time
+          description: Momento a partir del cual la dirección de carga deja de ser válida.
+
     CreatePublicationRequest:
       type: object
       additionalProperties: false
-      required: [name, type, description, city, photoUploadIds]
+      required: [name, type, description, city, price, photoUploadIds]
       properties:
         name:
           type: string
@@ -140,6 +222,11 @@ components:
           type: string
           minLength: 1
           description: Ciudad asociada con la publicación.
+        price:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Valor de negocio indicado para la publicación.
         photoUploadIds:
           type: array
           minItems: 1
@@ -148,6 +235,22 @@ components:
           items:
             type: string
             format: uuid
+
+    CreatePublicationResponse:
+      type: object
+      additionalProperties: false
+      required: [id, status, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador asignado a la publicación.
+        status:
+          $ref: '#/components/schemas/PublicationStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora en que se creó la publicación.
 
     PublicationResponse:
       type: object

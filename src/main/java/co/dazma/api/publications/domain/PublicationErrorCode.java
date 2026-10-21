@@ -72,6 +72,38 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_PHOTO_POSITION_INVALID",
             "publication.photo.position.invalid"
     ),
+    PHOTO_UPLOAD_REQUEST_REQUIRED(
+            "PUBLICATION_PHOTO_UPLOAD_REQUEST_REQUIRED",
+            "publication.photo.upload.request.required"
+    ),
+    PHOTO_UPLOAD_OWNER_REQUIRED(
+            "PUBLICATION_PHOTO_UPLOAD_OWNER_REQUIRED",
+            "publication.photo.upload.owner.required"
+    ),
+    PHOTO_CONTENT_TYPE_REQUIRED(
+            "PUBLICATION_PHOTO_CONTENT_TYPE_REQUIRED",
+            "publication.photo.content-type.required"
+    ),
+    PHOTO_CONTENT_TYPE_NOT_ALLOWED(
+            "PUBLICATION_PHOTO_CONTENT_TYPE_NOT_ALLOWED",
+            "publication.photo.content-type.not-allowed"
+    ),
+    PHOTO_CONTENT_LENGTH_INVALID(
+            "PUBLICATION_PHOTO_CONTENT_LENGTH_INVALID",
+            "publication.photo.content-length.invalid"
+    ),
+    PHOTO_CONTENT_LENGTH_EXCEEDED(
+            "PUBLICATION_PHOTO_CONTENT_LENGTH_EXCEEDED",
+            "publication.photo.content-length.exceeded"
+    ),
+    CREATE_REQUEST_REQUIRED(
+            "PUBLICATION_CREATE_REQUEST_REQUIRED",
+            "publication.create.request.required"
+    ),
+    PHOTO_UPLOAD_NOT_AVAILABLE(
+            "PUBLICATION_PHOTO_UPLOAD_NOT_AVAILABLE",
+            "publication.photo.upload.not-available"
+    ),
     NOT_FOUND(
             "PUBLICATION_NOT_FOUND",
             "publication.not-found"
