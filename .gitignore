@@ -27,3 +27,5 @@ target/
 .env.*
 !.env.example
 firebase-service-account.json
+### Perfil local ###
+src/main/resources/application-local.properties

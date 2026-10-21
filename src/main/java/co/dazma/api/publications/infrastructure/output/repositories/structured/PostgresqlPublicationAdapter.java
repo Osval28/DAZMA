@@ -8,6 +8,7 @@ import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import co.dazma.api.shared.infrastructure.JpaMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class PostgresqlPublicationAdapter implements PublicationRepositoryPort {
         springDataPublicationRepository.save(publicationEntityJPA);
         return domainMapper.toDomain(jpaMapper.toEntity(publicationEntityJPA));
     }
-
+    @Transactional(readOnly = true)
     @Override
     public Optional<Publication> findById(UUID publicationId) {
         return springDataPublicationRepository.findById(publicationId)
