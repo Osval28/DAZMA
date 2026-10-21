@@ -5,7 +5,9 @@ import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.users.domain.MissingRequiredFieldException;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
 import co.dazma.api.users.domain.UserAlreadySuspendedException;
+import co.dazma.api.users.domain.UserCannotOperateException;
 import co.dazma.api.users.domain.UserNotSuspendedException;
+import co.dazma.api.users.domain.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -59,6 +61,32 @@ public class UserExceptionHandler {
             HttpServletRequest request
     ) {
         return createConflictResponse(exception, request);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleNotFound(
+            UserNotFoundException exception,
+            HttpServletRequest request
+    ) {
+        return createResponse(
+                exception,
+                HttpStatus.NOT_FOUND,
+                "error.title.not-found",
+                request
+        );
+    }
+
+    @ExceptionHandler(UserCannotOperateException.class)
+    public ResponseEntity<ProblemDetail> handleCannotOperate(
+            UserCannotOperateException exception,
+            HttpServletRequest request
+    ) {
+        return createResponse(
+                exception,
+                HttpStatus.FORBIDDEN,
+                "error.title.forbidden",
+                request
+        );
     }
 
     private ResponseEntity<ProblemDetail> createConflictResponse(

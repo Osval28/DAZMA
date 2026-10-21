@@ -26,6 +26,7 @@
         <archunit-junit.version>1.5.1</archunit-junit.version>
         <spring-modulith.version>2.1.1</spring-modulith.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <aws.sdk.version>2.54.19</aws.sdk.version>
         <spring-cloud-aws.version>4.1.1</spring-cloud-aws.version>
         <sonar.cpd.exclusions>**/jpa/entities/**</sonar.cpd.exclusions>
     </properties>
@@ -55,6 +56,13 @@
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>2.22.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -113,6 +121,14 @@
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-runtime</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>url-connection-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
