@@ -5,7 +5,7 @@ import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.users.domain.MissingRequiredFieldException;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
 import co.dazma.api.users.domain.UserAlreadySuspendedException;
-import co.dazma.api.users.domain.UserCannotOperateException;
+import co.dazma.api.users.domain.UserCannotOperateExceptionDomain;
 import co.dazma.api.users.domain.UserNotSuspendedException;
 import co.dazma.api.users.domain.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,7 +122,7 @@ class UserExceptionHandlerTest {
     @Test
     void shouldReturnForbiddenWhenTheUserCannotOperate() {
         ResponseEntity<ProblemDetail> response = handler.handleCannotOperate(
-                new UserCannotOperateException(),
+                new UserCannotOperateExceptionDomain(),
                 request
         );
 

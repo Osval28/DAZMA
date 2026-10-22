@@ -3,7 +3,7 @@ package co.dazma.api.users.services.usecases;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
-import co.dazma.api.users.domain.UserCannotOperateException;
+import co.dazma.api.users.domain.UserCannotOperateExceptionDomain;
 import co.dazma.api.users.domain.UserNotFoundException;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,8 +59,8 @@ class ResolveUserIdServiceTest {
         when(userRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(user));
 
-        UserCannotOperateException exception = assertThrows(
-                UserCannotOperateException.class,
+        UserCannotOperateExceptionDomain exception = assertThrows(
+                UserCannotOperateExceptionDomain.class,
                 () -> service.resolveByExternalId("firebase-123")
         );
 

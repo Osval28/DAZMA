@@ -6,7 +6,6 @@ import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationType;
-import co.dazma.api.publications.infrastructure.input.errors.PublicationExceptionHandler;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
