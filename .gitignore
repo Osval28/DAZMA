@@ -26,6 +26,13 @@ target/
 .env
 .env.*
 !.env.example
+
+### Firebase credentials ###
 firebase-service-account.json
-### Perfil local ###
+**/firebase-service-account.json
+**/*firebase-adminsdk*.json
+**/*service-account*.json
+**/serviceAccountKey.json
+
+### Local profile ###
 src/main/resources/application-local.properties

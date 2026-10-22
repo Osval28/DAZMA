@@ -335,4 +335,3 @@ components:
         instance:
           type: string
           example: /api/publications
-

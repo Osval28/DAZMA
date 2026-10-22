@@ -31,7 +31,7 @@ public final class CloudflareR2Properties {
     public URI endpoint() {
         return endpoint;
     }
-    
+
     public String accessKeyId() {
         return accessKeyId;
     }

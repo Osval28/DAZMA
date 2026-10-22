@@ -8,5 +8,3 @@ import java.util.UUID;
 public record UserEntity (UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
 
 }
-
-

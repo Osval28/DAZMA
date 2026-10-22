@@ -11,9 +11,4 @@ public record Price(Integer value) {
             throw new InvalidPublicationException(PublicationErrorCode.VALUE_NOT_POSITIVE);
         }
     }
-
 }
-
-
-
-
