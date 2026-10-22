@@ -13,6 +13,7 @@ COPY --from=capas /app/extraido/spring-boot-loader/ ./
 COPY --from=capas /app/extraido/snapshot-dependencies/ ./
 COPY --from=capas /app/extraido/application/ ./
 ENV OTEL_SERVICE_NAME=dazma-api
+RUN apk upgrade --no-cache libexpat
 USER dazma
 EXPOSE 8080
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-Duser.timezone=UTC", "-javaagent:/app/opentelemetry-javaagent.jar", "org.springframework.boot.loader.launch.JarLauncher"]

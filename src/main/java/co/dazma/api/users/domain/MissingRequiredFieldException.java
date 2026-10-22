@@ -1,7 +1,10 @@
 package co.dazma.api.users.domain;
 
-public class MissingRequiredFieldException extends IllegalArgumentException {
+import co.dazma.api.shared.domain.errors.DomainException;
+
+public class MissingRequiredFieldException extends DomainException {
+
     public MissingRequiredFieldException(String field) {
-        super("Falta el campo: " + field);
+        super(UserErrorCode.REQUIRED_FIELD_MISSING, field);
     }
 }
