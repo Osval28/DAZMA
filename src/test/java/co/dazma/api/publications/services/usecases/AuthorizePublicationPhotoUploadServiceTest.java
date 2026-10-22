@@ -68,7 +68,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
                 new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         " IMAGE/JPEG ",
-                        2_000_000
+                        2_000_000L
                 )
         );
 
@@ -84,25 +84,6 @@ class AuthorizePublicationPhotoUploadServiceTest {
         );
     }
 
-    @Test
-    void shouldRejectMissingRequestOrOwner() {
-        InvalidPublicationException missingRequest = assertThrows(
-                InvalidPublicationException.class,
-                () -> service.authorize(null)
-        );
-        InvalidPublicationException missingOwner = assertThrows(
-                InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
-                        null,
-                        "image/jpeg",
-                        1_000
-                ))
-        );
-
-        assertEquals("PUBLICATION_PHOTO_UPLOAD_REQUEST_REQUIRED", missingRequest.code());
-        assertEquals("PUBLICATION_PHOTO_UPLOAD_OWNER_REQUIRED", missingOwner.code());
-        verifyNoInteractions(photoStorage);
-    }
 
     @Test
     void shouldRejectMissingOrUnsupportedContentType() {
@@ -113,7 +94,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
                 () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         " ",
-                        1_000
+                        1_000L
                 ))
         );
         InvalidPublicationException unsupportedType = assertThrows(
@@ -121,7 +102,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
                 () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "application/pdf",
-                        1_000
+                        1_000L
                 ))
         );
 
@@ -139,7 +120,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
                 () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/png",
-                        0
+                        0L
                 ))
         );
         InvalidPublicationException excessiveLength = assertThrows(

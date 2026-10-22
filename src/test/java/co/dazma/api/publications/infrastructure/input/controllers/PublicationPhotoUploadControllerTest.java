@@ -49,7 +49,7 @@ class PublicationPhotoUploadControllerTest {
                 new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/jpeg",
-                        2_000_000
+                        2_000_000L
                 )
         )).thenReturn(new AuthorizePublicationPhotoUploadOutputDto(
                 photoId,
@@ -76,7 +76,7 @@ class PublicationPhotoUploadControllerTest {
                 new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/jpeg",
-                        2_000_000
+                        2_000_000L
                 )
         );
     }

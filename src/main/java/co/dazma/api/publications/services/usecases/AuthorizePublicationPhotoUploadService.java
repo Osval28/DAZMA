@@ -48,16 +48,6 @@ public class AuthorizePublicationPhotoUploadService
     public AuthorizePublicationPhotoUploadOutputDto authorize(
             AuthorizePublicationPhotoUploadInputDto input
     ) {
-        if (input == null) {
-            throw new InvalidPublicationException(
-                    PublicationErrorCode.PHOTO_UPLOAD_REQUEST_REQUIRED
-            );
-        }
-        if (input.ownerId() == null) {
-            throw new InvalidPublicationException(
-                    PublicationErrorCode.PHOTO_UPLOAD_OWNER_REQUIRED
-            );
-        }
 
         String contentType = normalizeContentType(input.contentType());
         validateContentLength(input.contentLength());
