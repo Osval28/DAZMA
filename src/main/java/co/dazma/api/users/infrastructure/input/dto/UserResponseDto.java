@@ -11,7 +11,7 @@ public record UserResponseDto(UUID id, String name, String phone, String municip
                 user.getId(),
                 user.getName().value(),
                 user.getPhone().number(),
-                user.getMunicipality(),
+                user.getMunicipality().name(),
                 user.getState().name(),
                 user.getRole().name()
         );

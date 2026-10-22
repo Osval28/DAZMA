@@ -1,18 +1,20 @@
 package co.dazma.api.users.domain;
 
+import co.dazma.api.shared.domain.Municipality;
+
 import java.util.UUID;
 
 public class User {
     private final UUID id;
     private final Name name;
     private final Phone phone;
-    private final String municipality;
+    private final Municipality municipality;
     private final String externalId;
     private State state;
     private final Role role;
 
 
-    private User(UUID id, Name name, Phone phone, String municipality, String externalId, State state, Role role) {
+    private User(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -22,13 +24,11 @@ public class User {
         this.role = role;
     }
 
-    public static User register(Name name, Phone phone, String municipality, String externalId) {
-        requireText(municipality, "municipality");
+    public static User register(Name name, Phone phone, Municipality municipality, String externalId) {
         return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER);
     }
 
-    public static User restore(UUID id, Name name, Phone phone, String municipality, String externalId, State state, Role role) {
-        requireText(municipality, "municipality");
+    public static User restore(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role) {
         return new User(id, name, phone, municipality, externalId, state, role);
     }
 
@@ -77,7 +77,7 @@ public class User {
         return phone;
     }
 
-    public String getMunicipality() {
+    public Municipality getMunicipality() {
         return municipality;
     }
 

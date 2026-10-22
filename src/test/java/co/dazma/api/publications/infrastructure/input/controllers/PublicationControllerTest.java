@@ -1,7 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.domain.Description;
-import co.dazma.api.publications.domain.Municipality;
 import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.Name;
