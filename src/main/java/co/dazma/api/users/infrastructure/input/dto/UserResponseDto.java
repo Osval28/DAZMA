@@ -9,8 +9,8 @@ public record UserResponseDto(UUID id, String name, String phone, String municip
     public static UserResponseDto fromModel(User user) {
         return new UserResponseDto(
                 user.getId(),
-                user.getName(),
-                user.getPhone(),
+                user.getName().value(),
+                user.getPhone().number(),
                 user.getMunicipality(),
                 user.getState().name(),
                 user.getRole().name()

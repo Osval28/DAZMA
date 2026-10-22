@@ -1,5 +1,7 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.TestcontainersConfiguration;
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
@@ -36,9 +38,8 @@ class PostgresUserRepositoryIntegrationTest {
 
     @Test
     void shouldPersistAndFindAUserUsingPostgres() {
-        User user = User.register(
-                "Ana",
-                "3001234567",
+        User user = User.register(new Name("Ana"),
+                new Phone("3001234567"),
                 "Rionegro",
                 "firebase-integration-123"
         );

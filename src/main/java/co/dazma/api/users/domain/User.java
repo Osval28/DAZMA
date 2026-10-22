@@ -4,15 +4,15 @@ import java.util.UUID;
 
 public class User {
     private final UUID id;
-    private String name;
-    private String phone;
-    private String municipality;
+    private final Name name;
+    private final Phone phone;
+    private final String municipality;
     private final String externalId;
     private State state;
-    private Role role;
+    private final Role role;
 
 
-    private User(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
+    private User(UUID id, Name name, Phone phone, String municipality, String externalId, State state, Role role) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -22,18 +22,12 @@ public class User {
         this.role = role;
     }
 
-    public static User register(String name, String phone, String municipality, String externalId) {
-        requireText(externalId, "externalId");
-        requireText(name, "name");
-        requireText(phone, "phone");
+    public static User register(Name name, Phone phone, String municipality, String externalId) {
         requireText(municipality, "municipality");
         return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER);
     }
 
-    public static User restore(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
-        requireText(externalId, "externalId");
-        requireText(name, "name");
-        requireText(phone, "phone");
+    public static User restore(UUID id, Name name, Phone phone, String municipality, String externalId, State state, Role role) {
         requireText(municipality, "municipality");
         return new User(id, name, phone, municipality, externalId, state, role);
     }
@@ -63,11 +57,11 @@ public class User {
         return id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public String getPhone() {
+    public Phone getPhone() {
         return phone;
     }
 
