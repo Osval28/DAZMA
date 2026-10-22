@@ -12,7 +12,9 @@ import org.mapstruct.ReportingPolicy;
 public interface UserMapStructDomainMapper extends DomainMapper<UserEntity, User> {
 
     @Override
-    User toDomain(UserEntity entity);
+    default User toDomain(UserEntity entity) {
+        return User.restore(entity.id(), entity.name(), entity.phone(), entity.municipality(), entity.externalId(), entity.state(), entity.role());
+    }
 
     @Override
     UserEntity toEntity(User domain);

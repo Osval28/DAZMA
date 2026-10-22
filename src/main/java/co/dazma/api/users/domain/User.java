@@ -12,7 +12,7 @@ public class User {
     private Role role;
 
 
-    public User(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
+    private User(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -28,6 +28,14 @@ public class User {
         requireText(phone, "phone");
         requireText(municipality, "municipality");
         return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER);
+    }
+
+    public static User restore(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
+        requireText(externalId, "externalId");
+        requireText(name, "name");
+        requireText(phone, "phone");
+        requireText(municipality, "municipality");
+        return new User(id, name, phone, municipality, externalId, state, role);
     }
 
     private static void requireText(String value, String fieldName) {

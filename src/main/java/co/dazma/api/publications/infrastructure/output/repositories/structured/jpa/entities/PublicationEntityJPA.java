@@ -1,6 +1,5 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities;
 
-import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import jakarta.persistence.*;
