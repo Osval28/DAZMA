@@ -9,7 +9,7 @@ public record Name(String name) {
         if (name.isBlank()) {
             throw new InvalidPublicationException(PublicationErrorCode.NAME_REQUIRED);
         }
-        if (name.length() > MAX_LENGTH){
+        if (name.codePointCount(0, name.length()) > MAX_LENGTH){
             throw new InvalidPublicationException(PublicationErrorCode.NAME_TOO_LONG,MAX_LENGTH);
         }
     }
