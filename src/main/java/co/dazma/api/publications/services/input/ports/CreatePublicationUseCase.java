@@ -1,9 +1,9 @@
 package co.dazma.api.publications.services.input.ports;
 
 import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.services.input.models.CreatePublicationCommand;
+import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 
 public interface CreatePublicationUseCase {
 
-    Publication create(CreatePublicationCommand command);
+    Publication create(CreatePublicationInputDto input);
 }

@@ -1,16 +1,22 @@
 package co.dazma.api.publications.infrastructure.input.dto;
 
 import co.dazma.api.publications.domain.PublicationType;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 
 public record CreatePublicationRequestDto(
+        @NotNull
         String name,
+        @NotNull
         PublicationType type,
+        @NotNull
         String description,
-        String city,
+        @NotNull
+        String municipality,
+        @NotNull
         Integer price,
-        List<UUID> photoUploadIds
+        @NotNull List<@NotNull UUID> photoUploadIds
 ) {
 }

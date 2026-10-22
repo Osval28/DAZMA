@@ -1,11 +1,13 @@
 package co.dazma.api.publications.services.usecases;
 
 import co.dazma.api.publications.domain.InvalidPublicationException;
+import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
-import co.dazma.api.publications.services.input.models.CreatePublicationCommand;
+import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
@@ -59,16 +61,16 @@ class CreatePublicationServiceTest {
         when(publicationRepository.save(any(Publication.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Publication result = service.create(command(
+        Publication result = service.create(input(
                 ownerId,
                 List.of(firstPhotoId, secondPhotoId)
         ));
 
         assertEquals(ownerId, result.getOwnerId());
-        assertEquals("Bicicleta", result.getName());
+        assertEquals(new Name("Bicicleta"), result.getName());
         assertEquals(PublicationType.EXCHANGE, result.getType());
         assertEquals(PublicationStatus.PUBLISHED, result.getStatus());
-        assertEquals(900_000, result.getPrice());
+        assertEquals(new Price(900_000), result.getPrice());
         assertEquals(NOW, result.getCreatedAt());
         assertEquals(firstPhotoId, result.getPhotos().get(0).getId());
         assertEquals(0, result.getPhotos().get(0).getPosition());
@@ -86,29 +88,24 @@ class CreatePublicationServiceTest {
 
         assertThrows(
                 PublicationPhotoNotAvailableException.class,
-                () -> service.create(command(ownerId, List.of(photoId)))
+                () -> service.create(input(ownerId, List.of(photoId)))
         );
 
         verify(publicationRepository, never()).save(any());
     }
 
     @Test
-    void shouldRejectMissingCommandOwnerOrPhotosBeforeSaving() {
-        assertThrows(InvalidPublicationException.class, () -> service.create(null));
+    void shouldRejectEmptyPhotoListBeforeSaving() {
         assertThrows(
                 InvalidPublicationException.class,
-                () -> service.create(command(null, List.of(UUID.randomUUID())))
-        );
-        assertThrows(
-                InvalidPublicationException.class,
-                () -> service.create(command(UUID.randomUUID(), List.of()))
+                () -> service.create(input(UUID.randomUUID(), List.of()))
         );
 
         verifyNoInteractions(publicationRepository, photoStorage);
     }
 
-    private CreatePublicationCommand command(UUID ownerId, List<UUID> photoIds) {
-        return new CreatePublicationCommand(
+    private CreatePublicationInputDto input(UUID ownerId, List<UUID> photoIds) {
+        return new CreatePublicationInputDto(
                 ownerId,
                 "Bicicleta",
                 PublicationType.EXCHANGE,

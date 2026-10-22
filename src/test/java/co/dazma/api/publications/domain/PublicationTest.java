@@ -22,45 +22,25 @@ class PublicationTest {
 
         Publication publication = Publication.publish(
                 ownerId,
-                "  Bicicleta de montaña  ",
+                new Name("  Bicicleta de montaña  "),
                 PublicationType.EXCHANGE,
-                "  Bicicleta en buen estado  ",
-                "  Rionegro  ",
+                new Description("  Bicicleta en buen estado  "),
+                new Municipality("  Rionegro  "),
                 List.of(photo),
                 CREATED_AT,
-                PRICE
+                new Price(PRICE)
         );
 
         assertNotNull(publication.getId());
         assertEquals(ownerId, publication.getOwnerId());
-        assertEquals("Bicicleta de montaña", publication.getName());
+        assertEquals(new Name("Bicicleta de montaña"), publication.getName());
         assertEquals(PublicationType.EXCHANGE, publication.getType());
-        assertEquals("Bicicleta en buen estado", publication.getDescription());
-        assertEquals("Rionegro", publication.getCity());
+        assertEquals(new Description("Bicicleta en buen estado"), publication.getDescription());
+        assertEquals(new Municipality("Rionegro"), publication.getMunicipality());
         assertEquals(PublicationStatus.PUBLISHED, publication.getStatus());
         assertEquals(List.of(photo), publication.getPhotos());
         assertEquals(CREATED_AT, publication.getCreatedAt());
-        assertEquals(PRICE, publication.getPrice());
-    }
-
-    @Test
-    void shouldRejectMissingOwner() {
-        InvalidPublicationException exception = assertThrows(
-                InvalidPublicationException.class,
-                () -> Publication.publish(
-                        null,
-                        "Bicicleta",
-                        PublicationType.EXCHANGE,
-                        "En buen estado",
-                        "Rionegro",
-                        List.of(photo(0)),
-                        CREATED_AT,
-                        PRICE
-                )
-        );
-
-        assertEquals("PUBLICATION_OWNER_REQUIRED", exception.code());
-        assertEquals("publication.owner.required", exception.messageKey());
+        assertEquals(new Price(PRICE), publication.getPrice());
     }
 
     @Test
@@ -71,56 +51,39 @@ class PublicationTest {
                 InvalidPublicationException.class,
                 () -> Publication.publish(
                         ownerId,
-                        " ",
+                        new Name(" "),
                         PublicationType.EXCHANGE,
-                        "Descripción",
-                        "Rionegro",
+                        new Description("Descripción"),
+                        new Municipality("Rionegro"),
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
         assertThrows(
                 InvalidPublicationException.class,
                 () -> Publication.publish(
                         ownerId,
-                        "Bicicleta",
+                        new Name("Bicicleta"),
                         PublicationType.EXCHANGE,
-                        " ",
-                        "Rionegro",
+                        new Description(" "),
+                        new Municipality("Rionegro"),
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
         assertThrows(
                 InvalidPublicationException.class,
                 () -> Publication.publish(
                         ownerId,
-                        "Bicicleta",
+                        new Name("Bicicleta"),
                         PublicationType.EXCHANGE,
-                        "Descripción",
-                        " ",
+                        new Description("Descripción"),
+                        new Municipality(" "),
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
-                )
-        );
-    }
-
-    @Test
-    void shouldRejectMissingType() {
-        assertThrows(
-                InvalidPublicationException.class,
-                () -> Publication.publish(
-                        UUID.randomUUID(),
-                        "Bicicleta",
-                        null,
-                        "Descripción",
-                        "Rionegro",
-                        List.of(photo(0)),
-                        CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
     }
@@ -131,13 +94,13 @@ class PublicationTest {
                 InvalidPublicationException.class,
                 () -> Publication.publish(
                         UUID.randomUUID(),
-                        "Bicicleta",
+                        new Name("Bicicleta"),
                         PublicationType.EXCHANGE,
-                        "Descripción",
-                        "Rionegro",
+                        new Description("Descripción"),
+                        new Municipality("Rionegro"),
                         List.of(),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
     }
@@ -182,51 +145,62 @@ class PublicationTest {
     }
 
     @Test
-    void shouldRejectMissingCreationDate() {
-        assertThrows(
-                InvalidPublicationException.class,
-                () -> Publication.publish(
-                        UUID.randomUUID(),
-                        "Bicicleta",
-                        PublicationType.EXCHANGE,
-                        "Descripción",
-                        "Rionegro",
-                        List.of(photo(0)),
-                        null,
-                        PRICE
-                )
-        );
+    void shouldRejectNonPositivePrice() {
+        for (Integer invalidPrice : new Integer[]{0, -1}) {
+            assertThrows(InvalidPublicationException.class, () -> new Price(invalidPrice));
+        }
     }
 
     @Test
-    void shouldRejectMissingOrNonPositivePrice() {
-        for (Integer invalidPrice : new Integer[]{null, 0, -1}) {
-            assertThrows(
-                    InvalidPublicationException.class,
-                    () -> Publication.publish(
-                            UUID.randomUUID(),
-                            "Bicicleta",
-                            PublicationType.EXCHANGE,
-                            "Descripción",
-                            "Rionegro",
-                            List.of(photo(0)),
-                            CREATED_AT,
-                            invalidPrice
-                    )
-            );
-        }
+    void shouldAcceptANameWithTheMaximumLength() {
+        Name name = new Name("a".repeat(255));
+
+        assertEquals(255, name.name().length());
+    }
+
+    @Test
+    void shouldRejectANameLongerThanTheMaximumLength() {
+        String tooLongName = "a".repeat(256);
+
+        InvalidPublicationException exception = assertThrows(
+                InvalidPublicationException.class,
+                () -> new Name(tooLongName)
+        );
+
+        assertEquals("PUBLICATION_NAME_TOO_LONG", exception.code());
+        assertEquals(255, exception.arguments()[0]);
+    }
+
+    @Test
+    void shouldAcceptADescriptionWithTheMaximumLength() {
+        Description description = new Description("a".repeat(1000));
+
+        assertEquals(1000, description.text().length());
+    }
+
+    @Test
+    void shouldRejectADescriptionLongerThanTheMaximumLength() {
+        String tooLongDescription = "a".repeat(1001);
+
+        InvalidPublicationException exception = assertThrows(
+                InvalidPublicationException.class,
+                () -> new Description(tooLongDescription)
+        );
+
+        assertEquals("PUBLICATION_DESCRIPTION_TOO_LONG", exception.code());
+        assertEquals(1000, exception.arguments()[0]);
     }
 
     private Publication validPublication(List<PublicationPhoto> photos) {
         return Publication.publish(
                 UUID.randomUUID(),
-                "Bicicleta",
+                new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
-                "Descripción",
-                "Rionegro",
+                new Description("Descripción"),
+                new Municipality("Rionegro"),
                 photos,
                 CREATED_AT,
-                PRICE
+                new Price(PRICE)
         );
     }
 

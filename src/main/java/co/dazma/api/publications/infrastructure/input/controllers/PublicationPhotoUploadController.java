@@ -2,10 +2,11 @@ package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.infrastructure.input.dto.AuthorizePublicationPhotoUploadRequestDto;
 import co.dazma.api.publications.infrastructure.input.dto.PublicationPhotoUploadAuthorizationResponseDto;
-import co.dazma.api.publications.services.input.models.AuthorizePublicationPhotoUploadCommand;
-import co.dazma.api.publications.services.input.models.PublicationPhotoUploadAuthorization;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
+import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,12 +41,12 @@ public class PublicationPhotoUploadController {
     @PostMapping("/upload-authorizations")
     @ResponseStatus(HttpStatus.CREATED)
     public PublicationPhotoUploadAuthorizationResponseDto authorizeUpload(
-            @RequestBody AuthorizePublicationPhotoUploadRequestDto request,
+            @RequestBody @Valid AuthorizePublicationPhotoUploadRequestDto request,
             Principal principal
     ) {
         UUID ownerId = resolveUserIdUseCase.resolveByExternalId(principal.getName());
-        PublicationPhotoUploadAuthorization authorization = authorizeUploadUseCase.authorize(
-                new AuthorizePublicationPhotoUploadCommand(
+        AuthorizePublicationPhotoUploadOutputDto authorization = authorizeUploadUseCase.authorize(
+                new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         request.contentType(),
                         request.contentLength()

@@ -1,8 +1,8 @@
 package co.dazma.api.publications.services.usecases;
 
 import co.dazma.api.publications.domain.InvalidPublicationException;
-import co.dazma.api.publications.services.input.models.AuthorizePublicationPhotoUploadCommand;
-import co.dazma.api.publications.services.input.models.PublicationPhotoUploadAuthorization;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,11 +64,11 @@ class AuthorizePublicationPhotoUploadServiceTest {
                 eq(UPLOAD_VALIDITY)
         )).thenReturn(storageAuthorization);
 
-        PublicationPhotoUploadAuthorization result = service.authorize(
-                new AuthorizePublicationPhotoUploadCommand(
+        AuthorizePublicationPhotoUploadOutputDto result = service.authorize(
+                new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         " IMAGE/JPEG ",
-                        2_000_000
+                        2_000_000L
                 )
         );
 
@@ -84,25 +84,6 @@ class AuthorizePublicationPhotoUploadServiceTest {
         );
     }
 
-    @Test
-    void shouldRejectMissingRequestOrOwner() {
-        InvalidPublicationException missingRequest = assertThrows(
-                InvalidPublicationException.class,
-                () -> service.authorize(null)
-        );
-        InvalidPublicationException missingOwner = assertThrows(
-                InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
-                        null,
-                        "image/jpeg",
-                        1_000
-                ))
-        );
-
-        assertEquals("PUBLICATION_PHOTO_UPLOAD_REQUEST_REQUIRED", missingRequest.code());
-        assertEquals("PUBLICATION_PHOTO_UPLOAD_OWNER_REQUIRED", missingOwner.code());
-        verifyNoInteractions(photoStorage);
-    }
 
     @Test
     void shouldRejectMissingOrUnsupportedContentType() {
@@ -110,18 +91,18 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
         InvalidPublicationException missingType = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         " ",
-                        1_000
+                        1_000L
                 ))
         );
         InvalidPublicationException unsupportedType = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "application/pdf",
-                        1_000
+                        1_000L
                 ))
         );
 
@@ -136,15 +117,15 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
         InvalidPublicationException invalidLength = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/png",
-                        0
+                        0L
                 ))
         );
         InvalidPublicationException excessiveLength = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/png",
                         MAXIMUM_CONTENT_LENGTH + 1
