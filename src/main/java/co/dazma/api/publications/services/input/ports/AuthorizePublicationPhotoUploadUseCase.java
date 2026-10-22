@@ -1,11 +1,11 @@
 package co.dazma.api.publications.services.input.ports;
 
-import co.dazma.api.publications.services.input.models.AuthorizePublicationPhotoUploadCommand;
-import co.dazma.api.publications.services.input.models.PublicationPhotoUploadAuthorization;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 
 public interface AuthorizePublicationPhotoUploadUseCase {
 
-    PublicationPhotoUploadAuthorization authorize(
-            AuthorizePublicationPhotoUploadCommand command
+    AuthorizePublicationPhotoUploadOutputDto authorize(
+            AuthorizePublicationPhotoUploadInputDto input
     );
 }

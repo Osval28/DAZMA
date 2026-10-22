@@ -1,7 +1,7 @@
 package co.dazma.api.publications.services.usecases;
 
 import co.dazma.api.publications.domain.*;
-import co.dazma.api.publications.services.input.models.CreatePublicationCommand;
+import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
@@ -38,22 +38,22 @@ public class CreatePublicationService implements CreatePublicationUseCase {
 
     @Override
     @Transactional
-    public Publication create(CreatePublicationCommand command) {
+    public Publication create(CreatePublicationInputDto input) {
 
         List<PublicationPhoto> photos = resolvePhotos(
-                command.ownerId(),
-                command.photoIds()
+                input.ownerId(),
+                input.photoIds()
         );
 
         Publication publication = Publication.publish(
-                command.ownerId(),
-                command.name(),
-                command.type(),
-                command.description(),
-                new Municipality(command.municipality()),
+                input.ownerId(),
+                new Name(input.name()),
+                input.type(),
+                new Description(input.description()),
+                new Municipality(input.municipality()),
                 photos,
                 clock.instant(),
-                new Price(command.price())
+                new Price(input.price())
         );
 
         return publicationRepository.save(publication);

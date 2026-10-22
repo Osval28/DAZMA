@@ -6,6 +6,7 @@ public record Municipality(String name) {
         if (name.isBlank()) {
             throw new InvalidPublicationException(PublicationErrorCode.MUNICIPALITY_REQUIRED);
         }
+        name = name.trim();
     }
 
 }

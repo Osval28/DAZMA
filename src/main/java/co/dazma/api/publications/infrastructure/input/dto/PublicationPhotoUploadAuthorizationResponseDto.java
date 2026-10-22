@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.dto;
 
-import co.dazma.api.publications.services.input.models.PublicationPhotoUploadAuthorization;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 
 import java.net.URI;
 import java.time.Instant;
@@ -13,7 +13,7 @@ public record PublicationPhotoUploadAuthorizationResponseDto(
 ) {
 
     public static PublicationPhotoUploadAuthorizationResponseDto fromModel(
-            PublicationPhotoUploadAuthorization authorization
+            AuthorizePublicationPhotoUploadOutputDto authorization
     ) {
         return new PublicationPhotoUploadAuthorizationResponseDto(
                 authorization.photoId(),

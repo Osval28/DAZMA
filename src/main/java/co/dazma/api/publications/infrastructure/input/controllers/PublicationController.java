@@ -1,9 +1,8 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
-import co.dazma.api.publications.services.input.models.CreatePublicationCommand;
+import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
 import jakarta.validation.Valid;
@@ -41,13 +40,13 @@ public class PublicationController {
 
     @PostMapping
     public ResponseEntity<CreatePublicationResponseDto> create(
-            @RequestBody @Valid CreatePublicationRequestDto request,
+            @RequestBody @Valid co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto request,
             Principal principal,
             UriComponentsBuilder uriBuilder
     ) {
         UUID ownerId = resolveUserIdUseCase.resolveByExternalId(principal.getName());
         Publication publication = createPublicationUseCase.create(
-                new CreatePublicationCommand(
+                new CreatePublicationInputDto(
                         ownerId,
                         request.name(),
                         request.type(),

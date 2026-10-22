@@ -2,8 +2,8 @@ package co.dazma.api.publications.services.usecases;
 
 import co.dazma.api.publications.domain.InvalidPublicationException;
 import co.dazma.api.publications.domain.PublicationErrorCode;
-import co.dazma.api.publications.services.input.models.AuthorizePublicationPhotoUploadCommand;
-import co.dazma.api.publications.services.input.models.PublicationPhotoUploadAuthorization;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
@@ -45,34 +45,34 @@ public class AuthorizePublicationPhotoUploadService
     }
 
     @Override
-    public PublicationPhotoUploadAuthorization authorize(
-            AuthorizePublicationPhotoUploadCommand command
+    public AuthorizePublicationPhotoUploadOutputDto authorize(
+            AuthorizePublicationPhotoUploadInputDto input
     ) {
-        if (command == null) {
+        if (input == null) {
             throw new InvalidPublicationException(
                     PublicationErrorCode.PHOTO_UPLOAD_REQUEST_REQUIRED
             );
         }
-        if (command.ownerId() == null) {
+        if (input.ownerId() == null) {
             throw new InvalidPublicationException(
                     PublicationErrorCode.PHOTO_UPLOAD_OWNER_REQUIRED
             );
         }
 
-        String contentType = normalizeContentType(command.contentType());
-        validateContentLength(command.contentLength());
+        String contentType = normalizeContentType(input.contentType());
+        validateContentLength(input.contentLength());
 
         UUID photoId = UUID.randomUUID();
 
         PhotoStorageUploadAuthorization storageAuthorization = photoStorage.authorizeUpload(
-                command.ownerId(),
+                input.ownerId(),
                 photoId,
                 contentType,
-                command.contentLength(),
+                input.contentLength(),
                 uploadValidity
         );
 
-        return new PublicationPhotoUploadAuthorization(
+        return new AuthorizePublicationPhotoUploadOutputDto(
                 photoId,
                 storageAuthorization.uploadUrl(),
                 storageAuthorization.expiresAt()

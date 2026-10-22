@@ -10,9 +10,9 @@ public class Publication {
 
     private final UUID id;
     private final UUID ownerId;
-    private final String name;
+    private final Name name;
     private final PublicationType type;
-    private final String description;
+    private final Description description;
     private final Municipality municipality;
     private final PublicationStatus status;
     private final List<PublicationPhoto> photos;
@@ -22,24 +22,22 @@ public class Publication {
     private Publication(
             UUID id,
             UUID ownerId,
-            String name,
+            Name name,
             PublicationType type,
-            String description,
+            Description description,
             Municipality municipality,
             PublicationStatus status,
             List<PublicationPhoto> photos,
             Instant createdAt,
             Price price
     ) {
-        requireText(name, PublicationErrorCode.NAME_REQUIRED);
-        requireText(description, PublicationErrorCode.DESCRIPTION_REQUIRED);
         validatePhotos(photos);
 
         this.id = id;
         this.ownerId = ownerId;
-        this.name = name.trim();
+        this.name = name;
         this.type = type;
-        this.description = description.trim();
+        this.description = description;
         this.municipality = municipality;
         this.status = status;
         this.photos = List.copyOf(photos);
@@ -49,9 +47,9 @@ public class Publication {
 
     public static Publication publish(
             UUID ownerId,
-            String name,
+            Name name,
             PublicationType type,
-            String description,
+            Description description,
             Municipality municipality,
             List<PublicationPhoto> photos,
             Instant createdAt,
@@ -74,9 +72,9 @@ public class Publication {
     public static Publication restore(
             UUID id,
             UUID ownerId,
-            String name,
+            Name name,
             PublicationType type,
-            String description,
+            Description description,
             Municipality municipality,
             PublicationStatus status,
             List<PublicationPhoto> photos,
@@ -115,14 +113,7 @@ public class Publication {
         }
     }
 
-    private static void requireText(String value, PublicationErrorCode errorCode) {
-        if (value == null || value.isBlank()) {
-            throw new InvalidPublicationException(errorCode);
-        }
-    }
-
-
-    public UUID getId() {
+    public UUID getId()  {
         return id;
     }
 
@@ -130,7 +121,7 @@ public class Publication {
         return ownerId;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
@@ -138,7 +129,7 @@ public class Publication {
         return type;
     }
 
-    public String getDescription() {
+    public Description getDescription() {
         return description;
     }
 

@@ -1,8 +1,8 @@
 package co.dazma.api.publications.services.usecases;
 
 import co.dazma.api.publications.domain.InvalidPublicationException;
-import co.dazma.api.publications.services.input.models.AuthorizePublicationPhotoUploadCommand;
-import co.dazma.api.publications.services.input.models.PublicationPhotoUploadAuthorization;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,8 +64,8 @@ class AuthorizePublicationPhotoUploadServiceTest {
                 eq(UPLOAD_VALIDITY)
         )).thenReturn(storageAuthorization);
 
-        PublicationPhotoUploadAuthorization result = service.authorize(
-                new AuthorizePublicationPhotoUploadCommand(
+        AuthorizePublicationPhotoUploadOutputDto result = service.authorize(
+                new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         " IMAGE/JPEG ",
                         2_000_000
@@ -92,7 +92,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
         );
         InvalidPublicationException missingOwner = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         null,
                         "image/jpeg",
                         1_000
@@ -110,7 +110,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
         InvalidPublicationException missingType = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         " ",
                         1_000
@@ -118,7 +118,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
         );
         InvalidPublicationException unsupportedType = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "application/pdf",
                         1_000
@@ -136,7 +136,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
         InvalidPublicationException invalidLength = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/png",
                         0
@@ -144,7 +144,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
         );
         InvalidPublicationException excessiveLength = assertThrows(
                 InvalidPublicationException.class,
-                () -> service.authorize(new AuthorizePublicationPhotoUploadCommand(
+                () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/png",
                         MAXIMUM_CONTENT_LENGTH + 1

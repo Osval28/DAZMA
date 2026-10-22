@@ -1,8 +1,11 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured;
 
 import co.dazma.api.TestcontainersConfiguration;
+import co.dazma.api.publications.domain.Description;
+import co.dazma.api.publications.domain.Municipality;
 import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationEntityJPA;
@@ -66,10 +69,10 @@ class PostgresPublicationRepositoryIntegrationTest {
     private Publication publication(UUID ownerId, String objectKey) {
         return Publication.publish(
                 ownerId,
-                "Bicicleta",
+                new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
-                "Bicicleta en buen estado",
-                "Rionegro",
+                new Description("Bicicleta en buen estado"),
+                new Municipality("Rionegro"),
                 List.of(new PublicationPhoto(UUID.randomUUID(), objectKey, 0)),
                 Instant.parse("2026-10-18T12:00:00Z"),
                 new Price(850_000)

@@ -16,6 +16,10 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_NAME_REQUIRED",
             "publication.name.required"
     ),
+    NAME_TOO_LONG(
+            "PUBLICATION_NAME_TOO_LONG",
+            "publication.name.too-long"
+    ),
     TYPE_REQUIRED(
             "PUBLICATION_TYPE_REQUIRED",
             "publication.type.required"
@@ -23,6 +27,10 @@ public enum PublicationErrorCode implements ErrorCode {
     DESCRIPTION_REQUIRED(
             "PUBLICATION_DESCRIPTION_REQUIRED",
             "publication.description.required"
+    ),
+    DESCRIPTION_TOO_LONG(
+            "PUBLICATION_DESCRIPTION_TOO_LONG",
+            "publication.description.too-long"
     ),
     MUNICIPALITY_REQUIRED(
             "PUBLICATION_MUNICIPALITY_REQUIRED",

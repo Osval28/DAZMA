@@ -1,13 +1,9 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.publications.domain.Municipality;
-import co.dazma.api.publications.domain.Price;
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.PublicationPhoto;
+import co.dazma.api.publications.domain.*;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationEntity;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
@@ -27,9 +23,9 @@ public interface PublicationMapStructDomainMapper extends DomainMapper<Publicati
         return Publication.restore(
                 entity.id(),
                 entity.ownerId(),
-                entity.name(),
+                new Name(entity.name()),
                 entity.type(),
-                entity.description(),
+                new Description(entity.description()),
                 new Municipality(entity.municipality()),
                 entity.status(),
                 photos,
@@ -43,6 +39,14 @@ public interface PublicationMapStructDomainMapper extends DomainMapper<Publicati
 
     default String map(Municipality municipality) {
         return municipality == null ? null : municipality.name();
+    }
+
+    default String map(Description description) {
+        return description == null ? null : description.text();
+    }
+
+    default String map(Name name) {
+        return name == null ? null : name.name();
     }
 
     default Integer map(Price price) {

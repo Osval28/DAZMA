@@ -1,7 +1,7 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
-import co.dazma.api.publications.services.input.models.AuthorizePublicationPhotoUploadCommand;
-import co.dazma.api.publications.services.input.models.PublicationPhotoUploadAuthorization;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,12 +46,12 @@ class PublicationPhotoUploadControllerTest {
         when(resolveUserIdUseCase.resolveByExternalId("firebase-123"))
                 .thenReturn(ownerId);
         when(authorizeUploadUseCase.authorize(
-                new AuthorizePublicationPhotoUploadCommand(
+                new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/jpeg",
                         2_000_000
                 )
-        )).thenReturn(new PublicationPhotoUploadAuthorization(
+        )).thenReturn(new AuthorizePublicationPhotoUploadOutputDto(
                 photoId,
                 URI.create("https://storage.example/upload"),
                 expiration
@@ -73,7 +73,7 @@ class PublicationPhotoUploadControllerTest {
 
         verify(resolveUserIdUseCase).resolveByExternalId("firebase-123");
         verify(authorizeUploadUseCase).authorize(
-                new AuthorizePublicationPhotoUploadCommand(
+                new AuthorizePublicationPhotoUploadInputDto(
                         ownerId,
                         "image/jpeg",
                         2_000_000
