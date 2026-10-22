@@ -51,8 +51,8 @@ class PostgresUserRepositoryIntegrationTest {
 
         assertEquals(user.getId(), savedUser.getId());
         assertTrue(foundUser.isPresent());
-        assertEquals("Ana", foundUser.get().getName());
-        assertEquals("3001234567", foundUser.get().getPhone());
+        assertEquals("Ana", foundUser.get().getName().value());
+        assertEquals("3001234567", foundUser.get().getPhone().number());
         assertEquals("Rionegro", foundUser.get().getMunicipality());
         assertEquals(Role.USER, foundUser.get().getRole());
         assertEquals(State.ACTIVE, foundUser.get().getState());

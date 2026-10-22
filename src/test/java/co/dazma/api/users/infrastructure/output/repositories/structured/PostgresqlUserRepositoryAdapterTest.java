@@ -113,8 +113,8 @@ class PostgresqlUserRepositoryAdapterTest {
         verify(springDataRepository).save(captor.capture());
         UserEntityJPA saved = captor.getValue();
         assertEquals(user.getId(), saved.getId());
-        assertEquals(user.getName(), saved.getName());
-        assertEquals(user.getPhone(), saved.getPhone());
+        assertEquals(user.getName().value(), saved.getName());
+        assertEquals(user.getPhone().number(), saved.getPhone());
         assertEquals(user.getMunicipality(), saved.getMunicipality());
         assertEquals(user.getExternalId(), saved.getExternalId());
         assertEquals(user.getRole(), saved.getRole());

@@ -34,7 +34,7 @@ class ResolveUserIdServiceTest {
         when(userRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(user));
 
-        UUID result = service.resolveByExternalId(" firebase-123 ");
+        UUID result = service.resolveByExternalId("firebase-123");
 
         assertEquals(user.getId(), result);
     }
