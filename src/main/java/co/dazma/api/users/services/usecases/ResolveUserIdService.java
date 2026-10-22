@@ -1,6 +1,5 @@
 package co.dazma.api.users.services.usecases;
 
-import co.dazma.api.users.domain.MissingRequiredFieldException;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserCannotOperateException;
 import co.dazma.api.users.domain.UserNotFoundException;
@@ -21,11 +20,8 @@ public class ResolveUserIdService implements ResolveUserIdUseCase {
 
     @Override
     public UUID resolveByExternalId(String externalId) {
-        if (externalId == null || externalId.isBlank()) {
-            throw new MissingRequiredFieldException("externalId");
-        }
 
-        User user = userRepository.findByExternalId(externalId.trim())
+        User user = userRepository.findByExternalId(externalId)
                 .orElseThrow(UserNotFoundException::new);
         if (!user.canOperate()) {
             throw new UserCannotOperateException();

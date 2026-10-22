@@ -4,6 +4,7 @@ import co.dazma.api.users.domain.User;
 import co.dazma.api.users.infrastructure.input.dto.RegisterUserRequestDto;
 import co.dazma.api.users.infrastructure.input.dto.UserResponseDto;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto registerUser(
-            @RequestBody RegisterUserRequestDto request,
+            @RequestBody @Valid RegisterUserRequestDto request,
             Principal principal
     ) {
         User registeredUser = registerUserUseCase.registerUser(
