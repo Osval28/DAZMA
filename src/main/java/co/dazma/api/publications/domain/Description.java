@@ -9,7 +9,7 @@ public record Description(String text) {
         if (text.isEmpty()) {
             throw new InvalidPublicationException(PublicationErrorCode.DESCRIPTION_REQUIRED);
         }
-        if (text.length() > MAX_LENGTH) {
+        if (text.codePointCount(0, text.length()) > MAX_LENGTH) {
             throw new InvalidPublicationException(PublicationErrorCode.DESCRIPTION_TOO_LONG, MAX_LENGTH);
         }
     }
