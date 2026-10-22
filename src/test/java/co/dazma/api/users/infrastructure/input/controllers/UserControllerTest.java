@@ -1,5 +1,7 @@
 package co.dazma.api.users.infrastructure.input.controllers;
 
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +31,8 @@ class UserControllerTest {
 
     @Test
     void shouldRegisterUserUsingTheAuthenticatedExternalId() throws Exception {
-        User registeredUser = User.register(
-                "Ana",
-                "3001234567",
+        User registeredUser = User.register(new Name("Ana"),
+                new Phone("3001234567"),
                 "Rionegro",
                 "firebase-123"
         );

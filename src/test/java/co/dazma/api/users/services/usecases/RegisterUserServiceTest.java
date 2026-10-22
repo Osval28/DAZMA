@@ -1,5 +1,7 @@
 package co.dazma.api.users.services.usecases;
 
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
@@ -39,7 +41,7 @@ class RegisterUserServiceTest {
         );
 
         assertNotNull(registeredUser.getId());
-        assertEquals("Ana", registeredUser.getName());
+        assertEquals(new Name("Ana"), registeredUser.getName());
         assertEquals("firebase-123", registeredUser.getExternalId());
 
         verify(userRepository).save(registeredUser);
@@ -47,9 +49,8 @@ class RegisterUserServiceTest {
 
     @Test
     void shouldRejectAnAlreadyRegisteredUser() {
-        User existingUser = User.register(
-                "Ana",
-                "3001234567",
+        User existingUser = User.register(new Name("Ana"),
+                new Phone("3001234567"),
                 "Rionegro",
                 "firebase-123"
         );

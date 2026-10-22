@@ -2,6 +2,7 @@ package co.dazma.api.users.infrastructure.input.errors;
 
 import co.dazma.api.shared.domain.errors.DomainException;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
+import co.dazma.api.users.domain.InvalidUserException;
 import co.dazma.api.users.domain.MissingRequiredFieldException;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
 import co.dazma.api.users.domain.UserAlreadySuspendedException;
@@ -24,6 +25,19 @@ public class UserExceptionHandler {
 
     public UserExceptionHandler(ApiProblemFactory problemFactory) {
         this.problemFactory = problemFactory;
+    }
+
+    @ExceptionHandler(InvalidUserException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidUser(
+            InvalidUserException exception,
+            HttpServletRequest request
+    ) {
+        return createResponse(
+                exception,
+                HttpStatus.BAD_REQUEST,
+                "error.title.bad-request",
+                request
+        );
     }
 
     @ExceptionHandler(MissingRequiredFieldException.class)

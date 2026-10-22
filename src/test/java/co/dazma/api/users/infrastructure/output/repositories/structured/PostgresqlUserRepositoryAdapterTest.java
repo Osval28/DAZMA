@@ -1,5 +1,7 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
 import co.dazma.api.users.domain.User;
@@ -56,7 +58,7 @@ class PostgresqlUserRepositoryAdapterTest {
 
         assertTrue(result.isPresent());
         assertEquals(id, result.get().getId());
-        assertEquals("Ana", result.get().getName());
+        assertEquals(new Name("Ana"), result.get().getName());
         assertEquals("firebase-123", result.get().getExternalId());
         assertEquals(Role.USER, result.get().getRole());
         assertEquals(State.ACTIVE, result.get().getState());
@@ -75,9 +77,8 @@ class PostgresqlUserRepositoryAdapterTest {
 
     @Test
     void shouldConvertDomainUserSaveItAndReturnTheSavedUser() {
-        User user = User.register(
-                "Ana",
-                "3001234567",
+        User user = User.register(new Name("Ana"),
+                new Phone("3001234567"),
                 "Rionegro",
                 "firebase-123"
         );
@@ -98,9 +99,8 @@ class PostgresqlUserRepositoryAdapterTest {
 
     @Test
     void shouldMapDomainUserToJpaEntityBeforeSaving() {
-        User user = User.register(
-                "Ana",
-                "3001234567",
+        User user = User.register(new Name("Ana"),
+                new Phone("3001234567"),
                 "Rionegro",
                 "firebase-123"
         );
@@ -113,8 +113,8 @@ class PostgresqlUserRepositoryAdapterTest {
         verify(springDataRepository).save(captor.capture());
         UserEntityJPA saved = captor.getValue();
         assertEquals(user.getId(), saved.getId());
-        assertEquals(user.getName(), saved.getName());
-        assertEquals(user.getPhone(), saved.getPhone());
+        assertEquals(user.getName().value(), saved.getName());
+        assertEquals(user.getPhone().number(), saved.getPhone());
         assertEquals(user.getMunicipality(), saved.getMunicipality());
         assertEquals(user.getExternalId(), saved.getExternalId());
         assertEquals(user.getRole(), saved.getRole());

@@ -36,6 +36,10 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_MUNICIPALITY_REQUIRED",
             "publication.municipality.required"
     ),
+    MUNICIPALITY_TOO_LONG(
+            "PUBLICATION_MUNICIPALITY_TOO_LONG",
+            "publication.municipality.too-long"
+    ),
     MUNICIPALITY_NOT_FOUND(
             "PUBLICATION_MUNICIPALITY_NOT_FOUND",
             "publication.municipality.not-found"

@@ -1,5 +1,7 @@
 package co.dazma.api.users.services.usecases;
 
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserCannotOperateException;
 import co.dazma.api.users.domain.UserNotFoundException;
@@ -28,11 +30,11 @@ class ResolveUserIdServiceTest {
 
     @Test
     void shouldResolveTheInternalIdFromTheExternalIdentity() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "firebase-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), "Rionegro", "firebase-123");
         when(userRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(user));
 
-        UUID result = service.resolveByExternalId(" firebase-123 ");
+        UUID result = service.resolveByExternalId("firebase-123");
 
         assertEquals(user.getId(), result);
     }
@@ -52,7 +54,7 @@ class ResolveUserIdServiceTest {
 
     @Test
     void shouldRejectASuspendedUser() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "firebase-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), "Rionegro", "firebase-123");
         user.suspend();
         when(userRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(user));

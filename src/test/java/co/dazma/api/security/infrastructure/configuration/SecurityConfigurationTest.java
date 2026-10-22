@@ -1,5 +1,7 @@
 package co.dazma.api.security.infrastructure.configuration;
 
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.infrastructure.input.errors.ApiAccessDeniedHandler;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
@@ -129,9 +131,8 @@ class SecurityConfigurationTest {
 
     @Test
     void shouldUseFirebaseUidAsPrincipalWhenTokenIsValid() throws Exception {
-        User registeredUser = User.register(
-                "Ana",
-                "3001234567",
+        User registeredUser = User.register(new Name("Ana"),
+                new Phone("3001234567"),
                 "Rionegro",
                 "firebase-user-123"
         );

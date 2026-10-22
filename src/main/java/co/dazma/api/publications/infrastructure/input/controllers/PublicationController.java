@@ -1,6 +1,7 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
@@ -40,7 +41,7 @@ public class PublicationController {
 
     @PostMapping
     public ResponseEntity<CreatePublicationResponseDto> create(
-            @RequestBody @Valid co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto request,
+            @RequestBody @Valid CreatePublicationRequestDto request,
             Principal principal,
             UriComponentsBuilder uriBuilder
     ) {
