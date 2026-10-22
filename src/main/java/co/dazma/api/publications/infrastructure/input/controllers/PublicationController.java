@@ -6,6 +6,7 @@ import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRespo
 import co.dazma.api.publications.services.input.models.CreatePublicationCommand;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
+import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,7 @@ public class PublicationController {
 
     @PostMapping
     public ResponseEntity<CreatePublicationResponseDto> create(
-            @RequestBody CreatePublicationRequestDto request,
+            @RequestBody @Valid CreatePublicationRequestDto request,
             Principal principal,
             UriComponentsBuilder uriBuilder
     ) {
@@ -51,7 +52,7 @@ public class PublicationController {
                         request.name(),
                         request.type(),
                         request.description(),
-                        request.city(),
+                        request.municipality(),
                         request.price(),
                         request.photoUploadIds()
                 )

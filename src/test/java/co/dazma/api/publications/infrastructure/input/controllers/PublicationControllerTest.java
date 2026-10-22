@@ -1,5 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
+import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationType;
@@ -56,7 +57,7 @@ class PublicationControllerTest {
                         0
                 )),
                 createdAt,
-                900_000
+                new Price(900_000)
         );
         CreatePublicationCommand expectedCommand = new CreatePublicationCommand(
                 ownerId,

@@ -28,7 +28,7 @@ class PublicationTest {
                 "  Rionegro  ",
                 List.of(photo),
                 CREATED_AT,
-                PRICE
+                new Price(PRICE)
         );
 
         assertNotNull(publication.getId());
@@ -36,11 +36,11 @@ class PublicationTest {
         assertEquals("Bicicleta de montaña", publication.getName());
         assertEquals(PublicationType.EXCHANGE, publication.getType());
         assertEquals("Bicicleta en buen estado", publication.getDescription());
-        assertEquals("Rionegro", publication.getCity());
+        assertEquals("Rionegro", publication.getMunicipality());
         assertEquals(PublicationStatus.PUBLISHED, publication.getStatus());
         assertEquals(List.of(photo), publication.getPhotos());
         assertEquals(CREATED_AT, publication.getCreatedAt());
-        assertEquals(PRICE, publication.getPrice());
+        assertEquals(new Price(PRICE), publication.getPrice());
     }
 
     @Test
@@ -55,7 +55,7 @@ class PublicationTest {
                         "Rionegro",
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
 
@@ -77,7 +77,7 @@ class PublicationTest {
                         "Rionegro",
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
         assertThrows(
@@ -90,7 +90,7 @@ class PublicationTest {
                         "Rionegro",
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
         assertThrows(
@@ -103,7 +103,7 @@ class PublicationTest {
                         " ",
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
     }
@@ -120,7 +120,7 @@ class PublicationTest {
                         "Rionegro",
                         List.of(photo(0)),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
     }
@@ -137,7 +137,7 @@ class PublicationTest {
                         "Rionegro",
                         List.of(),
                         CREATED_AT,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
     }
@@ -193,7 +193,7 @@ class PublicationTest {
                         "Rionegro",
                         List.of(photo(0)),
                         null,
-                        PRICE
+                        new Price(PRICE)
                 )
         );
     }
@@ -201,19 +201,7 @@ class PublicationTest {
     @Test
     void shouldRejectMissingOrNonPositivePrice() {
         for (Integer invalidPrice : new Integer[]{null, 0, -1}) {
-            assertThrows(
-                    InvalidPublicationException.class,
-                    () -> Publication.publish(
-                            UUID.randomUUID(),
-                            "Bicicleta",
-                            PublicationType.EXCHANGE,
-                            "Descripción",
-                            "Rionegro",
-                            List.of(photo(0)),
-                            CREATED_AT,
-                            invalidPrice
-                    )
-            );
+            assertThrows(InvalidPublicationException.class, () -> new Price(invalidPrice));
         }
     }
 
@@ -226,7 +214,7 @@ class PublicationTest {
                 "Rionegro",
                 photos,
                 CREATED_AT,
-                PRICE
+                new Price(PRICE)
         );
     }
 

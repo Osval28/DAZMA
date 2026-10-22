@@ -1,6 +1,7 @@
 package co.dazma.api.publications.services.usecases;
 
 import co.dazma.api.publications.domain.InvalidPublicationException;
+import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
 import co.dazma.api.publications.domain.PublicationStatus;
@@ -68,7 +69,7 @@ class CreatePublicationServiceTest {
         assertEquals("Bicicleta", result.getName());
         assertEquals(PublicationType.EXCHANGE, result.getType());
         assertEquals(PublicationStatus.PUBLISHED, result.getStatus());
-        assertEquals(900_000, result.getPrice());
+        assertEquals(new Price(900_000), result.getPrice());
         assertEquals(NOW, result.getCreatedAt());
         assertEquals(firstPhotoId, result.getPhotos().get(0).getId());
         assertEquals(0, result.getPhotos().get(0).getPosition());

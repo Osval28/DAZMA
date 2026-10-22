@@ -24,9 +24,13 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_DESCRIPTION_REQUIRED",
             "publication.description.required"
     ),
-    CITY_REQUIRED(
-            "PUBLICATION_CITY_REQUIRED",
-            "publication.city.required"
+    MUNICIPALITY_REQUIRED(
+            "PUBLICATION_MUNICIPALITY_REQUIRED",
+            "publication.municipality.required"
+    ),
+    MUNICIPALITY_NOT_FOUND(
+            "PUBLICATION_MUNICIPALITY_NOT_FOUND",
+            "publication.municipality.not-found"
     ),
     STATUS_REQUIRED(
             "PUBLICATION_STATUS_REQUIRED",

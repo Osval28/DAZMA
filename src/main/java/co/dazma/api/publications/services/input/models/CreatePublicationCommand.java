@@ -10,7 +10,7 @@ public record CreatePublicationCommand(
         String name,
         PublicationType type,
         String description,
-        String city,
+        String municipality,
         Integer price,
         List<UUID> photoIds
 ) {

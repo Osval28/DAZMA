@@ -1,6 +1,7 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured;
 
 import co.dazma.api.TestcontainersConfiguration;
+import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationType;
@@ -49,10 +50,10 @@ class PostgresPublicationRepositoryIntegrationTest {
         assertEquals("Bicicleta", found.getName());
         assertEquals(PublicationType.EXCHANGE, found.getType());
         assertEquals("Bicicleta en buen estado", found.getDescription());
-        assertEquals("Rionegro", found.getCity());
+        assertEquals("Rionegro", found.getMunicipality());
         assertEquals(publication.getStatus(), found.getStatus());
         assertEquals(publication.getCreatedAt(), found.getCreatedAt());
-        assertEquals(publication.getPrice(), found.getPrice());
+        assertEquals(publication.getPrice().value(), found.getPrice());
         assertEquals(1, found.getPhotos().size());
         assertEquals("publications/bicycle.jpg", found.getPhotos().get(0).getObjectKey());
     }
@@ -71,7 +72,7 @@ class PostgresPublicationRepositoryIntegrationTest {
                 "Rionegro",
                 List.of(new PublicationPhoto(UUID.randomUUID(), objectKey, 0)),
                 Instant.parse("2026-10-18T12:00:00Z"),
-                850_000
+                new Price(850_000)
         );
     }
 }

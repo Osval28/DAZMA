@@ -1,10 +1,6 @@
 package co.dazma.api.publications.services.usecases;
 
-import co.dazma.api.publications.domain.InvalidPublicationException;
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.PublicationErrorCode;
-import co.dazma.api.publications.domain.PublicationPhoto;
-import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
+import co.dazma.api.publications.domain.*;
 import co.dazma.api.publications.services.input.models.CreatePublicationCommand;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
@@ -43,14 +39,6 @@ public class CreatePublicationService implements CreatePublicationUseCase {
     @Override
     @Transactional
     public Publication create(CreatePublicationCommand command) {
-        if (command == null) {
-            throw new InvalidPublicationException(
-                    PublicationErrorCode.CREATE_REQUEST_REQUIRED
-            );
-        }
-        if (command.ownerId() == null) {
-            throw new InvalidPublicationException(PublicationErrorCode.OWNER_REQUIRED);
-        }
 
         List<PublicationPhoto> photos = resolvePhotos(
                 command.ownerId(),
@@ -62,10 +50,10 @@ public class CreatePublicationService implements CreatePublicationUseCase {
                 command.name(),
                 command.type(),
                 command.description(),
-                command.city(),
+                new Municipality(command.municipality()),
                 photos,
                 clock.instant(),
-                command.price()
+                new Price(command.price())
         );
 
         return publicationRepository.save(publication);
@@ -75,18 +63,9 @@ public class CreatePublicationService implements CreatePublicationUseCase {
             UUID ownerId,
             List<UUID> photoIds
     ) {
-        if (photoIds == null || photoIds.isEmpty()) {
-            throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_REQUIRED);
-        }
-
         List<PublicationPhoto> photos = new ArrayList<>(photoIds.size());
         for (int position = 0; position < photoIds.size(); position++) {
             UUID photoId = photoIds.get(position);
-            if (photoId == null) {
-                throw new InvalidPublicationException(
-                        PublicationErrorCode.PHOTO_ID_REQUIRED
-                );
-            }
 
             StoredPublicationPhoto storedPhoto = photoStorage
                     .findUploadedPhoto(ownerId, photoId)
