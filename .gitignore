@@ -21,3 +21,13 @@ target/
 
 ### VS Code ###
 .vscode/
+
+### Local environment and secrets ###
+.env
+.env.*
+!.env.example
+src/main/resources/application-local.properties
+**/firebase-service-account.json
+**/*firebase-adminsdk*.json
+**/*service-account*.json
+**/serviceAccountKey.json
