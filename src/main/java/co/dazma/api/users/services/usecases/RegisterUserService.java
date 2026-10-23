@@ -1,5 +1,8 @@
 package co.dazma.api.users.services.usecases;
 
+import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
@@ -21,7 +24,8 @@ public class RegisterUserService implements RegisterUserUseCase {
             throw new UserAlreadyRegisteredException();
         }
 
-        User user = User.register(name, phone, municipality, externalId);
+        User user = User.register(new Name(name), new Phone(phone), new Municipality(municipality),
+                externalId);
 
         return userRepository.save(user);
     }

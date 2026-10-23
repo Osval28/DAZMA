@@ -1,6 +1,5 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities;
 
-import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import jakarta.persistence.*;
@@ -31,7 +30,7 @@ public class PublicationEntityJPA {
     private String description;
 
     @Column(nullable = false)
-    private String city;
+    private String municipality;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -64,7 +63,7 @@ public class PublicationEntityJPA {
             String name,
             PublicationType type,
             String description,
-            String city,
+            String municipality,
             PublicationStatus status,
             Instant createdAt,
             Integer price
@@ -74,7 +73,7 @@ public class PublicationEntityJPA {
         this.name = name;
         this.type = type;
         this.description = description;
-        this.city = city;
+        this.municipality = municipality;
         this.status = status;
         this.createdAt = createdAt;
         this.price = price;
@@ -100,8 +99,8 @@ public class PublicationEntityJPA {
         return description;
     }
 
-    public String getCity() {
-        return city;
+    public String getMunicipality() {
+        return municipality;
     }
 
     public PublicationStatus getStatus() {

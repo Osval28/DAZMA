@@ -1,13 +1,12 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.PublicationPhoto;
+import co.dazma.api.publications.domain.*;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationEntity;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
-
+import co.dazma.api.shared.domain.Municipality;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
@@ -24,17 +23,33 @@ public interface PublicationMapStructDomainMapper extends DomainMapper<Publicati
         return Publication.restore(
                 entity.id(),
                 entity.ownerId(),
-                entity.name(),
+                new Name(entity.name()),
                 entity.type(),
-                entity.description(),
-                entity.city(),
+                new Description(entity.description()),
+                new Municipality(entity.municipality()),
                 entity.status(),
                 photos,
                 entity.createdAt(),
-                entity.price()
+                new Price(entity.price())
         );
     }
 
     @Override
     PublicationEntity toEntity(Publication domain);
+
+    default String map(Municipality municipality) {
+        return municipality == null ? null : municipality.name();
+    }
+
+    default String map(Description description) {
+        return description == null ? null : description.text();
+    }
+
+    default String map(Name name) {
+        return name == null ? null : name.name();
+    }
+
+    default Integer map(Price price) {
+        return price == null ? null : price.value();
+    }
 }

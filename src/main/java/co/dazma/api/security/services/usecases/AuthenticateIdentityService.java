@@ -12,7 +12,7 @@ public class AuthenticateIdentityService implements AuthenticateIdentityUseCase 
     }
 
     @Override
-    public String authenticate(String token) {
-        return identityTokenVerifier.verify(token);
+    public String authenticate(String token, boolean checkRevoked) {
+        return identityTokenVerifier.verify(token, checkRevoked);
     }
 }

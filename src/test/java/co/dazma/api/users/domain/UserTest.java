@@ -1,11 +1,7 @@
 package co.dazma.api.users.domain;
 
+import co.dazma.api.shared.domain.Municipality;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +10,7 @@ class UserTest {
     @Test
     void registeredUserShouldBeActiveAndHaveUserRole() {
 
-        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123");
 
         assertEquals(State.ACTIVE, user.getState());
         assertEquals(Role.USER, user.getRole());
@@ -23,32 +19,17 @@ class UserTest {
 
     @Test
     void cannotRegisterUserWithEmptyName() {
-        assertThrows(MissingRequiredFieldException.class,
-                () -> User.register("", "3001234567", "Rionegro", "uid-123"));
-    }
-
-    @ParameterizedTest
-    @MethodSource("missingRequiredFields")
-    void cannotRegisterUserWhenARequiredFieldIsMissing(
-            String name,
-            String phone,
-            String municipality,
-            String externalId,
-            String missingField
-    ) {
-        MissingRequiredFieldException exception = assertThrows(
-                MissingRequiredFieldException.class,
-                () -> User.register(name, phone, municipality, externalId)
+        InvalidUserException exception = assertThrows(
+                InvalidUserException.class,
+                () -> User.register(new Name(""), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123")
         );
 
-        assertEquals("USER_REQUIRED_FIELD_MISSING", exception.code());
-        assertEquals("user.required-field.missing", exception.messageKey());
-        assertArrayEquals(new Object[]{missingField}, exception.arguments());
+        assertEquals("USER_NAME_REQUIRED", exception.code());
     }
 
     @Test
     void cannotSuspendAlreadySuspendedUser() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123");
         user.suspend();
 
         UserAlreadySuspendedException exception = assertThrows(
@@ -61,7 +42,7 @@ class UserTest {
 
     @Test
     void cannotReactivateActiveUser() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123");
 
         UserNotSuspendedException exception = assertThrows(
                 UserNotSuspendedException.class,
@@ -73,23 +54,23 @@ class UserTest {
 
     @Test
     void canOperateReturnsTrueForActiveUser() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123");
         assertTrue(user.canOperate());
     }
 
     @Test
     void registeredUserKeepsTheProvidedData() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123");
 
-        assertEquals("Ana", user.getName());
-        assertEquals("3001234567", user.getPhone());
-        assertEquals("Rionegro", user.getMunicipality());
+        assertEquals(new Name("Ana"), user.getName());
+        assertEquals(new Phone("3001234567"), user.getPhone());
+        assertEquals("Rionegro", user.getMunicipality().name());
         assertEquals("uid-123", user.getExternalId());
     }
 
     @Test
     void canOperateReturnsFalseForInactiveUser() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123");
         user.suspend();
 
         assertFalse(user.canOperate());
@@ -97,25 +78,12 @@ class UserTest {
 
     @Test
     void suspendedUserCanBeReactivated() {
-        User user = User.register("Ana", "3001234567", "Rionegro", "uid-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123");
         user.suspend();
 
         user.reactivate();
 
         assertEquals(State.ACTIVE, user.getState());
         assertTrue(user.canOperate());
-    }
-
-    private static Stream<Arguments> missingRequiredFields() {
-        return Stream.of(
-                Arguments.of(null, "3001234567", "Rionegro", "uid-123", "name"),
-                Arguments.of("   ", "3001234567", "Rionegro", "uid-123", "name"),
-                Arguments.of("Ana", null, "Rionegro", "uid-123", "phone"),
-                Arguments.of("Ana", "   ", "Rionegro", "uid-123", "phone"),
-                Arguments.of("Ana", "3001234567", null, "uid-123", "municipality"),
-                Arguments.of("Ana", "3001234567", "   ", "uid-123", "municipality"),
-                Arguments.of("Ana", "3001234567", "Rionegro", null, "externalId"),
-                Arguments.of("Ana", "3001234567", "Rionegro", "   ", "externalId")
-        );
     }
 }

@@ -1,8 +1,8 @@
 package co.dazma.api.security.domain;
 
-import co.dazma.api.shared.domain.errors.DomainException;
+import co.dazma.api.shared.domain.errors.DomainUnauthenticatedException;
 
-public class InvalidIdentityTokenException extends DomainException {
+public class InvalidIdentityTokenException extends DomainUnauthenticatedException {
 
     public InvalidIdentityTokenException() {
         super(SecurityErrorCode.IDENTITY_TOKEN_INVALID);

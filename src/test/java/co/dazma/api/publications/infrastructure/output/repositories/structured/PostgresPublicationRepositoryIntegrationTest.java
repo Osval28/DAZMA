@@ -1,13 +1,17 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured;
 
 import co.dazma.api.TestcontainersConfiguration;
+import co.dazma.api.publications.domain.Description;
+import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationEntityJPA;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.repository.SpringDataPublicationRepository;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructDomainMapper;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructJpaMapper;
+import co.dazma.api.shared.domain.Municipality;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,10 +53,10 @@ class PostgresPublicationRepositoryIntegrationTest {
         assertEquals("Bicicleta", found.getName());
         assertEquals(PublicationType.EXCHANGE, found.getType());
         assertEquals("Bicicleta en buen estado", found.getDescription());
-        assertEquals("Rionegro", found.getCity());
+        assertEquals("Rionegro", found.getMunicipality());
         assertEquals(publication.getStatus(), found.getStatus());
         assertEquals(publication.getCreatedAt(), found.getCreatedAt());
-        assertEquals(publication.getPrice(), found.getPrice());
+        assertEquals(publication.getPrice().value(), found.getPrice());
         assertEquals(1, found.getPhotos().size());
         assertEquals("publications/bicycle.jpg", found.getPhotos().get(0).getObjectKey());
     }
@@ -65,13 +69,13 @@ class PostgresPublicationRepositoryIntegrationTest {
     private Publication publication(UUID ownerId, String objectKey) {
         return Publication.publish(
                 ownerId,
-                "Bicicleta",
+                new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
-                "Bicicleta en buen estado",
-                "Rionegro",
+                new Description("Bicicleta en buen estado"),
+                new Municipality("Rionegro"),
                 List.of(new PublicationPhoto(UUID.randomUUID(), objectKey, 0)),
                 Instant.parse("2026-10-18T12:00:00Z"),
-                850_000
+                new Price(850_000)
         );
     }
 }
