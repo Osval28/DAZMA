@@ -1,5 +1,6 @@
 package co.dazma.api.security.infrastructure.input.controllers;
 
+import co.dazma.api.security.domain.SessionRevocationException;
 import co.dazma.api.security.services.input.dto.CloseSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionOutputDto;
@@ -20,6 +21,7 @@ import java.time.Duration;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -102,6 +104,17 @@ class SessionControllerTest {
                 )));
 
         verify(closeSessionUseCase).close(new CloseSessionInputDto("session-token"));
+    }
+
+    @Test
+    void shouldExpireTheCookieEvenWhenTheRevocationFails() throws Exception {
+        doThrow(new SessionRevocationException(new IllegalStateException("Firebase no disponible")))
+                .when(closeSessionUseCase).close(new CloseSessionInputDto("session-token"));
+
+        mockMvc.perform(delete("/api/sessions")
+                        .cookie(new Cookie("dazma_session", "session-token")))
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Max-Age=0")));
     }
 
     @Test

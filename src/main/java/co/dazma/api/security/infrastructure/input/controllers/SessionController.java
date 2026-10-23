@@ -1,5 +1,6 @@
 package co.dazma.api.security.infrastructure.input.controllers;
 
+import co.dazma.api.security.domain.SessionRevocationException;
 import co.dazma.api.security.infrastructure.input.cookies.SessionCookies;
 import co.dazma.api.security.infrastructure.input.dto.OpenSessionRequestDto;
 import co.dazma.api.security.services.input.dto.CloseSessionInputDto;
@@ -8,6 +9,8 @@ import co.dazma.api.security.services.input.dto.OpenSessionOutputDto;
 import co.dazma.api.security.services.input.ports.CloseSessionUseCase;
 import co.dazma.api.security.services.input.ports.OpenSessionUseCase;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,8 @@ public class SessionController {
 
     public static final String PATH = "/api/sessions";
     public static final String CSRF_PATH = PATH + "/csrf";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionController.class);
 
     private final OpenSessionUseCase openSessionUseCase;
     private final CloseSessionUseCase closeSessionUseCase;
@@ -60,12 +65,20 @@ public class SessionController {
             @CookieValue(name = SessionCookies.NAME, required = false) String sessionToken
     ) {
         if (sessionToken != null && !sessionToken.isBlank()) {
-            closeSessionUseCase.close(new CloseSessionInputDto(sessionToken));
+            revokeQuietly(sessionToken);
         }
 
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, SessionCookies.expired().toString())
                 .build();
+    }
+
+    private void revokeQuietly(String sessionToken) {
+        try {
+            closeSessionUseCase.close(new CloseSessionInputDto(sessionToken));
+        } catch (SessionRevocationException exception) {
+            LOGGER.warn("No se pudo revocar la sesión en Firebase; la cookie se elimina de todas formas.", exception);
+        }
     }
 
     private static void issueCsrfToken(CsrfToken csrfToken) {

@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.Duration;
 
 @Configuration
@@ -73,9 +74,11 @@ public class FirebaseConfiguration {
     @Bean
     public OpenSessionUseCase openSessionUseCase(
             SessionTokenIssuer sessionTokenIssuer,
-            @Value("${dazma.session.validity:PT8H}") Duration sessionValidity
+            @Value("${dazma.session.validity:PT8H}") Duration sessionValidity,
+            @Value("${dazma.session.maximum-sign-in-age:PT5M}") Duration maximumSignInAge,
+            Clock clock
     ) {
-        return new OpenSessionService(sessionTokenIssuer, sessionValidity);
+        return new OpenSessionService(sessionTokenIssuer, sessionValidity, maximumSignInAge, clock);
     }
 
     @Bean

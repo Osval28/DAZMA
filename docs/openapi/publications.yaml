@@ -11,7 +11,7 @@ paths:
       summary: Autorizar la carga de una fotografía
       description: |
         Genera una autorización temporal para cargar directamente una fotografía al
-        almacenamiento. El propietario se obtiene del token de Firebase; el cliente
+        almacenamiento. El propietario se obtiene de la sesión (cookie `dazma_session`); el cliente
         solo informa el tipo y el tamaño del archivo que pretende cargar.
 
         La carga debe realizarse mediante una solicitud PUT a `uploadUrl`, antes de
@@ -20,7 +20,8 @@ paths:
         publicación.
       operationId: authorizePublicationPhotoUpload
       security:
-        - firebaseBearer: []
+        - sessionCookie: []
+          csrfHeader: []
       requestBody:
         required: true
         content:
@@ -52,12 +53,13 @@ paths:
       summary: Crear una publicación
       description: |
         Crea una publicación para el usuario autenticado. El propietario se obtiene
-        del token de Firebase; el cliente no puede escogerlo en el cuerpo de la solicitud.
+        de la sesión (cookie `dazma_session`); el cliente no puede escogerlo en el cuerpo de la solicitud.
         Cada identificador de foto debe corresponder a una carga previamente autorizada,
         completada y perteneciente al mismo usuario.
       operationId: createPublication
       security:
-        - firebaseBearer: []
+        - sessionCookie: []
+          csrfHeader: []
       requestBody:
         required: true
         content:
@@ -68,7 +70,7 @@ paths:
               name: Bicicleta de montaña
               type: EXCHANGE
               description: Bicicleta en buen estado para intercambiar por una consola.
-              city: Rionegro
+              municipality: Rionegro
               price: 900000
               photoUploadIds:
                 - 5fc930d6-c24c-4e60-91ed-a82c3b7f5275
@@ -122,13 +124,93 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /api/sessions/csrf:
+    get:
+      tags: [Sessions]
+      summary: Obtener el token CSRF
+      description: |
+        Devuelve la cookie `XSRF-TOKEN`, legible desde JavaScript. Toda solicitud que no
+        sea GET, incluido el inicio de sesión, debe enviar su valor en el encabezado
+        `X-XSRF-TOKEN`. Las solicitudes deben hacerse con credenciales
+        (`credentials: 'include'`).
+      operationId: issueCsrfToken
+      security: []
+      responses:
+        '204':
+          description: Token emitido en la cookie `XSRF-TOKEN`.
+          headers:
+            Set-Cookie:
+              description: Cookie `XSRF-TOKEN` (no HttpOnly).
+              schema:
+                type: string
+
+  /api/sessions:
+    post:
+      tags: [Sessions]
+      summary: Iniciar sesión
+      description: |
+        Cambia un ID token de Firebase por la cookie de sesión `dazma_session`
+        (HttpOnly, Secure, SameSite=Strict). El ID token debe provenir de un inicio de
+        sesión reciente (máximo 5 minutos); de lo contrario se responde 401 con el código
+        `RECENT_SIGN_IN_REQUIRED`. Después de esta llamada el cliente debe descartar el
+        ID token.
+      operationId: openSession
+      security:
+        - csrfHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenSessionRequest'
+            example:
+              idToken: eyJhbGciOiJSUzI1NiIsImtpZCI6...
+      responses:
+        '204':
+          description: Sesión abierta.
+          headers:
+            Set-Cookie:
+              description: Cookie `dazma_session` (HttpOnly, Secure, SameSite=Strict).
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    delete:
+      tags: [Sessions]
+      summary: Cerrar sesión
+      description: |
+        Revoca la sesión en Firebase y elimina la cookie `dazma_session`. La cookie se
+        elimina aunque la revocación falle.
+      operationId: closeSession
+      security:
+        - csrfHeader: []
+      responses:
+        '204':
+          description: Sesión cerrada.
+          headers:
+            Set-Cookie:
+              description: Cookie `dazma_session` expirada.
+              schema:
+                type: string
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
 components:
   securitySchemes:
-    firebaseBearer:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: Token de identidad emitido por Firebase Authentication.
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: dazma_session
+      description: Cookie de sesión HttpOnly emitida por `POST /api/sessions`.
+    csrfHeader:
+      type: apiKey
+      in: header
+      name: X-XSRF-TOKEN
+      description: Valor de la cookie `XSRF-TOKEN`, obligatorio en toda solicitud que no sea GET.
 
   responses:
     BadRequest:
@@ -169,6 +251,13 @@ components:
             $ref: '#/components/schemas/ProblemResponse'
 
   schemas:
+    OpenSessionRequest:
+      type: object
+      required: [idToken]
+      properties:
+        idToken:
+          type: string
+          description: ID token obtenido de Firebase Authentication justo después de iniciar sesión.
     AuthorizePublicationPhotoUploadRequest:
       type: object
       additionalProperties: false
@@ -206,7 +295,7 @@ components:
     CreatePublicationRequest:
       type: object
       additionalProperties: false
-      required: [name, type, description, city, price, photoUploadIds]
+      required: [name, type, description, municipality, price, photoUploadIds]
       properties:
         name:
           type: string
@@ -218,7 +307,7 @@ components:
           type: string
           minLength: 1
           description: Información del artículo y de lo que espera el propietario.
-        city:
+        municipality:
           type: string
           minLength: 1
           description: Ciudad asociada con la publicación.
@@ -255,7 +344,7 @@ components:
     PublicationResponse:
       type: object
       additionalProperties: false
-      required: [id, name, type, description, city, status, owner, photos, createdAt]
+      required: [id, name, type, description, municipality, status, owner, photos, createdAt]
       properties:
         id:
           type: string
@@ -266,7 +355,7 @@ components:
           $ref: '#/components/schemas/PublicationType'
         description:
           type: string
-        city:
+        municipality:
           type: string
         status:
           $ref: '#/components/schemas/PublicationStatus'
@@ -328,7 +417,7 @@ components:
           example: Invalid publication
         detail:
           type: string
-          example: The city field is required.
+          example: The municipality field is required.
         code:
           type: string
           example: PUBLICATION_INVALID
