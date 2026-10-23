@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <springProperty scope="context" name="rootLogLevel" source="logging.level.root" defaultValue="INFO"/>
+
+    <appender name="OpenTelemetry"
+              class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+        <captureMdcAttributes>traceId,spanId</captureMdcAttributes>
+    </appender>
+
+    <root level="${rootLogLevel}">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="OpenTelemetry"/>
+    </root>
+</configuration>
