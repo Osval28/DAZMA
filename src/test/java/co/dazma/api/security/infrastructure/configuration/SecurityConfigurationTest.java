@@ -11,6 +11,7 @@ import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.infrastructure.input.controllers.UserController;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import co.dazma.api.shared.domain.Municipality;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import org.junit.jupiter.api.Test;
@@ -133,7 +134,7 @@ class SecurityConfigurationTest {
     void shouldUseFirebaseUidAsPrincipalWhenTokenIsValid() throws Exception {
         User registeredUser = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                "Rionegro",
+                new Municipality("Rionegro"),
                 "firebase-user-123"
         );
         when(authenticateIdentityUseCase.authenticate("valid-token"))
