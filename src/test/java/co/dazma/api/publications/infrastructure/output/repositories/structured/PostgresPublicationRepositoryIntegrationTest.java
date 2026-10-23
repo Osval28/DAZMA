@@ -11,6 +11,7 @@ import co.dazma.api.publications.infrastructure.output.repositories.structured.j
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.repository.SpringDataPublicationRepository;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructDomainMapper;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructJpaMapper;
+import co.dazma.api.shared.domain.Municipality;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

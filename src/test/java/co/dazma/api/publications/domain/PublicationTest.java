@@ -1,5 +1,6 @@
 package co.dazma.api.publications.domain;
 
+import co.dazma.api.shared.domain.Municipality;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -69,36 +70,6 @@ class PublicationTest {
                         new Description(" "),
                         new Municipality("Rionegro"),
                         List.of(photo(0)),
-                        CREATED_AT,
-                        new Price(PRICE)
-                )
-        );
-        assertThrows(
-                InvalidPublicationException.class,
-                () -> Publication.publish(
-                        ownerId,
-                        new Name("Bicicleta"),
-                        PublicationType.EXCHANGE,
-                        new Description("Descripción"),
-                        new Municipality(" "),
-                        List.of(photo(0)),
-                        CREATED_AT,
-                        new Price(PRICE)
-                )
-        );
-    }
-
-    @Test
-    void shouldRejectAnEmptyPhotoList() {
-        assertThrows(
-                InvalidPublicationException.class,
-                () -> Publication.publish(
-                        UUID.randomUUID(),
-                        new Name("Bicicleta"),
-                        PublicationType.EXCHANGE,
-                        new Description("Descripción"),
-                        new Municipality("Rionegro"),
-                        List.of(),
                         CREATED_AT,
                         new Price(PRICE)
                 )

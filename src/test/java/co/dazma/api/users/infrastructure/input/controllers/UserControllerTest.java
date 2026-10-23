@@ -1,5 +1,6 @@
 package co.dazma.api.users.infrastructure.input.controllers;
 
+import co.dazma.api.shared.domain.Municipality;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
@@ -33,7 +34,7 @@ class UserControllerTest {
     void shouldRegisterUserUsingTheAuthenticatedExternalId() throws Exception {
         User registeredUser = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                "Rionegro",
+                new Municipality("Rionegro"),
                 "firebase-123"
         );
         when(registerUserUseCase.registerUser(
