@@ -26,7 +26,7 @@
         <archunit-junit.version>1.5.1</archunit-junit.version>
         <spring-modulith.version>2.1.1</spring-modulith.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <aws.sdk.version>2.54.19</aws.sdk.version>
+        <aws.sdk.version>2.57.0</aws.sdk.version>
         <spring-cloud-aws.version>4.1.1</spring-cloud-aws.version>
         <sonar.cpd.exclusions>**/jpa/entities/**</sonar.cpd.exclusions>
     </properties>
