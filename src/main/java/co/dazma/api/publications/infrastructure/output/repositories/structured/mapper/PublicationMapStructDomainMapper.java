@@ -6,7 +6,7 @@ import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
-
+import co.dazma.api.shared.domain.Municipality;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,

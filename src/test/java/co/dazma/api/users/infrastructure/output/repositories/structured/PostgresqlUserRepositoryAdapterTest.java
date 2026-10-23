@@ -1,5 +1,6 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
+import co.dazma.api.shared.domain.Municipality;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.Role;
@@ -79,7 +80,7 @@ class PostgresqlUserRepositoryAdapterTest {
     void shouldConvertDomainUserSaveItAndReturnTheSavedUser() {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                "Rionegro",
+                new Municipality("Rionegro"),
                 "firebase-123"
         );
         when(springDataRepository.save(any(UserEntityJPA.class)))
@@ -101,7 +102,7 @@ class PostgresqlUserRepositoryAdapterTest {
     void shouldMapDomainUserToJpaEntityBeforeSaving() {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                "Rionegro",
+                new Municipality("Rionegro"),
                 "firebase-123"
         );
         when(springDataRepository.save(any(UserEntityJPA.class)))
@@ -115,7 +116,7 @@ class PostgresqlUserRepositoryAdapterTest {
         assertEquals(user.getId(), saved.getId());
         assertEquals(user.getName().value(), saved.getName());
         assertEquals(user.getPhone().number(), saved.getPhone());
-        assertEquals(user.getMunicipality(), saved.getMunicipality());
+        assertEquals(user.getMunicipality().name(), saved.getMunicipality());
         assertEquals(user.getExternalId(), saved.getExternalId());
         assertEquals(user.getRole(), saved.getRole());
         assertEquals(user.getState(), saved.getState());

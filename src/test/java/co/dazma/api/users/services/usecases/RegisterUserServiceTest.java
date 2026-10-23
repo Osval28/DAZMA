@@ -1,5 +1,6 @@
 package co.dazma.api.users.services.usecases;
 
+import co.dazma.api.shared.domain.Municipality;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
@@ -51,7 +52,7 @@ class RegisterUserServiceTest {
     void shouldRejectAnAlreadyRegisteredUser() {
         User existingUser = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                "Rionegro",
+                new Municipality("Rionegro"),
                 "firebase-123"
         );
 
