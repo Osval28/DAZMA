@@ -43,6 +43,14 @@ public class GlobalExceptionHandler {
         return createResponse(exception, HttpStatus.BAD_REQUEST, "error.title.bad-request", request);
     }
 
+    @ExceptionHandler(DomainUnauthenticatedException.class)
+    public ResponseEntity<ProblemDetail> handleUnauthenticated(
+            DomainUnauthenticatedException exception,
+            HttpServletRequest request
+    ) {
+        return createResponse(exception, HttpStatus.UNAUTHORIZED, "error.title.unauthorized", request);
+    }
+
     @ExceptionHandler(DomainConflictException.class)
     public ResponseEntity<ProblemDetail> handleConflict(
             DomainConflictException exception,

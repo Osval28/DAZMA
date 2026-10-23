@@ -4,6 +4,7 @@ import co.dazma.api.shared.domain.errors.DomainConflictException;
 import co.dazma.api.shared.domain.errors.DomainInvalidException;
 import co.dazma.api.shared.domain.errors.DomainNotAllowedException;
 import co.dazma.api.shared.domain.errors.DomainNotFoundException;
+import co.dazma.api.shared.domain.errors.DomainUnauthenticatedException;
 import co.dazma.api.shared.domain.errors.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ class GlobalExceptionHandlerTest {
         StaticMessageSource messageSource = new StaticMessageSource();
         messageSource.addMessage("error.title.bad-request", LOCALE, "Solicitud inválida");
         messageSource.addMessage("error.title.forbidden", LOCALE, "Operación no permitida");
+        messageSource.addMessage("error.title.unauthorized", LOCALE, "Autenticación requerida");
         messageSource.addMessage("error.title.not-found", LOCALE, "Recurso no encontrado");
         messageSource.addMessage("error.title.conflict", LOCALE, "Conflicto con el estado actual");
         messageSource.addMessage("test.error", LOCALE, "Detalle de prueba {0}.");
@@ -49,6 +51,16 @@ class GlobalExceptionHandlerTest {
         );
 
         assertProblem(response, 400, "Solicitud inválida");
+    }
+
+    @Test
+    void shouldMapAnUnauthenticatedExceptionToUnauthorized() {
+        ResponseEntity<ProblemDetail> response = handler.handleUnauthenticated(
+                new TestUnauthenticatedException(),
+                request
+        );
+
+        assertProblem(response, 401, "Autenticación requerida");
     }
 
     @Test
@@ -109,6 +121,12 @@ class GlobalExceptionHandlerTest {
 
     private static final class TestInvalidException extends DomainInvalidException {
         TestInvalidException() {
+            super(TestErrorCode.TEST_ERROR, 7);
+        }
+    }
+
+    private static final class TestUnauthenticatedException extends DomainUnauthenticatedException {
+        TestUnauthenticatedException() {
             super(TestErrorCode.TEST_ERROR, 7);
         }
     }
