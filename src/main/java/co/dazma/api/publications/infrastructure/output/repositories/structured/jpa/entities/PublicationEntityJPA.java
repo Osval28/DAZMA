@@ -46,6 +46,8 @@ public class PublicationEntityJPA {
     @OrderBy("position ASC")
     private List<PublicationPhotoEntityJPA> photos = new ArrayList<PublicationPhotoEntityJPA>();
 
+    @Version private Long version;
+
     public void addPhoto(PublicationPhotoEntityJPA photo) {
         photo.assignTo(this);
         photos.add(photo);
@@ -66,7 +68,8 @@ public class PublicationEntityJPA {
             String municipality,
             PublicationStatus status,
             Instant createdAt,
-            Integer price
+            Integer price,
+            Long version
     ) {
         this.id = id;
         this.ownerId = ownerId;
@@ -77,6 +80,7 @@ public class PublicationEntityJPA {
         this.status = status;
         this.createdAt = createdAt;
         this.price = price;
+        this.version = version;
     }
 
     public UUID getId() {
@@ -113,5 +117,9 @@ public class PublicationEntityJPA {
 
     public Integer getPrice() {
         return price;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 }

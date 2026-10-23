@@ -30,7 +30,8 @@ public interface PublicationMapStructDomainMapper extends DomainMapper<Publicati
                 entity.status(),
                 photos,
                 entity.createdAt(),
-                new Price(entity.price())
+                new Price(entity.price()),
+                entity.version()
         );
     }
 

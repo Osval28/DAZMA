@@ -50,7 +50,8 @@ class PostgresqlUserRepositoryAdapterTest {
                 "Rionegro",
                 "firebase-123",
                 State.ACTIVE,
-                Role.USER
+                Role.USER,
+                null
         );
         when(springDataRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(entity));

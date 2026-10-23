@@ -1,9 +1,9 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
-import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
+import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
 import jakarta.validation.Valid;
@@ -46,7 +46,7 @@ public class PublicationController {
             UriComponentsBuilder uriBuilder
     ) {
         UUID ownerId = resolveUserIdUseCase.resolveByExternalId(principal.getName());
-        Publication publication = createPublicationUseCase.create(
+        CreatePublicationOutputDto publication = createPublicationUseCase.create(
                 new CreatePublicationInputDto(
                         ownerId,
                         request.name(),
@@ -60,11 +60,11 @@ public class PublicationController {
 
         URI location = uriBuilder
                 .path("/api/publications/{publicationId}")
-                .buildAndExpand(publication.getId())
+                .buildAndExpand(publication.id())
                 .toUri();
 
         return ResponseEntity
                 .created(location)
-                .body(CreatePublicationResponseDto.fromDomain(publication));
+                .body(CreatePublicationResponseDto.fromOutput(publication));
     }
 }

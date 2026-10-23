@@ -17,7 +17,7 @@ public interface UserMapStructDomainMapper extends DomainMapper<UserEntity, User
     @Override
     default User toDomain(UserEntity entity) {
         return User.restore(entity.id(), new Name(entity.name()), new Phone(entity.phone()), new Municipality(entity.municipality())
-                , entity.externalId(), entity.state(), entity.role());
+                , entity.externalId(), entity.state(), entity.role(), entity.version());
     }
 
     @Override

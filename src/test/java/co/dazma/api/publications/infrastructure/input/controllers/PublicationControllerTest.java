@@ -1,15 +1,11 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
-import co.dazma.api.publications.domain.Description;
-import co.dazma.api.publications.domain.Price;
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.Name;
-import co.dazma.api.publications.domain.PublicationPhoto;
+import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
+import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
-import co.dazma.api.shared.domain.Municipality;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
 import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
@@ -65,19 +61,10 @@ class PublicationControllerTest {
         UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         Instant createdAt = Instant.parse("2026-10-20T20:00:00Z");
-        Publication publication = Publication.publish(
-                ownerId,
-                new Name("Bicicleta"),
-                PublicationType.EXCHANGE,
-                new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
-                List.of(new PublicationPhoto(
-                        photoId,
-                        "publications/" + ownerId + "/" + photoId,
-                        0
-                )),
-                createdAt,
-                new Price(900_000)
+        CreatePublicationOutputDto publication = new CreatePublicationOutputDto(
+                UUID.randomUUID(),
+                PublicationStatus.PUBLISHED,
+                createdAt
         );
         CreatePublicationInputDto expectedInput = new CreatePublicationInputDto(
                 ownerId,
@@ -108,9 +95,9 @@ class PublicationControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string(
                         "Location",
-                        "http://localhost/api/publications/" + publication.getId()
+                        "http://localhost/api/publications/" + publication.id()
                 ))
-                .andExpect(jsonPath("$.id").value(publication.getId().toString()))
+                .andExpect(jsonPath("$.id").value(publication.id().toString()))
                 .andExpect(jsonPath("$.status").value("PUBLISHED"))
                 .andExpect(jsonPath("$.createdAt").value(createdAt.toString()));
 

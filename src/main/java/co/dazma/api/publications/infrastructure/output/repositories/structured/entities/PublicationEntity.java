@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.UUID;
 
 public record PublicationEntity(UUID id, UUID ownerId, String name, PublicationType type, String description, String municipality,
-                                PublicationStatus status, Instant createdAt, List<PublicationPhotoEntity> photos, Integer price) {
+                                PublicationStatus status, Instant createdAt, List<PublicationPhotoEntity> photos, Integer price, Long version) {
 }

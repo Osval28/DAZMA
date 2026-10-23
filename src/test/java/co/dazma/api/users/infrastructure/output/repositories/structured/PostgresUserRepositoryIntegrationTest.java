@@ -68,7 +68,8 @@ class PostgresUserRepositoryIntegrationTest {
                 "Rionegro",
                 "duplicated-firebase-id",
                 State.ACTIVE,
-                Role.USER
+                Role.USER,
+                null
         );
         UserEntityJPA secondUser = new UserEntityJPA(
                 UUID.randomUUID(),
@@ -77,7 +78,8 @@ class PostgresUserRepositoryIntegrationTest {
                 "Medellin",
                 "duplicated-firebase-id",
                 State.ACTIVE,
-                Role.USER
+                Role.USER,
+                null
         );
         springDataRepository.saveAndFlush(firstUser);
 
