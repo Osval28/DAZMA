@@ -44,7 +44,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getRequestURI().equals(SessionController.PATH);
+        return request.getRequestURI().startsWith(SessionController.PATH);
     }
 
     @Override

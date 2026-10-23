@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.security.web.method.annotation.CsrfTokenArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -27,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,7 +53,6 @@ class SessionControllerTest {
                 .thenReturn(new OpenSessionOutputDto("session-token", Duration.ofHours(8)));
 
         mockMvc.perform(post("/api/sessions")
-                        .requestAttr(CsrfToken.class.getName(), csrfToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 { "idToken": "id-token" }
@@ -70,9 +69,19 @@ class SessionControllerTest {
     }
 
     @Test
+    void shouldIssueTheCsrfTokenBeforeOpeningASession() throws Exception {
+        CsrfToken csrfToken = mock(CsrfToken.class);
+
+        mockMvc.perform(get("/api/sessions/csrf")
+                        .requestAttr(CsrfToken.class.getName(), csrfToken))
+                .andExpect(status().isNoContent());
+
+        verify(csrfToken).getToken();
+    }
+
+    @Test
     void shouldRejectABlankIdTokenBeforeCallingTheUseCase() throws Exception {
         mockMvc.perform(post("/api/sessions")
-                        .requestAttr(CsrfToken.class.getName(), csrfToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 { "idToken": " " }
@@ -104,7 +113,4 @@ class SessionControllerTest {
         verifyNoInteractions(closeSessionUseCase);
     }
 
-    private static CsrfToken csrfToken() {
-        return new DefaultCsrfToken("X-XSRF-TOKEN", "_csrf", "csrf-token");
-    }
 }

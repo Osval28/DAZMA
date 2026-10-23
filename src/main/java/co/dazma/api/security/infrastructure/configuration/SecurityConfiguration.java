@@ -15,7 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -37,9 +36,6 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf
                         .spa()
                         .csrfTokenRepository(csrfTokenRepository(csrfCookieDomain))
-                        .ignoringRequestMatchers(
-                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, SessionController.PATH)
-                        )
                 )
                 .cors(Customizer.withDefaults())
                 .httpBasic(httpBasic -> httpBasic.disable())
@@ -54,6 +50,7 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, SessionController.CSRF_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, SessionController.PATH).permitAll()
                         .requestMatchers(HttpMethod.DELETE, SessionController.PATH).permitAll()
                         .requestMatchers("/api/**").authenticated()
@@ -67,6 +64,7 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    @SuppressWarnings("java:S3330") // The SPA must read XSRF-TOKEN to echo it in X-XSRF-TOKEN; it is not a credential.
     private static CookieCsrfTokenRepository csrfTokenRepository(String cookieDomain) {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         if (!cookieDomain.isBlank()) {

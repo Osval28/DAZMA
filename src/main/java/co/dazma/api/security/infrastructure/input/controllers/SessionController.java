@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SessionController {
 
     public static final String PATH = "/api/sessions";
+    public static final String CSRF_PATH = PATH + "/csrf";
 
     private final OpenSessionUseCase openSessionUseCase;
     private final CloseSessionUseCase closeSessionUseCase;
@@ -37,10 +39,15 @@ public class SessionController {
         this.closeSessionUseCase = closeSessionUseCase;
     }
 
-    @PostMapping
-    public ResponseEntity<Void> open(@RequestBody @Valid OpenSessionRequestDto request, CsrfToken csrfToken) {
-        OpenSessionOutputDto session = openSessionUseCase.open(new OpenSessionInputDto(request.idToken()));
+    @GetMapping("/csrf")
+    public ResponseEntity<Void> csrf(CsrfToken csrfToken) {
         issueCsrfToken(csrfToken);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> open(@RequestBody @Valid OpenSessionRequestDto request) {
+        OpenSessionOutputDto session = openSessionUseCase.open(new OpenSessionInputDto(request.idToken()));
 
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE,
