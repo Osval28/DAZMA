@@ -6,6 +6,7 @@ import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
+import co.dazma.api.shared.domain.Municipality;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;

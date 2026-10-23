@@ -2,12 +2,13 @@ package co.dazma.api.users.infrastructure.input.errors;
 
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
+import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
 import co.dazma.api.users.domain.MissingRequiredFieldException;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
 import co.dazma.api.users.domain.UserAlreadySuspendedException;
-import co.dazma.api.users.domain.UserCannotOperateException;
-import co.dazma.api.users.domain.UserNotSuspendedException;
+import co.dazma.api.users.domain.UserCannotOperateExceptionDomain;
 import co.dazma.api.users.domain.UserNotFoundException;
+import co.dazma.api.users.domain.UserNotSuspendedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -21,9 +22,9 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class UserExceptionHandlerTest {
+class UserExceptionHandlingTest {
 
-    private UserExceptionHandler handler;
+    private GlobalExceptionHandler handler;
     private MockHttpServletRequest request;
 
     @BeforeEach
@@ -32,7 +33,7 @@ class UserExceptionHandlerTest {
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         ErrorMessageResolver messageResolver = new ErrorMessageResolver(messageSource);
-        handler = new UserExceptionHandler(new ApiProblemFactory(messageResolver));
+        handler = new GlobalExceptionHandler(new ApiProblemFactory(messageResolver));
 
         request = new MockHttpServletRequest();
         request.setRequestURI("/api/users");
@@ -41,7 +42,7 @@ class UserExceptionHandlerTest {
 
     @Test
     void shouldReturnBadRequestWhenARequiredFieldIsMissing() {
-        ResponseEntity<ProblemDetail> response = handler.handleMissingRequiredField(
+        ResponseEntity<ProblemDetail> response = handler.handleInvalid(
                 new MissingRequiredFieldException("phone"),
                 request
         );
@@ -57,7 +58,7 @@ class UserExceptionHandlerTest {
 
     @Test
     void shouldReturnConflictWhenTheUserIsAlreadyRegistered() {
-        ResponseEntity<ProblemDetail> response = handler.handleAlreadyRegistered(
+        ResponseEntity<ProblemDetail> response = handler.handleConflict(
                 new UserAlreadyRegisteredException(),
                 request
         );
@@ -73,7 +74,7 @@ class UserExceptionHandlerTest {
 
     @Test
     void shouldReturnConflictWhenTheUserIsAlreadySuspended() {
-        ResponseEntity<ProblemDetail> response = handler.handleAlreadySuspended(
+        ResponseEntity<ProblemDetail> response = handler.handleConflict(
                 new UserAlreadySuspendedException(),
                 request
         );
@@ -89,7 +90,7 @@ class UserExceptionHandlerTest {
 
     @Test
     void shouldReturnConflictWhenTheUserIsNotSuspended() {
-        ResponseEntity<ProblemDetail> response = handler.handleNotSuspended(
+        ResponseEntity<ProblemDetail> response = handler.handleConflict(
                 new UserNotSuspendedException(),
                 request
         );
@@ -121,8 +122,8 @@ class UserExceptionHandlerTest {
 
     @Test
     void shouldReturnForbiddenWhenTheUserCannotOperate() {
-        ResponseEntity<ProblemDetail> response = handler.handleCannotOperate(
-                new UserCannotOperateException(),
+        ResponseEntity<ProblemDetail> response = handler.handleNotAllowed(
+                new UserCannotOperateExceptionDomain(),
                 request
         );
 

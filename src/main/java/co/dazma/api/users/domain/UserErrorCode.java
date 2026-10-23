@@ -8,6 +8,22 @@ public enum UserErrorCode implements ErrorCode {
             "USER_REQUIRED_FIELD_MISSING",
             "user.required-field.missing"
     ),
+    PHONE_REQUIRED(
+            "USER_PHONE_REQUIRED",
+            "user.phone.required"
+    ),
+    NAME_REQUIRED(
+            "USER_NAME_REQUIRED",
+            "user.name.required"
+    ),
+    NAME_TOO_LONG(
+            "USER_NAME_TOO_LONG",
+            "user.name.too-long"
+    ),
+    PHONE_INVALID(
+            "USER_PHONE_INVALID",
+            "user.phone.invalid"
+    ),
     ALREADY_REGISTERED(
             "USER_ALREADY_REGISTERED",
             "user.already-registered"

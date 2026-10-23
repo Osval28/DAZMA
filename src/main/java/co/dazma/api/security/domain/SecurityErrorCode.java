@@ -15,6 +15,14 @@ public enum SecurityErrorCode implements ErrorCode {
     ACCESS_DENIED(
             "ACCESS_DENIED",
             "security.access-denied"
+    ),
+    RECENT_SIGN_IN_REQUIRED(
+            "RECENT_SIGN_IN_REQUIRED",
+            "security.recent-sign-in.required"
+    ),
+    SESSION_REVOCATION_FAILED(
+            "SESSION_REVOCATION_FAILED",
+            "security.session-revocation.failed"
     );
 
     private final String code;

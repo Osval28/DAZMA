@@ -14,13 +14,13 @@ public class FirebaseIdentityTokenVerifier implements IdentityTokenVerifier {
     }
 
     @Override
-    public String verify(String token) {
-        if (token == null || token.isBlank()) {
+    public String verify(String sessionToken, boolean checkRevoked) {
+        if (sessionToken == null || sessionToken.isBlank()) {
             throw new InvalidIdentityTokenException();
         }
 
         try {
-            return firebaseAuth.verifyIdToken(token).getUid();
+            return firebaseAuth.verifySessionCookie(sessionToken, checkRevoked).getUid();
         } catch (FirebaseAuthException exception) {
             throw new InvalidIdentityTokenException(exception);
         }

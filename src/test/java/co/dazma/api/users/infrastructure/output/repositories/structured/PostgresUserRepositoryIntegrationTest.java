@@ -1,5 +1,8 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
+import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.TestcontainersConfiguration;
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
@@ -36,10 +39,9 @@ class PostgresUserRepositoryIntegrationTest {
 
     @Test
     void shouldPersistAndFindAUserUsingPostgres() {
-        User user = User.register(
-                "Ana",
-                "3001234567",
-                "Rionegro",
+        User user = User.register(new Name("Ana"),
+                new Phone("3001234567"),
+                new Municipality("Rionegro"),
                 "firebase-integration-123"
         );
 
@@ -50,9 +52,9 @@ class PostgresUserRepositoryIntegrationTest {
 
         assertEquals(user.getId(), savedUser.getId());
         assertTrue(foundUser.isPresent());
-        assertEquals("Ana", foundUser.get().getName());
-        assertEquals("3001234567", foundUser.get().getPhone());
-        assertEquals("Rionegro", foundUser.get().getMunicipality());
+        assertEquals("Ana", foundUser.get().getName().value());
+        assertEquals("3001234567", foundUser.get().getPhone().number());
+        assertEquals("Rionegro", foundUser.get().getMunicipality().name());
         assertEquals(Role.USER, foundUser.get().getRole());
         assertEquals(State.ACTIVE, foundUser.get().getState());
     }

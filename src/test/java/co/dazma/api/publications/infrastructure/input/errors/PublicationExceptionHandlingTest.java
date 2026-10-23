@@ -6,6 +6,7 @@ import co.dazma.api.publications.domain.PublicationNotFoundException;
 import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
+import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -19,9 +20,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class PublicationExceptionHandlerTest {
+class PublicationExceptionHandlingTest {
 
-    private PublicationExceptionHandler handler;
+    private GlobalExceptionHandler handler;
     private MockHttpServletRequest request;
 
     @BeforeEach
@@ -30,7 +31,7 @@ class PublicationExceptionHandlerTest {
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         ErrorMessageResolver messageResolver = new ErrorMessageResolver(messageSource);
-        handler = new PublicationExceptionHandler(new ApiProblemFactory(messageResolver));
+        handler = new GlobalExceptionHandler(new ApiProblemFactory(messageResolver));
 
         request = new MockHttpServletRequest();
         request.setRequestURI("/api/publications");
@@ -39,7 +40,7 @@ class PublicationExceptionHandlerTest {
 
     @Test
     void shouldReturnBadRequestForAnInvalidPublication() {
-        ResponseEntity<ProblemDetail> response = handler.handleInvalidPublication(
+        ResponseEntity<ProblemDetail> response = handler.handleInvalid(
                 new InvalidPublicationException(PublicationErrorCode.NAME_REQUIRED),
                 request
         );
@@ -56,7 +57,7 @@ class PublicationExceptionHandlerTest {
         UUID publicationId = UUID.randomUUID();
         request.setRequestURI("/api/publications/" + publicationId);
 
-        ResponseEntity<ProblemDetail> response = handler.handlePublicationNotFound(
+        ResponseEntity<ProblemDetail> response = handler.handleNotFound(
                 new PublicationNotFoundException(publicationId),
                 request
         );
@@ -68,16 +69,16 @@ class PublicationExceptionHandlerTest {
     }
 
     @Test
-    void shouldReturnConflictWhenUploadedPhotoIsNotAvailable() {
+    void shouldReturnForbiddenWhenUploadedPhotoIsNotAvailable() {
         UUID photoId = UUID.randomUUID();
 
-        ResponseEntity<ProblemDetail> response = handler.handlePhotoNotAvailable(
+        ResponseEntity<ProblemDetail> response = handler.handleNotAllowed(
                 new PublicationPhotoNotAvailableException(photoId),
                 request
         );
 
-        assertEquals(409, response.getStatusCode().value());
-        assertEquals("Conflicto con el estado actual", response.getBody().getTitle());
+        assertEquals(403, response.getStatusCode().value());
+        assertEquals("Operación no permitida", response.getBody().getTitle());
         assertEquals(
                 "La fotografía " + photoId
                         + " no fue cargada o no pertenece al usuario autenticado.",
