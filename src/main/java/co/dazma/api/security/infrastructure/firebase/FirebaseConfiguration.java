@@ -3,9 +3,15 @@ package co.dazma.api.security.infrastructure.firebase;
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
+import co.dazma.api.security.infrastructure.output.firebase.FirebaseSessionTokenIssuer;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
+import co.dazma.api.security.services.input.ports.CloseSessionUseCase;
+import co.dazma.api.security.services.input.ports.OpenSessionUseCase;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
+import co.dazma.api.security.services.output.ports.SessionTokenIssuer;
 import co.dazma.api.security.services.usecases.AuthenticateIdentityService;
+import co.dazma.api.security.services.usecases.CloseSessionService;
+import co.dazma.api.security.services.usecases.OpenSessionService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -19,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 @Configuration
 @ConditionalOnProperty(
@@ -56,6 +63,27 @@ public class FirebaseConfiguration {
     @Bean
     public IdentityTokenVerifier identityTokenVerifier(FirebaseAuth firebaseAuth) {
         return new FirebaseIdentityTokenVerifier(firebaseAuth);
+    }
+
+    @Bean
+    public SessionTokenIssuer sessionTokenIssuer(FirebaseAuth firebaseAuth) {
+        return new FirebaseSessionTokenIssuer(firebaseAuth);
+    }
+
+    @Bean
+    public OpenSessionUseCase openSessionUseCase(
+            SessionTokenIssuer sessionTokenIssuer,
+            @Value("${dazma.session.validity:PT8H}") Duration sessionValidity
+    ) {
+        return new OpenSessionService(sessionTokenIssuer, sessionValidity);
+    }
+
+    @Bean
+    public CloseSessionUseCase closeSessionUseCase(
+            IdentityTokenVerifier identityTokenVerifier,
+            SessionTokenIssuer sessionTokenIssuer
+    ) {
+        return new CloseSessionService(identityTokenVerifier, sessionTokenIssuer);
     }
 
     @Bean

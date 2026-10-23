@@ -23,22 +23,22 @@ class AuthenticateIdentityServiceTest {
 
     @Test
     void shouldReturnUidProvidedByIdentityVerifier() {
-        when(identityTokenVerifier.verify("valid-token"))
+        when(identityTokenVerifier.verify("valid-token", true))
                 .thenReturn("firebase-user-123");
 
-        String uid = service.authenticate("valid-token");
+        String uid = service.authenticate("valid-token", true);
 
         assertEquals("firebase-user-123", uid);
     }
 
     @Test
     void shouldPropagateInvalidIdentityToken() {
-        when(identityTokenVerifier.verify("invalid-token"))
+        when(identityTokenVerifier.verify("invalid-token", true))
                 .thenThrow(new InvalidIdentityTokenException());
 
         assertThrows(
                 InvalidIdentityTokenException.class,
-                () -> service.authenticate("invalid-token")
+                () -> service.authenticate("invalid-token", true)
         );
     }
 }

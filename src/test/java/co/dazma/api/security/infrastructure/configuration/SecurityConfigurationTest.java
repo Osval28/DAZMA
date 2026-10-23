@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -80,6 +81,7 @@ class SecurityConfigurationTest {
     @Test
     void shouldRejectProtectedEndpointWithoutToken() throws Exception {
         mockMvc.perform(post("/api/users")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
                 .andExpect(status().isUnauthorized())
@@ -97,9 +99,10 @@ class SecurityConfigurationTest {
     }
 
     @Test
-    void shouldNotAuthenticateUsingACookie() throws Exception {
+    void shouldNotAuthenticateUsingABearerHeader() throws Exception {
         mockMvc.perform(post("/api/users")
-                        .cookie(new MockCookie("authentication", "valid-token"))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer valid-token")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
                 .andExpect(status().isUnauthorized())
@@ -111,12 +114,25 @@ class SecurityConfigurationTest {
     }
 
     @Test
+    void shouldRejectAStateChangingRequestWithoutCsrfToken() throws Exception {
+        mockMvc.perform(post("/api/users")
+                        .cookie(new MockCookie("dazma_session", "valid-token"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRegistrationBody()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
+
+        verifyNoInteractions(registerUserUseCase);
+    }
+
+    @Test
     void shouldRejectProtectedEndpointWhenTokenIsInvalid() throws Exception {
-        when(authenticateIdentityUseCase.authenticate("invalid-token"))
+        when(authenticateIdentityUseCase.authenticate("invalid-token", true))
                 .thenThrow(new InvalidIdentityTokenException());
 
         mockMvc.perform(post("/api/users")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer invalid-token")
+                        .cookie(new MockCookie("dazma_session", "invalid-token"))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
                 .andExpect(status().isUnauthorized())
@@ -137,7 +153,7 @@ class SecurityConfigurationTest {
                 new Municipality("Rionegro"),
                 "firebase-user-123"
         );
-        when(authenticateIdentityUseCase.authenticate("valid-token"))
+        when(authenticateIdentityUseCase.authenticate("valid-token", true))
                 .thenReturn("firebase-user-123");
         when(registerUserUseCase.registerUser(
                 "Ana",
@@ -147,7 +163,8 @@ class SecurityConfigurationTest {
         )).thenReturn(registeredUser);
 
         mockMvc.perform(post("/api/users")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer valid-token")
+                        .cookie(new MockCookie("dazma_session", "valid-token"))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
                 .andExpect(status().isCreated())
@@ -164,11 +181,11 @@ class SecurityConfigurationTest {
 
     @Test
     void shouldReturnForbiddenProblemWhenAuthenticatedUserAccessesDeniedRoute() throws Exception {
-        when(authenticateIdentityUseCase.authenticate("valid-token"))
+        when(authenticateIdentityUseCase.authenticate("valid-token", false))
                 .thenReturn("firebase-user-123");
 
         mockMvc.perform(get("/denied")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer valid-token"))
+                        .cookie(new MockCookie("dazma_session", "valid-token")))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.status").value(403))
