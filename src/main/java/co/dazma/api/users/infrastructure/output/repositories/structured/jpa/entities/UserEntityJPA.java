@@ -34,13 +34,9 @@ public class UserEntityJPA {
     @Column(nullable = false)
     private Role role;
 
-    @Version
-    private Long version;
-
     protected UserEntityJPA() {}
 
-    public UserEntityJPA(UUID id, String name, String phone, String municipality, String externalId, State state, Role role,
-                         Long version) {
+    public UserEntityJPA(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -48,7 +44,6 @@ public class UserEntityJPA {
         this.externalId = externalId;
         this.state = state;
         this.role = role;
-        this.version = version;
     }
 
     public UUID getId() {
@@ -83,9 +78,6 @@ public class UserEntityJPA {
         return state;
     }
 
-    public Long getVersion() {
-        return version;
-    }
 
 
 }

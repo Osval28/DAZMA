@@ -2,6 +2,7 @@ package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.infrastructure.input.mapper.PublicationWebMapper;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
@@ -12,6 +13,7 @@ import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,7 +52,11 @@ class PublicationControllerTest {
         );
 
         mockMvc = MockMvcBuilders.standaloneSetup(
-                        new PublicationController(resolveUserIdUseCase, createPublicationUseCase)
+                        new PublicationController(
+                                resolveUserIdUseCase,
+                                createPublicationUseCase,
+                                Mappers.getMapper(PublicationWebMapper.class)
+                        )
                 )
                 .setControllerAdvice(exceptionHandler)
                 .build();

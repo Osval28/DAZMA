@@ -18,7 +18,6 @@ public class Publication {
     private final List<PublicationPhoto> photos;
     private final Instant createdAt;
     private final Price price;
-    private final Long version;
 
     private Publication(
             UUID id,
@@ -30,8 +29,7 @@ public class Publication {
             PublicationStatus status,
             List<PublicationPhoto> photos,
             Instant createdAt,
-            Price price,
-            Long version
+            Price price
     ) {
         validatePhotos(photos);
 
@@ -45,7 +43,6 @@ public class Publication {
         this.photos = List.copyOf(photos);
         this.createdAt = createdAt;
         this.price = price;
-        this.version = version;
     }
 
     public static Publication publish(
@@ -58,7 +55,7 @@ public class Publication {
             Instant createdAt,
             Price price
     ) {
-        return new Publication(
+        return new Publication (
                 UUID.randomUUID(),
                 ownerId,
                 name,
@@ -68,8 +65,7 @@ public class Publication {
                 PublicationStatus.PUBLISHED,
                 photos,
                 createdAt,
-                price,
-                null
+                price
         );
     }
 
@@ -83,8 +79,7 @@ public class Publication {
             PublicationStatus status,
             List<PublicationPhoto> photos,
             Instant createdAt,
-            Price price,
-            Long version
+            Price price
     ) {
         return new Publication(
                 id,
@@ -96,8 +91,7 @@ public class Publication {
                 status,
                 photos,
                 createdAt,
-                price,
-                version
+                price
         );
     }
 
@@ -157,10 +151,6 @@ public class Publication {
 
     public Price getPrice() {
         return price;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
     @Override

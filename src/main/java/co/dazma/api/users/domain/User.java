@@ -12,11 +12,9 @@ public class User {
     private final String externalId;
     private State state;
     private final Role role;
-    private final Long version;
 
 
-    private User(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role,
-                 Long version) {
+    private User(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -24,16 +22,14 @@ public class User {
         this.externalId = externalId;
         this.state = state;
         this.role = role;
-        this.version = version;
     }
 
     public static User register(Name name, Phone phone, Municipality municipality, String externalId) {
-        return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER, null);
+        return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER);
     }
 
-    public static User restore(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role,
-                               Long version) {
-        return new User(id, name, phone, municipality, externalId, state, role, version);
+    public static User restore(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role) {
+        return new User(id, name, phone, municipality, externalId, state, role);
     }
 
     private static void requireText(String value, String fieldName) {
@@ -97,9 +93,6 @@ public class User {
         return externalId;
     }
 
-    public Long getVersion() {
-        return version;
-    }
 
 
 

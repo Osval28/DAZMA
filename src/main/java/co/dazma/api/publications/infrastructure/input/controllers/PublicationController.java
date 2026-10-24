@@ -2,6 +2,7 @@ package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
+import co.dazma.api.publications.infrastructure.input.mapper.PublicationWebMapper;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
@@ -30,13 +31,16 @@ public class PublicationController {
 
     private final ResolveUserIdUseCase resolveUserIdUseCase;
     private final CreatePublicationUseCase createPublicationUseCase;
+    private final PublicationWebMapper publicationWebMapper;
 
     public PublicationController(
             ResolveUserIdUseCase resolveUserIdUseCase,
-            CreatePublicationUseCase createPublicationUseCase
+            CreatePublicationUseCase createPublicationUseCase,
+            PublicationWebMapper PublicationWebMapper
     ) {
         this.resolveUserIdUseCase = resolveUserIdUseCase;
         this.createPublicationUseCase = createPublicationUseCase;
+        this.publicationWebMapper = PublicationWebMapper;
     }
 
     @PostMapping
@@ -50,7 +54,7 @@ public class PublicationController {
                 new CreatePublicationInputDto(
                         ownerId,
                         request.name(),
-                        request.type(),
+                        publicationWebMapper.toDomain(request.type()),
                         request.description(),
                         request.municipality(),
                         request.price(),
@@ -65,6 +69,6 @@ public class PublicationController {
 
         return ResponseEntity
                 .created(location)
-                .body(CreatePublicationResponseDto.fromOutput(publication));
+                .body(publicationWebMapper.toResponse(publication));
     }
 }

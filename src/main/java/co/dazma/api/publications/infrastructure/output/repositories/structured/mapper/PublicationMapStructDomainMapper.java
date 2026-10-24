@@ -2,6 +2,8 @@ package co.dazma.api.publications.infrastructure.output.repositories.structured.
 
 import co.dazma.api.publications.domain.*;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationTypeEntity;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -12,6 +14,7 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface PublicationMapStructDomainMapper extends DomainMapper<PublicationEntity, Publication> {
+
     @Override
     default Publication toDomain(PublicationEntity entity) {
 
@@ -24,19 +27,22 @@ public interface PublicationMapStructDomainMapper extends DomainMapper<Publicati
                 entity.id(),
                 entity.ownerId(),
                 new Name(entity.name()),
-                entity.type(),
+                toDomain(entity.type()),
                 new Description(entity.description()),
                 new Municipality(entity.municipality()),
-                entity.status(),
+                toDomain(entity.status()),
                 photos,
                 entity.createdAt(),
-                new Price(entity.price()),
-                entity.version()
+                new Price(entity.price())
         );
     }
 
     @Override
     PublicationEntity toEntity(Publication domain);
+
+    PublicationType toDomain(PublicationTypeEntity type);
+
+    PublicationStatus toDomain(PublicationStatusEntity status);
 
     default String map(Municipality municipality) {
         return municipality == null ? null : municipality.name();
