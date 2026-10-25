@@ -10,7 +10,7 @@ public record CreatePublicationRequestDto(
         @NotNull
         String name,
         @NotNull
-        PublicationType type,
+        PublicationTypeDto type,
         @NotNull
         String description,
         @NotNull

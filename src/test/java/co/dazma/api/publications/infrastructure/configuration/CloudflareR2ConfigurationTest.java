@@ -3,11 +3,13 @@ package co.dazma.api.publications.infrastructure.configuration;
 import co.dazma.api.publications.infrastructure.output.storage.r2.CloudflareR2PublicationPhotoStorageAdapter;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
+import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.publications.services.usecases.AuthorizePublicationPhotoUploadService;
 import co.dazma.api.publications.services.usecases.CreatePublicationService;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.util.unit.DataSize;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -76,6 +78,8 @@ class CloudflareR2ConfigurationTest {
         CreatePublicationUseCase createUseCase = configuration.createPublicationUseCase(
                 mock(PublicationRepositoryPort.class),
                 storagePort,
+                mock(PublicationEventsPort.class),
+                TransactionOperations.withoutTransaction(),
                 Clock.systemUTC()
         );
 

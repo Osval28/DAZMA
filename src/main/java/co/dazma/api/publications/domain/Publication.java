@@ -55,7 +55,7 @@ public class Publication {
             Instant createdAt,
             Price price
     ) {
-        return new Publication(
+        return new Publication (
                 UUID.randomUUID(),
                 ownerId,
                 name,
@@ -151,5 +151,17 @@ public class Publication {
 
     public Price getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Publication publication)) return false;
+        return id.equals(publication.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

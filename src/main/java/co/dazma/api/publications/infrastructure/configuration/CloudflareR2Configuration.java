@@ -3,6 +3,7 @@ package co.dazma.api.publications.infrastructure.configuration;
 import co.dazma.api.publications.infrastructure.output.storage.r2.CloudflareR2PublicationPhotoStorageAdapter;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
+import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.publications.services.usecases.AuthorizePublicationPhotoUploadService;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.support.TransactionOperations;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -86,9 +88,17 @@ public class CloudflareR2Configuration {
     public CreatePublicationUseCase createPublicationUseCase(
             PublicationRepositoryPort publicationRepository,
             PublicationPhotoStoragePort photoStorage,
+            PublicationEventsPort publicationEvents,
+            TransactionOperations transactionOperations,
             Clock clock
     ) {
-        return new CreatePublicationService(publicationRepository, photoStorage, clock);
+        return new CreatePublicationService(
+                publicationRepository,
+                photoStorage,
+                publicationEvents,
+                transactionOperations,
+                clock
+        );
     }
 
     private StaticCredentialsProvider credentialsProvider(

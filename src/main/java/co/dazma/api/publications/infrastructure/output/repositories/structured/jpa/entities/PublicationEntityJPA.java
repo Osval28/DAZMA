@@ -2,6 +2,8 @@ package co.dazma.api.publications.infrastructure.output.repositories.structured.
 
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationTypeEntity;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -24,7 +26,7 @@ public class PublicationEntityJPA {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PublicationType type;
+    private PublicationTypeEntity type;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
@@ -34,7 +36,7 @@ public class PublicationEntityJPA {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PublicationStatus status;
+    private PublicationStatusEntity status;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -45,6 +47,7 @@ public class PublicationEntityJPA {
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
     private List<PublicationPhotoEntityJPA> photos = new ArrayList<PublicationPhotoEntityJPA>();
+
 
     public void addPhoto(PublicationPhotoEntityJPA photo) {
         photo.assignTo(this);
@@ -61,10 +64,10 @@ public class PublicationEntityJPA {
             UUID id,
             UUID ownerId,
             String name,
-            PublicationType type,
+            PublicationTypeEntity type,
             String description,
             String municipality,
-            PublicationStatus status,
+            PublicationStatusEntity status,
             Instant createdAt,
             Integer price
     ) {
@@ -91,7 +94,7 @@ public class PublicationEntityJPA {
         return name;
     }
 
-    public PublicationType getType() {
+    public PublicationTypeEntity getType() {
         return type;
     }
 
@@ -103,7 +106,7 @@ public class PublicationEntityJPA {
         return municipality;
     }
 
-    public PublicationStatus getStatus() {
+    public PublicationStatusEntity getStatus() {
         return status;
     }
 
@@ -114,4 +117,5 @@ public class PublicationEntityJPA {
     public Integer getPrice() {
         return price;
     }
+
 }
