@@ -22,7 +22,7 @@ public class CloudflareR2Configuration {
     @Bean(destroyMethod = "close")
     public S3Client cloudflareR2Client(CloudflareR2Properties properties) {
         return S3Client.builder()
-                .endpointOverride(properties.endpoint())
+                .endpointOverride(properties.endpointUri())
                 .credentialsProvider(credentialsProvider(properties))
                 .region(R2_REGION)
                 .serviceConfiguration(r2ServiceConfiguration())
@@ -33,7 +33,7 @@ public class CloudflareR2Configuration {
     @Bean(destroyMethod = "close")
     public S3Presigner cloudflareR2Presigner(CloudflareR2Properties properties) {
         return S3Presigner.builder()
-                .endpointOverride(properties.endpoint())
+                .endpointOverride(properties.endpointUri())
                 .credentialsProvider(credentialsProvider(properties))
                 .region(R2_REGION)
                 .serviceConfiguration(r2ServiceConfiguration())
