@@ -7,8 +7,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-import java.net.URI;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,7 +17,7 @@ class CloudflareR2ConfigurationTest {
     @Test
     void shouldBuildTheR2ClientAndPresigner() {
         CloudflareR2Properties properties = new CloudflareR2Properties(
-                URI.create("https://account.r2.cloudflarestorage.com"),
+                "https://account.r2.cloudflarestorage.com",
                 "access-key",
                 "secret-key",
                 "publication-photos"
@@ -32,7 +30,7 @@ class CloudflareR2ConfigurationTest {
             assertNotNull(presigner);
             assertEquals(Region.of("auto"), client.serviceClientConfiguration().region());
             assertEquals(
-                    properties.endpoint(),
+                    properties.endpointUri(),
                     client.serviceClientConfiguration().endpointOverride().orElseThrow()
             );
         }
@@ -41,7 +39,7 @@ class CloudflareR2ConfigurationTest {
     @Test
     void shouldWireTheR2StorageAdapter() {
         CloudflareR2Properties r2Properties = new CloudflareR2Properties(
-                URI.create("https://account.r2.cloudflarestorage.com"),
+                "https://account.r2.cloudflarestorage.com",
                 "access-key",
                 "secret-key",
                 "publication-photos"
