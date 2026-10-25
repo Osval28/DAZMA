@@ -10,6 +10,8 @@ import com.resend.core.net.RequestOptions;
 import com.resend.services.emails.model.CreateEmailOptions;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class ResendNotificationGateway implements NotificationGateway {
 
@@ -31,6 +33,11 @@ public class ResendNotificationGateway implements NotificationGateway {
                 .to(emailMessage.to())
                 .subject(emailMessage.subject())
                 .html(emailMessage.body())
+                .headers(Map.of(
+                        "Importance", "high",
+                        "X-Priority", "1",
+                        "X-MSMail-Priority", "High"
+                ))
                 .build();
         RequestOptions options = RequestOptions.builder()
                 .setIdempotencyKey(emailMessage.idempotencyKey())
