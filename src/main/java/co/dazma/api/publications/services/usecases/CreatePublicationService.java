@@ -7,9 +7,11 @@ import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
+import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.shared.domain.Municipality;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionOperations;
 
 import java.time.Clock;
@@ -18,8 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Service
 public class CreatePublicationService implements CreatePublicationUseCase {
 
+    private final PublicationOwnerPort publicationOwners;
     private final PublicationRepositoryPort publicationRepository;
     private final PublicationPhotoStoragePort photoStorage;
     private final PublicationEventsPort publicationEvents;
@@ -27,12 +31,17 @@ public class CreatePublicationService implements CreatePublicationUseCase {
     private final Clock clock;
 
     public CreatePublicationService(
+            PublicationOwnerPort publicationOwners,
             PublicationRepositoryPort publicationRepository,
             PublicationPhotoStoragePort photoStorage,
             PublicationEventsPort publicationEvents,
             TransactionOperations transaction,
             Clock clock
     ) {
+        this.publicationOwners = Objects.requireNonNull(
+                publicationOwners,
+                "El puerto de propietarios de publicaciones es obligatorio"
+        );
         this.publicationRepository = Objects.requireNonNull(
                 publicationRepository,
                 "El repositorio de publicaciones es obligatorio"
@@ -52,6 +61,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
     @Override
     public CreatePublicationOutputDto create(CreatePublicationInputDto input) {
 
+        UUID ownerId = publicationOwners.resolveOperatingOwner(input.ownerExternalId());
         Name name = new Name(input.name());
         Description description = new Description(input.description());
         Municipality municipality = new Municipality(input.municipality());
@@ -61,13 +71,13 @@ public class CreatePublicationService implements CreatePublicationUseCase {
         Publication savedPublication;
         try {
             List<PublicationPhoto> photos = promotePhotos(
-                    input.ownerId(),
+                    ownerId,
                     input.photoIds(),
                     promotedObjectKeys
             );
 
             Publication publication = Publication.publish(
-                    input.ownerId(),
+                    ownerId,
                     name,
                     input.type(),
                     description,

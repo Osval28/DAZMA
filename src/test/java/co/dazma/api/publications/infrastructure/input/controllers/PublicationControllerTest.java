@@ -9,7 +9,6 @@ import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
-import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -36,13 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class PublicationControllerTest {
 
-    private ResolveUserIdUseCase resolveUserIdUseCase;
     private CreatePublicationUseCase createPublicationUseCase;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        resolveUserIdUseCase = mock(ResolveUserIdUseCase.class);
         createPublicationUseCase = mock(CreatePublicationUseCase.class);
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
@@ -53,7 +50,6 @@ class PublicationControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(
                         new PublicationController(
-                                resolveUserIdUseCase,
                                 createPublicationUseCase,
                                 Mappers.getMapper(PublicationWebMapper.class)
                         )
@@ -64,7 +60,6 @@ class PublicationControllerTest {
 
     @Test
     void shouldCreatePublicationForAuthenticatedUser() throws Exception {
-        UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         Instant createdAt = Instant.parse("2026-10-20T20:00:00Z");
         CreatePublicationOutputDto publication = new CreatePublicationOutputDto(
@@ -73,7 +68,7 @@ class PublicationControllerTest {
                 createdAt
         );
         CreatePublicationInputDto expectedInput = new CreatePublicationInputDto(
-                ownerId,
+                "firebase-123",
                 "Bicicleta",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",
@@ -81,8 +76,6 @@ class PublicationControllerTest {
                 900_000,
                 List.of(photoId)
         );
-        when(resolveUserIdUseCase.resolveByExternalId("firebase-123"))
-                .thenReturn(ownerId);
         when(createPublicationUseCase.create(expectedInput)).thenReturn(publication);
 
         mockMvc.perform(post("/api/publications")
@@ -107,7 +100,6 @@ class PublicationControllerTest {
                 .andExpect(jsonPath("$.status").value("PUBLISHED"))
                 .andExpect(jsonPath("$.createdAt").value(createdAt.toString()));
 
-        verify(resolveUserIdUseCase).resolveByExternalId("firebase-123");
         verify(createPublicationUseCase).create(expectedInput);
     }
 
