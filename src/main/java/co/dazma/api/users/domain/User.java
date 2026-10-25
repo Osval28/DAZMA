@@ -12,9 +12,9 @@ public class User {
     private final String externalId;
     private State state;
     private final Role role;
+    private final Email email;
 
-
-    private User(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role) {
+    private User(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role, Email email) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -22,14 +22,15 @@ public class User {
         this.externalId = externalId;
         this.state = state;
         this.role = role;
+        this.email = email;
     }
 
-    public static User register(Name name, Phone phone, Municipality municipality, String externalId) {
-        return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER);
+    public static User register(Name name, Phone phone, Municipality municipality, String externalId, Email email) {
+        return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER, email);
     }
 
-    public static User restore(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role) {
-        return new User(id, name, phone, municipality, externalId, state, role);
+    public static User restore(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role, Email email) {
+        return new User(id, name, phone, municipality, externalId, state, role, email);
     }
 
     private static void requireText(String value, String fieldName) {
@@ -93,7 +94,9 @@ public class User {
         return externalId;
     }
 
-
+    public Email getEmail() {
+        return email;
+    }
 
 
 }

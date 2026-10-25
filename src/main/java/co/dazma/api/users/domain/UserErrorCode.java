@@ -43,6 +43,14 @@ public enum UserErrorCode implements ErrorCode {
     CANNOT_OPERATE(
             "USER_CANNOT_OPERATE",
             "user.cannot-operate"
+    ),
+    EMAIL_REQUIRED(
+            "USER_EMAIL_REQUIRED",
+            "user.email.required"
+    ),
+    EMAIL_INVALID(
+            "USER_EMAIL_INVALID",
+            "user.email.invalid"
     );
 
     private final String code;

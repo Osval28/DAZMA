@@ -1,6 +1,7 @@
 package co.dazma.api.users.services.usecases;
 
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
@@ -38,7 +39,8 @@ class RegisterUserServiceTest {
                 "Ana",
                 "3001234567",
                 "Rionegro",
-                "firebase-123"
+                "firebase-123",
+                "ana@dazma.store"
         );
 
         assertNotNull(registeredUser.getId());
@@ -53,7 +55,8 @@ class RegisterUserServiceTest {
         User existingUser = User.register(new Name("Ana"),
                 new Phone("3001234567"),
                 new Municipality("Rionegro"),
-                "firebase-123"
+                "firebase-123",
+                new Email("ana@dazma.store")
         );
 
         when(userRepository.findByExternalId("firebase-123"))
@@ -65,7 +68,8 @@ class RegisterUserServiceTest {
                         "Ana",
                         "3001234567",
                         "Rionegro",
-                        "firebase-123"
+                        "firebase-123",
+                        "ana@dazma.store"
                 )
         );
 

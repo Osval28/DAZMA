@@ -1,6 +1,8 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.AuthenticatedUser;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import jakarta.servlet.FilterChain;
@@ -25,6 +27,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class FirebaseAuthenticationFilterTest {
+
+    private static final AuthenticatedIdentity IDENTITY =
+            new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true);
 
     private AuthenticateIdentityUseCase authenticateIdentityUseCase;
     private ApiAuthenticationEntryPoint authenticationEntryPoint;
@@ -55,7 +60,7 @@ class FirebaseAuthenticationFilterTest {
     void shouldCreateAuthenticationWhenSessionCookieIsValid() throws Exception {
         request.setCookies(new Cookie("dazma_session", "valid-token"));
         when(authenticateIdentityUseCase.authenticate("valid-token", false))
-                .thenReturn("firebase-user-123");
+                .thenReturn(IDENTITY);
 
         filter.doFilter(request, response, filterChain);
 
@@ -63,6 +68,10 @@ class FirebaseAuthenticationFilterTest {
         assertNotNull(authentication);
         assertTrue(authentication.isAuthenticated());
         assertEquals("firebase-user-123", authentication.getName());
+        assertEquals(
+                new AuthenticatedUser("firebase-user-123", "ana@dazma.store", true),
+                authentication.getPrincipal()
+        );
         verify(filterChain).doFilter(request, response);
     }
 
@@ -116,7 +125,7 @@ class FirebaseAuthenticationFilterTest {
         request.setMethod("POST");
         request.setCookies(new Cookie("dazma_session", "valid-token"));
         when(authenticateIdentityUseCase.authenticate("valid-token", true))
-                .thenReturn("firebase-user-123");
+                .thenReturn(IDENTITY);
 
         filter.doFilter(request, response, filterChain);
 
