@@ -19,6 +19,14 @@ public enum NotificationErrorCode implements ErrorCode {
     BODY_REQUIRED(
             "NOTIFICATION_BODY_REQUIRED",
             "notification.body.required"
+    ),
+    IDEMPOTENCY_KEY_REQUIRED(
+            "NOTIFICATION_IDEMPOTENCY_KEY_REQUIRED",
+            "notification.idempotency-key.required"
+    ),
+    IDEMPOTENCY_KEY_TOO_LONG(
+            "NOTIFICATION_IDEMPOTENCY_KEY_TOO_LONG",
+            "notification.idempotency-key.too-long"
     );
 
     private final String code;
