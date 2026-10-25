@@ -4,6 +4,8 @@ import co.dazma.api.publications.domain.InvalidPublicationException;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
+import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort;
+import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,24 +33,32 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
     private static final long MAXIMUM_CONTENT_LENGTH = 5_000_000;
     private static final Duration UPLOAD_VALIDITY = Duration.ofMinutes(5);
+    private static final String EXTERNAL_ID = "firebase-123";
 
+    private PublicationOwnerPort publicationOwners;
+    private UUID ownerId;
     private PublicationPhotoStoragePort photoStorage;
     private AuthorizePublicationPhotoUploadService service;
 
     @BeforeEach
     void setUp() {
+        publicationOwners = mock(PublicationOwnerPort.class);
+        ownerId = UUID.randomUUID();
+        when(publicationOwners.resolveOperatingOwner(EXTERNAL_ID)).thenReturn(ownerId);
         photoStorage = mock(PublicationPhotoStoragePort.class);
+        PhotoUploadParametersPort parameters = mock(PhotoUploadParametersPort.class);
+        when(parameters.allowedContentTypes()).thenReturn(Set.of("image/jpeg", "image/png", "image/webp"));
+        when(parameters.maximumContentLength()).thenReturn(MAXIMUM_CONTENT_LENGTH);
+        when(parameters.uploadValidity()).thenReturn(UPLOAD_VALIDITY);
         service = new AuthorizePublicationPhotoUploadService(
+                publicationOwners,
                 photoStorage,
-                Set.of("image/jpeg", "image/png", "image/webp"),
-                MAXIMUM_CONTENT_LENGTH,
-                UPLOAD_VALIDITY
+                parameters
         );
     }
 
     @Test
     void shouldAuthorizeAValidPhotoUpload() {
-        UUID ownerId = UUID.randomUUID();
         Instant expiresAt = Instant.parse("2026-10-20T18:00:00Z");
         PhotoStorageUploadAuthorization storageAuthorization =
                 new PhotoStorageUploadAuthorization(
@@ -66,7 +76,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
         AuthorizePublicationPhotoUploadOutputDto result = service.authorize(
                 new AuthorizePublicationPhotoUploadInputDto(
-                        ownerId,
+                        EXTERNAL_ID,
                         " IMAGE/JPEG ",
                         2_000_000L
                 )
@@ -87,12 +97,11 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
     @Test
     void shouldRejectMissingOrUnsupportedContentType() {
-        UUID ownerId = UUID.randomUUID();
 
         InvalidPublicationException missingType = assertThrows(
                 InvalidPublicationException.class,
                 () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
-                        ownerId,
+                        EXTERNAL_ID,
                         " ",
                         1_000L
                 ))
@@ -100,7 +109,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
         InvalidPublicationException unsupportedType = assertThrows(
                 InvalidPublicationException.class,
                 () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
-                        ownerId,
+                        EXTERNAL_ID,
                         "application/pdf",
                         1_000L
                 ))
@@ -113,12 +122,11 @@ class AuthorizePublicationPhotoUploadServiceTest {
 
     @Test
     void shouldRejectInvalidOrExcessiveContentLength() {
-        UUID ownerId = UUID.randomUUID();
 
         InvalidPublicationException invalidLength = assertThrows(
                 InvalidPublicationException.class,
                 () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
-                        ownerId,
+                        EXTERNAL_ID,
                         "image/png",
                         0L
                 ))
@@ -126,7 +134,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
         InvalidPublicationException excessiveLength = assertThrows(
                 InvalidPublicationException.class,
                 () -> service.authorize(new AuthorizePublicationPhotoUploadInputDto(
-                        ownerId,
+                        EXTERNAL_ID,
                         "image/png",
                         MAXIMUM_CONTENT_LENGTH + 1
                 ))

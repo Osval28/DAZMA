@@ -12,6 +12,7 @@ import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
+import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,10 @@ import static org.mockito.Mockito.when;
 class CreatePublicationServiceTest {
 
     private static final Instant NOW = Instant.parse("2026-10-20T20:00:00Z");
+    private static final String EXTERNAL_ID = "firebase-123";
 
+    private PublicationOwnerPort publicationOwners;
+    private UUID ownerId;
     private PublicationRepositoryPort publicationRepository;
     private PublicationPhotoStoragePort photoStorage;
     private PublicationEventsPort publicationEvents;
@@ -54,11 +58,15 @@ class CreatePublicationServiceTest {
 
     @BeforeEach
     void setUp() {
+        publicationOwners = mock(PublicationOwnerPort.class);
+        ownerId = UUID.randomUUID();
+        when(publicationOwners.resolveOperatingOwner(EXTERNAL_ID)).thenReturn(ownerId);
         publicationRepository = mock(PublicationRepositoryPort.class);
         photoStorage = mock(PublicationPhotoStoragePort.class);
         publicationEvents = mock(PublicationEventsPort.class);
         transaction = new RecordingTransaction();
         service = new CreatePublicationService(
+                publicationOwners,
                 publicationRepository,
                 photoStorage,
                 publicationEvents,
@@ -69,7 +77,6 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldCreatePublicationWithVerifiedPhotosInRequestedOrder() {
-        UUID ownerId = UUID.randomUUID();
         UUID firstPhotoId = UUID.randomUUID();
         UUID secondPhotoId = UUID.randomUUID();
         when(photoStorage.promoteUploadedPhoto(ownerId, firstPhotoId))
@@ -80,7 +87,6 @@ class CreatePublicationServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         CreatePublicationOutputDto result = service.create(input(
-                ownerId,
                 List.of(firstPhotoId, secondPhotoId)
         ));
 
@@ -103,7 +109,6 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldAnnounceTheCreatedPublicationInsideTheTransaction() {
-        UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         when(photoStorage.promoteUploadedPhoto(ownerId, photoId))
                 .thenReturn(Optional.of(storedPhoto(ownerId, photoId)));
@@ -115,7 +120,7 @@ class CreatePublicationServiceTest {
             return null;
         }).when(publicationEvents).publish(any(PublicationCreated.class));
 
-        CreatePublicationOutputDto result = service.create(input(ownerId, List.of(photoId)));
+        CreatePublicationOutputDto result = service.create(input(List.of(photoId)));
 
         ArgumentCaptor<PublicationCreated> event = ArgumentCaptor.forClass(PublicationCreated.class);
         verify(publicationEvents).publish(event.capture());
@@ -127,7 +132,6 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldVerifyPhotosOutsideTheTransaction() {
-        UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         AtomicBoolean verifiedInsideTransaction = new AtomicBoolean(true);
         when(photoStorage.promoteUploadedPhoto(ownerId, photoId)).thenAnswer(invocation -> {
@@ -137,14 +141,13 @@ class CreatePublicationServiceTest {
         when(publicationRepository.save(any(Publication.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        service.create(input(ownerId, List.of(photoId)));
+        service.create(input(List.of(photoId)));
 
         assertFalse(verifiedInsideTransaction.get());
     }
 
     @Test
     void shouldDiscardPromotedPhotosWhenThePublicationCannotBeSaved() {
-        UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         StoredPublicationPhoto stored = storedPhoto(ownerId, photoId);
         when(photoStorage.promoteUploadedPhoto(ownerId, photoId)).thenReturn(Optional.of(stored));
@@ -153,7 +156,7 @@ class CreatePublicationServiceTest {
 
         IllegalStateException thrown = assertThrows(
                 IllegalStateException.class,
-                () -> service.create(input(ownerId, List.of(photoId)))
+                () -> service.create(input(List.of(photoId)))
         );
 
         assertSame(failure, thrown);
@@ -163,7 +166,6 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldKeepTheOriginalFailureWhenDiscardingPhotosAlsoFails() {
-        UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         when(photoStorage.promoteUploadedPhoto(ownerId, photoId))
                 .thenReturn(Optional.of(storedPhoto(ownerId, photoId)));
@@ -174,7 +176,7 @@ class CreatePublicationServiceTest {
 
         IllegalStateException thrown = assertThrows(
                 IllegalStateException.class,
-                () -> service.create(input(ownerId, List.of(photoId)))
+                () -> service.create(input(List.of(photoId)))
         );
 
         assertSame(failure, thrown);
@@ -183,7 +185,6 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldDiscardAlreadyPromotedPhotosWhenALaterPhotoIsMissing() {
-        UUID ownerId = UUID.randomUUID();
         UUID firstPhotoId = UUID.randomUUID();
         UUID missingPhotoId = UUID.randomUUID();
         StoredPublicationPhoto first = storedPhoto(ownerId, firstPhotoId);
@@ -192,7 +193,7 @@ class CreatePublicationServiceTest {
 
         assertThrows(
                 PublicationPhotoNotAvailableException.class,
-                () -> service.create(input(ownerId, List.of(firstPhotoId, missingPhotoId)))
+                () -> service.create(input(List.of(firstPhotoId, missingPhotoId)))
         );
 
         verify(photoStorage).discardPhotos(List.of(first.objectKey()));
@@ -201,9 +202,8 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldNotTouchStorageWhenAFieldIsInvalid() {
-        UUID ownerId = UUID.randomUUID();
         CreatePublicationInputDto invalid = new CreatePublicationInputDto(
-                ownerId,
+                EXTERNAL_ID,
                 "   ",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",
@@ -219,14 +219,13 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldRejectPhotoThatWasNotUploadedForOwner() {
-        UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         when(photoStorage.promoteUploadedPhoto(ownerId, photoId))
                 .thenReturn(Optional.empty());
 
         assertThrows(
                 PublicationPhotoNotAvailableException.class,
-                () -> service.create(input(ownerId, List.of(photoId)))
+                () -> service.create(input(List.of(photoId)))
         );
 
         verify(publicationRepository, never()).save(any());
@@ -237,15 +236,29 @@ class CreatePublicationServiceTest {
     void shouldRejectEmptyPhotoListBeforeSaving() {
         assertThrows(
                 InvalidPublicationException.class,
-                () -> service.create(input(UUID.randomUUID(), List.of()))
+                () -> service.create(input(List.of()))
         );
 
         verifyNoInteractions(publicationRepository, photoStorage, publicationEvents);
     }
 
-    private CreatePublicationInputDto input(UUID ownerId, List<UUID> photoIds) {
+    @Test
+    void shouldNotTouchStorageWhenTheOwnerCannotOperate() {
+        IllegalStateException rejection = new IllegalStateException("cannot operate");
+        when(publicationOwners.resolveOperatingOwner(EXTERNAL_ID)).thenThrow(rejection);
+
+        IllegalStateException thrown = assertThrows(
+                IllegalStateException.class,
+                () -> service.create(input(List.of(UUID.randomUUID())))
+        );
+
+        assertSame(rejection, thrown);
+        verifyNoInteractions(photoStorage, publicationRepository, publicationEvents);
+    }
+
+    private CreatePublicationInputDto input(List<UUID> photoIds) {
         return new CreatePublicationInputDto(
-                ownerId,
+                EXTERNAL_ID,
                 "Bicicleta",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",

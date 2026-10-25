@@ -6,42 +6,40 @@ import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUpl
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
+import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort;
+import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
+import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+@Service
 public class AuthorizePublicationPhotoUploadService
         implements AuthorizePublicationPhotoUploadUseCase {
 
+    private final PublicationOwnerPort publicationOwners;
     private final PublicationPhotoStoragePort photoStorage;
-    private final Set<String> allowedContentTypes;
-    private final long maximumContentLength;
-    private final Duration uploadValidity;
+    private final PhotoUploadParametersPort parameters;
 
     public AuthorizePublicationPhotoUploadService(
+            PublicationOwnerPort publicationOwners,
             PublicationPhotoStoragePort photoStorage,
-            Set<String> allowedContentTypes,
-            long maximumContentLength,
-            Duration uploadValidity
+            PhotoUploadParametersPort parameters
     ) {
+        this.publicationOwners = Objects.requireNonNull(
+                publicationOwners,
+                "El puerto de propietarios de publicaciones es obligatorio"
+        );
         this.photoStorage = Objects.requireNonNull(
                 photoStorage,
                 "El almacenamiento de fotografías es obligatorio"
         );
-        this.allowedContentTypes = normalizeAllowedContentTypes(allowedContentTypes);
-        if (maximumContentLength <= 0) {
-            throw new IllegalArgumentException("El tamaño máximo debe ser mayor que cero");
-        }
-        this.maximumContentLength = maximumContentLength;
-        if (uploadValidity == null || uploadValidity.isZero() || uploadValidity.isNegative()) {
-            throw new IllegalArgumentException("La vigencia de carga debe ser mayor que cero");
-        }
-        this.uploadValidity = uploadValidity;
+        this.parameters = Objects.requireNonNull(
+                parameters,
+                "Los parámetros de carga de fotografías son obligatorios"
+        );
     }
 
     @Override
@@ -49,17 +47,18 @@ public class AuthorizePublicationPhotoUploadService
             AuthorizePublicationPhotoUploadInputDto input
     ) {
 
+        UUID ownerId = publicationOwners.resolveOperatingOwner(input.ownerExternalId());
         String contentType = normalizeContentType(input.contentType());
         validateContentLength(input.contentLength());
 
         UUID photoId = UUID.randomUUID();
 
         PhotoStorageUploadAuthorization storageAuthorization = photoStorage.authorizeUpload(
-                input.ownerId(),
+                ownerId,
                 photoId,
                 contentType,
                 input.contentLength(),
-                uploadValidity
+                parameters.uploadValidity()
         );
 
         return new AuthorizePublicationPhotoUploadOutputDto(
@@ -77,7 +76,7 @@ public class AuthorizePublicationPhotoUploadService
         }
 
         String normalizedContentType = contentType.trim().toLowerCase(Locale.ROOT);
-        if (!allowedContentTypes.contains(normalizedContentType)) {
+        if (!parameters.allowedContentTypes().contains(normalizedContentType)) {
             throw new InvalidPublicationException(
                     PublicationErrorCode.PHOTO_CONTENT_TYPE_NOT_ALLOWED,
                     normalizedContentType
@@ -92,6 +91,7 @@ public class AuthorizePublicationPhotoUploadService
                     PublicationErrorCode.PHOTO_CONTENT_LENGTH_INVALID
             );
         }
+        long maximumContentLength = parameters.maximumContentLength();
         if (contentLength > maximumContentLength) {
             throw new InvalidPublicationException(
                     PublicationErrorCode.PHOTO_CONTENT_LENGTH_EXCEEDED,
@@ -100,14 +100,4 @@ public class AuthorizePublicationPhotoUploadService
         }
     }
 
-    private static Set<String> normalizeAllowedContentTypes(Set<String> contentTypes) {
-        if (contentTypes == null || contentTypes.isEmpty()
-                || contentTypes.stream().anyMatch(type -> type == null || type.isBlank())) {
-            throw new IllegalArgumentException("Debe configurarse al menos un tipo de imagen");
-        }
-
-        return contentTypes.stream()
-                .map(type -> type.trim().toLowerCase(Locale.ROOT))
-                .collect(Collectors.toUnmodifiableSet());
-    }
 }
