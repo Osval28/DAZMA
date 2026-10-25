@@ -4,7 +4,10 @@ import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthor
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -13,6 +16,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +24,7 @@ import java.util.UUID;
 public final class CloudflareR2PublicationPhotoStorageAdapter
         implements PublicationPhotoStoragePort {
 
+    private static final String PENDING_PREFIX = "pending";
     private static final String PUBLICATIONS_PREFIX = "publications";
 
     private final S3Client s3Client;
@@ -60,7 +65,7 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
             throw new IllegalArgumentException("La vigencia de carga debe ser mayor que cero");
         }
 
-        String objectKey = createObjectKey(ownerId, photoId);
+        String objectKey = createPendingObjectKey(ownerId, photoId);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(objectKey)
@@ -84,33 +89,58 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
     }
 
     @Override
-    public Optional<StoredPublicationPhoto> findUploadedPhoto(UUID ownerId, UUID photoId) {
+    public Optional<StoredPublicationPhoto> promoteUploadedPhoto(UUID ownerId, UUID photoId) {
         Objects.requireNonNull(ownerId, "El propietario de la fotografía es obligatorio");
         Objects.requireNonNull(photoId, "El identificador de la fotografía es obligatorio");
-        String objectKey = createObjectKey(ownerId, photoId);
-        HeadObjectRequest request = HeadObjectRequest.builder()
+        String pendingKey = createPendingObjectKey(ownerId, photoId);
+        HeadObjectRequest headRequest = HeadObjectRequest.builder()
                 .bucket(bucketName)
-                .key(objectKey)
+                .key(pendingKey)
                 .build();
 
+        HeadObjectResponse response;
         try {
-            var response = s3Client.headObject(request);
-            return Optional.of(new StoredPublicationPhoto(
-                    photoId,
-                    objectKey,
-                    response.contentType(),
-                    response.contentLength()
-            ));
+            response = s3Client.headObject(headRequest);
         } catch (S3Exception exception) {
             if (exception.statusCode() == 404) {
                 return Optional.empty();
             }
             throw exception;
         }
+
+        String publishedKey = createPublishedObjectKey(ownerId);
+        s3Client.copyObject(CopyObjectRequest.builder()
+                .sourceBucket(bucketName)
+                .sourceKey(pendingKey)
+                .destinationBucket(bucketName)
+                .destinationKey(publishedKey)
+                .build());
+
+        return Optional.of(new StoredPublicationPhoto(
+                photoId,
+                publishedKey,
+                response.contentType(),
+                response.contentLength()
+        ));
     }
 
-    private static String createObjectKey(UUID ownerId, UUID photoId) {
-        return PUBLICATIONS_PREFIX + "/" + ownerId + "/" + photoId;
+    @Override
+    public void discardPhotos(List<String> objectKeys) {
+        Objects.requireNonNull(objectKeys, "Las claves de las fotografías son obligatorias");
+        for (String objectKey : objectKeys) {
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(objectKey)
+                    .build());
+        }
+    }
+
+    private static String createPendingObjectKey(UUID ownerId, UUID photoId) {
+        return PENDING_PREFIX + "/" + ownerId + "/" + photoId;
+    }
+
+    private static String createPublishedObjectKey(UUID ownerId) {
+        return PUBLICATIONS_PREFIX + "/" + ownerId + "/" + UUID.randomUUID();
     }
 
     private static String requireText(String value, String message) {

@@ -33,8 +33,8 @@ public class PostgresqlPublicationAdapter implements PublicationRepositoryPort {
     public Publication save(Publication publication) {
         PublicationEntity  publicationEntity = domainMapper.toEntity(publication);
         PublicationEntityJPA publicationEntityJPA = jpaMapper.toJpaEntity(publicationEntity);
-        springDataPublicationRepository.save(publicationEntityJPA);
-        return domainMapper.toDomain(jpaMapper.toEntity(publicationEntityJPA));
+        PublicationEntityJPA savedEntityJPA = springDataPublicationRepository.save(publicationEntityJPA);
+        return domainMapper.toDomain(jpaMapper.toEntity(savedEntityJPA));
     }
     @Transactional(readOnly = true)
     @Override

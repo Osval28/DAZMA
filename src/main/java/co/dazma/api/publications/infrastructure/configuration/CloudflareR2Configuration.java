@@ -1,13 +1,7 @@
 package co.dazma.api.publications.infrastructure.configuration;
 
 import co.dazma.api.publications.infrastructure.output.storage.r2.CloudflareR2PublicationPhotoStorageAdapter;
-import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
-import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
-import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
-import co.dazma.api.publications.services.usecases.AuthorizePublicationPhotoUploadService;
-import co.dazma.api.publications.services.usecases.CreatePublicationService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,18 +13,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-import java.time.Clock;
-
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(
-        prefix = "dazma.storage.r2",
-        name = "enabled",
-        havingValue = "true"
-)
-@EnableConfigurationProperties({
-        CloudflareR2Properties.class,
-        PublicationPhotoUploadProperties.class
-})
+@EnableConfigurationProperties(CloudflareR2Properties.class)
 public class CloudflareR2Configuration {
 
     private static final Region R2_REGION = Region.of("auto");
@@ -67,28 +51,6 @@ public class CloudflareR2Configuration {
                 cloudflareR2Presigner,
                 properties.bucketName()
         );
-    }
-
-    @Bean
-    public AuthorizePublicationPhotoUploadUseCase authorizePublicationPhotoUploadUseCase(
-            PublicationPhotoStoragePort photoStorage,
-            PublicationPhotoUploadProperties properties
-    ) {
-        return new AuthorizePublicationPhotoUploadService(
-                photoStorage,
-                properties.allowedContentTypes(),
-                properties.maximumContentLength(),
-                properties.validity()
-        );
-    }
-
-    @Bean
-    public CreatePublicationUseCase createPublicationUseCase(
-            PublicationRepositoryPort publicationRepository,
-            PublicationPhotoStoragePort photoStorage,
-            Clock clock
-    ) {
-        return new CreatePublicationService(publicationRepository, photoStorage, clock);
     }
 
     private StaticCredentialsProvider credentialsProvider(

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record CreatePublicationInputDto(
-        UUID ownerId,
+        String ownerExternalId,
         String name,
         PublicationType type,
         String description,

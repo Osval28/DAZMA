@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -16,14 +18,18 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +80,7 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
         verify(s3Presigner).presignPutObject(captor.capture());
         PutObjectPresignRequest request = captor.getValue();
 
-        String expectedObjectKey = "publications/" + ownerId + "/" + photoId;
+        String expectedObjectKey = "pending/" + ownerId + "/" + photoId;
         assertEquals(expectedObjectKey, authorization.objectKey());
         assertEquals(URI.create("https://storage.example/upload"), authorization.uploadUrl());
         assertEquals(expiration, authorization.expiresAt());
@@ -86,7 +92,7 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
     }
 
     @Test
-    void shouldConfirmThatAnObjectExists() {
+    void shouldPromoteAnUploadedPhotoFromPendingToPublished() {
         UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         when(s3Client.headObject(any(HeadObjectRequest.class)))
@@ -96,25 +102,45 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
                         .build());
 
         StoredPublicationPhoto storedPhoto = adapter
-                .findUploadedPhoto(ownerId, photoId)
+                .promoteUploadedPhoto(ownerId, photoId)
                 .orElseThrow();
 
-        ArgumentCaptor<HeadObjectRequest> captor =
-                ArgumentCaptor.forClass(HeadObjectRequest.class);
-        verify(s3Client).headObject(captor.capture());
-        assertEquals(BUCKET_NAME, captor.getValue().bucket());
-        assertEquals(
-                "publications/" + ownerId + "/" + photoId,
-                captor.getValue().key()
-        );
+        ArgumentCaptor<HeadObjectRequest> head = ArgumentCaptor.forClass(HeadObjectRequest.class);
+        verify(s3Client).headObject(head.capture());
+        assertEquals(BUCKET_NAME, head.getValue().bucket());
+        assertEquals("pending/" + ownerId + "/" + photoId, head.getValue().key());
+
+        ArgumentCaptor<CopyObjectRequest> copy = ArgumentCaptor.forClass(CopyObjectRequest.class);
+        verify(s3Client).copyObject(copy.capture());
+        assertEquals(BUCKET_NAME, copy.getValue().sourceBucket());
+        assertEquals("pending/" + ownerId + "/" + photoId, copy.getValue().sourceKey());
+        assertEquals(BUCKET_NAME, copy.getValue().destinationBucket());
+        assertTrue(copy.getValue().destinationKey().startsWith("publications/" + ownerId + "/"));
+
         assertEquals(photoId, storedPhoto.photoId());
-        assertEquals(captor.getValue().key(), storedPhoto.objectKey());
+        assertEquals(copy.getValue().destinationKey(), storedPhoto.objectKey());
         assertEquals("image/jpeg", storedPhoto.contentType());
         assertEquals(2_000_000L, storedPhoto.contentLength());
     }
 
     @Test
-    void shouldReportThatAnObjectDoesNotExist() {
+    void shouldUseADifferentPublishedKeyForEachPromotion() {
+        UUID ownerId = UUID.randomUUID();
+        UUID photoId = UUID.randomUUID();
+        when(s3Client.headObject(any(HeadObjectRequest.class)))
+                .thenReturn(HeadObjectResponse.builder()
+                        .contentType("image/jpeg")
+                        .contentLength(1L)
+                        .build());
+
+        String first = adapter.promoteUploadedPhoto(ownerId, photoId).orElseThrow().objectKey();
+        String second = adapter.promoteUploadedPhoto(ownerId, photoId).orElseThrow().objectKey();
+
+        assertNotEquals(first, second);
+    }
+
+    @Test
+    void shouldReportThatAnObjectDoesNotExistWithoutCopying() {
         UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         S3Exception missingObject = mock(S3Exception.class);
@@ -122,7 +148,9 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
         when(s3Client.headObject(any(HeadObjectRequest.class)))
                 .thenThrow(missingObject);
 
-        assertTrue(adapter.findUploadedPhoto(ownerId, photoId).isEmpty());
+        assertTrue(adapter.promoteUploadedPhoto(ownerId, photoId).isEmpty());
+
+        verify(s3Client, never()).copyObject(any(CopyObjectRequest.class));
     }
 
     @Test
@@ -135,9 +163,22 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
 
         S3Exception thrown = assertThrows(
                 S3Exception.class,
-                () -> adapter.findUploadedPhoto(ownerId, photoId)
+                () -> adapter.promoteUploadedPhoto(ownerId, photoId)
         );
 
         assertSame(failure, thrown);
+        verify(s3Client, never()).copyObject(any(CopyObjectRequest.class));
+    }
+
+    @Test
+    void shouldDeleteEveryDiscardedPhoto() {
+        adapter.discardPhotos(List.of("publications/a/1", "publications/a/2"));
+
+        ArgumentCaptor<DeleteObjectRequest> captor =
+                ArgumentCaptor.forClass(DeleteObjectRequest.class);
+        verify(s3Client, times(2)).deleteObject(captor.capture());
+        assertEquals(BUCKET_NAME, captor.getAllValues().get(0).bucket());
+        assertEquals("publications/a/1", captor.getAllValues().get(0).key());
+        assertEquals("publications/a/2", captor.getAllValues().get(1).key());
     }
 }
