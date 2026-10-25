@@ -1,5 +1,6 @@
 package co.dazma.api.security.services.usecases;
 
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.services.input.dto.CloseSessionInputDto;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
@@ -27,7 +28,9 @@ class CloseSessionServiceTest {
 
     @Test
     void shouldRevokeTheSessionsOfTheAuthenticatedUser() {
-        when(identityTokenVerifier.verify("session-token", false)).thenReturn("firebase-user-123");
+        when(identityTokenVerifier.verify("session-token", false)).thenReturn(
+                new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true)
+        );
 
         service.close(new CloseSessionInputDto("session-token"));
 

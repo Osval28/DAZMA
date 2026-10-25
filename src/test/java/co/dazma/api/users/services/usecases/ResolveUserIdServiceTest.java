@@ -1,6 +1,7 @@
 package co.dazma.api.users.services.usecases;
 
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
@@ -31,7 +32,7 @@ class ResolveUserIdServiceTest {
 
     @Test
     void shouldResolveTheInternalIdFromTheExternalIdentity() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "firebase-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "firebase-123", new Email("ana@dazma.store"));
         when(userRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(user));
 
@@ -55,7 +56,7 @@ class ResolveUserIdServiceTest {
 
     @Test
     void shouldRejectASuspendedUser() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "firebase-123");
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "firebase-123", new Email("ana@dazma.store"));
         user.suspend();
         when(userRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(user));

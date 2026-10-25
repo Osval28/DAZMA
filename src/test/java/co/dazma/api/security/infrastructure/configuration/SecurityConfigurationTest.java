@@ -1,7 +1,9 @@
 package co.dazma.api.security.infrastructure.configuration;
 
+import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.infrastructure.input.errors.ApiAccessDeniedHandler;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
@@ -151,15 +153,17 @@ class SecurityConfigurationTest {
         User registeredUser = User.register(new Name("Ana"),
                 new Phone("3001234567"),
                 new Municipality("Rionegro"),
-                "firebase-user-123"
+                "firebase-user-123",
+                new Email("ana@dazma.store")
         );
         when(authenticateIdentityUseCase.authenticate("valid-token", true))
-                .thenReturn("firebase-user-123");
+                .thenReturn(new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true));
         when(registerUserUseCase.registerUser(
                 "Ana",
                 "3001234567",
                 "Rionegro",
-                "firebase-user-123"
+                "firebase-user-123",
+                "ana@dazma.store"
         )).thenReturn(registeredUser);
 
         mockMvc.perform(post("/api/users")
@@ -175,14 +179,15 @@ class SecurityConfigurationTest {
                 "Ana",
                 "3001234567",
                 "Rionegro",
-                "firebase-user-123"
+                "firebase-user-123",
+                "ana@dazma.store"
         );
     }
 
     @Test
     void shouldReturnForbiddenProblemWhenAuthenticatedUserAccessesDeniedRoute() throws Exception {
         when(authenticateIdentityUseCase.authenticate("valid-token", false))
-                .thenReturn("firebase-user-123");
+                .thenReturn(new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true));
 
         mockMvc.perform(get("/denied")
                         .cookie(new MockCookie("dazma_session", "valid-token")))
