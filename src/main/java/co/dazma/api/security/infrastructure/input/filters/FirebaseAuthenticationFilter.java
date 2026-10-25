@@ -1,5 +1,7 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
+import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.infrastructure.input.controllers.SessionController;
 import co.dazma.api.security.infrastructure.input.cookies.SessionCookies;
@@ -63,10 +65,15 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
         String token = sessionCookie.getValue();
 
         try {
-            String uid = authenticateIdentityUseCase.authenticate(token, changesState(request));
+            AuthenticatedIdentity identity = authenticateIdentityUseCase.authenticate(token, changesState(request));
+            AuthenticatedUser principal = new AuthenticatedUser(
+                    identity.uid(),
+                    identity.email(),
+                    identity.emailVerified()
+            );
 
             UsernamePasswordAuthenticationToken authentication =
-                    UsernamePasswordAuthenticationToken.authenticated(uid, null, List.of());
+                    UsernamePasswordAuthenticationToken.authenticated(principal, null, List.of());
             authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
             );

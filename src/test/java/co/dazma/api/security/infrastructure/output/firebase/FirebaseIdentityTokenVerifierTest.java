@@ -1,5 +1,6 @@
 package co.dazma.api.security.infrastructure.output.firebase;
 
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -26,14 +27,16 @@ class FirebaseIdentityTokenVerifierTest {
     }
 
     @Test
-    void shouldReturnUidWhenTokenIsValid() throws FirebaseAuthException {
+    void shouldReturnTheIdentityWhenTokenIsValid() throws FirebaseAuthException {
         FirebaseToken firebaseToken = mock(FirebaseToken.class);
         when(firebaseToken.getUid()).thenReturn("firebase-user-123");
+        when(firebaseToken.getEmail()).thenReturn("ana@dazma.store");
+        when(firebaseToken.isEmailVerified()).thenReturn(true);
         when(firebaseAuth.verifySessionCookie("valid-token", true)).thenReturn(firebaseToken);
 
-        String uid = verifier.verify("valid-token", true);
+        AuthenticatedIdentity identity = verifier.verify("valid-token", true);
 
-        assertEquals("firebase-user-123", uid);
+        assertEquals(new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true), identity);
     }
 
     @Test
@@ -60,8 +63,21 @@ class FirebaseIdentityTokenVerifierTest {
     void shouldSkipTheRevocationCheckWhenNotRequired() throws FirebaseAuthException {
         FirebaseToken firebaseToken = mock(FirebaseToken.class);
         when(firebaseToken.getUid()).thenReturn("firebase-user-123");
+        when(firebaseToken.getEmail()).thenReturn("ana@dazma.store");
         when(firebaseAuth.verifySessionCookie("valid-token", false)).thenReturn(firebaseToken);
 
-        assertEquals("firebase-user-123", verifier.verify("valid-token", false));
+        assertEquals("firebase-user-123", verifier.verify("valid-token", false).uid());
+    }
+
+    @Test
+    void shouldRejectATokenWithoutEmail() throws FirebaseAuthException {
+        FirebaseToken firebaseToken = mock(FirebaseToken.class);
+        when(firebaseToken.getUid()).thenReturn("firebase-user-123");
+        when(firebaseAuth.verifySessionCookie("token-without-email", true)).thenReturn(firebaseToken);
+
+        assertThrows(
+                InvalidIdentityTokenException.class,
+                () -> verifier.verify("token-without-email", true)
+        );
     }
 }

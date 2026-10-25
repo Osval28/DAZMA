@@ -1,0 +1,1 @@
+ALTER TABLE app_users.users ADD COLUMN email VARCHAR(320) NOT NULL;

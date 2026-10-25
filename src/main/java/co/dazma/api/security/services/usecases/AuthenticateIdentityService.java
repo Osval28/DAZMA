@@ -1,5 +1,6 @@
 package co.dazma.api.security.services.usecases;
 
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
 
@@ -12,7 +13,7 @@ public class AuthenticateIdentityService implements AuthenticateIdentityUseCase 
     }
 
     @Override
-    public String authenticate(String token, boolean checkRevoked) {
+    public AuthenticatedIdentity authenticate(String token, boolean checkRevoked) {
         return identityTokenVerifier.verify(token, checkRevoked);
     }
 }

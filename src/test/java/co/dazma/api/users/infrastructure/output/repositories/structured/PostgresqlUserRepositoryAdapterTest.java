@@ -1,6 +1,7 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.Role;
@@ -50,7 +51,8 @@ class PostgresqlUserRepositoryAdapterTest {
                 "Rionegro",
                 "firebase-123",
                 State.ACTIVE,
-                Role.USER
+                Role.USER,
+                "ana@dazma.store"
         );
         when(springDataRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(entity));
@@ -81,7 +83,8 @@ class PostgresqlUserRepositoryAdapterTest {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
                 new Municipality("Rionegro"),
-                "firebase-123"
+                "firebase-123",
+                new Email("ana@dazma.store")
         );
         when(springDataRepository.save(any(UserEntityJPA.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -95,6 +98,7 @@ class PostgresqlUserRepositoryAdapterTest {
         assertEquals(user.getExternalId(), savedUser.getExternalId());
         assertEquals(user.getRole(), savedUser.getRole());
         assertEquals(user.getState(), savedUser.getState());
+        assertEquals(user.getEmail(), savedUser.getEmail());
         verify(springDataRepository).save(any(UserEntityJPA.class));
     }
 
@@ -103,7 +107,8 @@ class PostgresqlUserRepositoryAdapterTest {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
                 new Municipality("Rionegro"),
-                "firebase-123"
+                "firebase-123",
+                new Email("ana@dazma.store")
         );
         when(springDataRepository.save(any(UserEntityJPA.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -120,5 +125,6 @@ class PostgresqlUserRepositoryAdapterTest {
         assertEquals(user.getExternalId(), saved.getExternalId());
         assertEquals(user.getRole(), saved.getRole());
         assertEquals(user.getState(), saved.getState());
+        assertEquals(user.getEmail().value(), saved.getEmail());
     }
 }

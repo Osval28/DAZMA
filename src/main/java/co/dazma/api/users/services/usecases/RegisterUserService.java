@@ -1,6 +1,7 @@
 package co.dazma.api.users.services.usecases;
 
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
@@ -19,13 +20,13 @@ public class RegisterUserService implements RegisterUserUseCase {
     }
 
     @Override
-    public User registerUser(String name, String phone, String municipality, String externalId) {
+    public User registerUser(String name, String phone, String municipality, String externalId, String email) {
         if (userRepository.findByExternalId(externalId).isPresent()) {
             throw new UserAlreadyRegisteredException();
         }
 
         User user = User.register(new Name(name), new Phone(phone), new Municipality(municipality),
-                externalId);
+                externalId, new Email(email));
 
         return userRepository.save(user);
     }

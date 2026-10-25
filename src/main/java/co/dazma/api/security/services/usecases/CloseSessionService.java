@@ -28,7 +28,7 @@ public class CloseSessionService implements CloseSessionUseCase {
 
     private Optional<String> uidOfStillValidSession(String sessionToken) {
         try {
-            return Optional.of(identityTokenVerifier.verify(sessionToken, false));
+            return Optional.of(identityTokenVerifier.verify(sessionToken, false).uid());
         } catch (InvalidIdentityTokenException exception) {
             return Optional.empty();
         }

@@ -1,6 +1,7 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.TestcontainersConfiguration;
@@ -42,7 +43,8 @@ class PostgresUserRepositoryIntegrationTest {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
                 new Municipality("Rionegro"),
-                "firebase-integration-123"
+                "firebase-integration-123",
+                new Email("ana@dazma.store")
         );
 
         User savedUser = userRepository.save(user);
@@ -68,7 +70,8 @@ class PostgresUserRepositoryIntegrationTest {
                 "Rionegro",
                 "duplicated-firebase-id",
                 State.ACTIVE,
-                Role.USER
+                Role.USER,
+                "ana@dazma.store"
         );
         UserEntityJPA secondUser = new UserEntityJPA(
                 UUID.randomUUID(),
@@ -77,7 +80,8 @@ class PostgresUserRepositoryIntegrationTest {
                 "Medellin",
                 "duplicated-firebase-id",
                 State.ACTIVE,
-                Role.USER
+                Role.USER,
+                "luis@dazma.store"
         );
         springDataRepository.saveAndFlush(firstUser);
 
