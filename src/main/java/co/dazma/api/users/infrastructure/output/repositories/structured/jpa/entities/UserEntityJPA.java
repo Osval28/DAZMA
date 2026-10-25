@@ -34,9 +34,12 @@ public class UserEntityJPA {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private String email;
+
     protected UserEntityJPA() {}
 
-    public UserEntityJPA(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
+    public UserEntityJPA(UUID id, String name, String phone, String municipality, String externalId, State state, Role role, String email) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -44,6 +47,7 @@ public class UserEntityJPA {
         this.externalId = externalId;
         this.state = state;
         this.role = role;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -77,6 +81,11 @@ public class UserEntityJPA {
     public State getState() {
         return state;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
 
 
 }

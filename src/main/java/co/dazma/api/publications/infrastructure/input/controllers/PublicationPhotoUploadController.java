@@ -1,0 +1,46 @@
+package co.dazma.api.publications.infrastructure.input.controllers;
+
+import co.dazma.api.publications.infrastructure.input.dto.AuthorizePublicationPhotoUploadRequestDto;
+import co.dazma.api.publications.infrastructure.input.dto.PublicationPhotoUploadAuthorizationResponseDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
+import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
+import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
+
+@RestController
+@RequestMapping("/api/publications/photos")
+public class PublicationPhotoUploadController {
+
+    private final AuthorizePublicationPhotoUploadUseCase authorizeUploadUseCase;
+
+    public PublicationPhotoUploadController(
+            AuthorizePublicationPhotoUploadUseCase authorizeUploadUseCase
+    ) {
+        this.authorizeUploadUseCase = authorizeUploadUseCase;
+    }
+
+    @PostMapping("/upload-authorizations")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PublicationPhotoUploadAuthorizationResponseDto authorizeUpload(
+            @RequestBody @Valid AuthorizePublicationPhotoUploadRequestDto request,
+            Principal principal
+    ) {
+        AuthorizePublicationPhotoUploadOutputDto authorization = authorizeUploadUseCase.authorize(
+                new AuthorizePublicationPhotoUploadInputDto(
+                        principal.getName(),
+                        request.contentType(),
+                        request.contentLength()
+                )
+        );
+
+        return PublicationPhotoUploadAuthorizationResponseDto.fromModel(authorization);
+    }
+}

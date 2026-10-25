@@ -1,0 +1,11 @@
+package co.dazma.api.publications.infrastructure.input.dto;
+
+
+import java.time.Instant;
+import java.util.UUID;
+
+
+public record CreatePublicationResponseDto(UUID id, PublicationStatusDto status, Instant createdAt) {
+
+
+}

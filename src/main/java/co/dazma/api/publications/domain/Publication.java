@@ -1,5 +1,5 @@
 package co.dazma.api.publications.domain;
-
+import co.dazma.api.shared.domain.Municipality;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -10,46 +10,35 @@ public class Publication {
 
     private final UUID id;
     private final UUID ownerId;
-    private final String name;
+    private final Name name;
     private final PublicationType type;
-    private final String description;
-    private final String city;
+    private final Description description;
+    private final Municipality municipality;
     private final PublicationStatus status;
     private final List<PublicationPhoto> photos;
     private final Instant createdAt;
-    private final Integer price;
+    private final Price price;
 
     private Publication(
             UUID id,
             UUID ownerId,
-            String name,
+            Name name,
             PublicationType type,
-            String description,
-            String city,
+            Description description,
+            Municipality municipality,
             PublicationStatus status,
             List<PublicationPhoto> photos,
             Instant createdAt,
-            Integer price
+            Price price
     ) {
-        requireValue(id, PublicationErrorCode.ID_REQUIRED);
-        requireValue(ownerId, PublicationErrorCode.OWNER_REQUIRED);
-        requireText(name, PublicationErrorCode.NAME_REQUIRED);
-        requireValue(type, PublicationErrorCode.TYPE_REQUIRED);
-        requireText(description, PublicationErrorCode.DESCRIPTION_REQUIRED);
-        requireText(city, PublicationErrorCode.CITY_REQUIRED);
-        requireValue(status, PublicationErrorCode.STATUS_REQUIRED);
-        requireValue(createdAt, PublicationErrorCode.CREATED_AT_REQUIRED);
-        requireValue(price, PublicationErrorCode.VALUE_REQUIRED);
         validatePhotos(photos);
-        if (price <= 0) {
-            throw new InvalidPublicationException(PublicationErrorCode.VALUE_NOT_POSITIVE);
-        }
+
         this.id = id;
         this.ownerId = ownerId;
-        this.name = name.trim();
+        this.name = name;
         this.type = type;
-        this.description = description.trim();
-        this.city = city.trim();
+        this.description = description;
+        this.municipality = municipality;
         this.status = status;
         this.photos = List.copyOf(photos);
         this.createdAt = createdAt;
@@ -58,21 +47,21 @@ public class Publication {
 
     public static Publication publish(
             UUID ownerId,
-            String name,
+            Name name,
             PublicationType type,
-            String description,
-            String city,
+            Description description,
+            Municipality municipality,
             List<PublicationPhoto> photos,
             Instant createdAt,
-            Integer price
+            Price price
     ) {
-        return new Publication(
+        return new Publication (
                 UUID.randomUUID(),
                 ownerId,
                 name,
                 type,
                 description,
-                city,
+                municipality,
                 PublicationStatus.PUBLISHED,
                 photos,
                 createdAt,
@@ -83,14 +72,14 @@ public class Publication {
     public static Publication restore(
             UUID id,
             UUID ownerId,
-            String name,
+            Name name,
             PublicationType type,
-            String description,
-            String city,
+            Description description,
+            Municipality municipality,
             PublicationStatus status,
             List<PublicationPhoto> photos,
             Instant createdAt,
-            Integer price
+            Price price
     ) {
         return new Publication(
                 id,
@@ -98,7 +87,7 @@ public class Publication {
                 name,
                 type,
                 description,
-                city,
+                municipality,
                 status,
                 photos,
                 createdAt,
@@ -107,12 +96,10 @@ public class Publication {
     }
 
     private static void validatePhotos(List<PublicationPhoto> photos) {
-        if (photos == null || photos.isEmpty()) {
+        if (photos.isEmpty()) {
             throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_REQUIRED);
         }
-        if (photos.stream().anyMatch(photo -> photo == null)) {
-            throw new InvalidPublicationException(PublicationErrorCode.PHOTO_NULL);
-        }
+
 
         Set<UUID> photoIds = new HashSet<>();
         Set<Integer> positions = new HashSet<>();
@@ -126,19 +113,7 @@ public class Publication {
         }
     }
 
-    private static void requireText(String value, PublicationErrorCode errorCode) {
-        if (value == null || value.isBlank()) {
-            throw new InvalidPublicationException(errorCode);
-        }
-    }
-
-    private static void requireValue(Object value, PublicationErrorCode errorCode) {
-        if (value == null) {
-            throw new InvalidPublicationException(errorCode);
-        }
-    }
-
-    public UUID getId() {
+    public UUID getId()  {
         return id;
     }
 
@@ -146,7 +121,7 @@ public class Publication {
         return ownerId;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
@@ -154,12 +129,12 @@ public class Publication {
         return type;
     }
 
-    public String getDescription() {
+    public Description getDescription() {
         return description;
     }
 
-    public String getCity() {
-        return city;
+    public Municipality getMunicipality() {
+        return municipality;
     }
 
     public PublicationStatus getStatus() {
@@ -173,7 +148,20 @@ public class Publication {
     public Instant getCreatedAt() {
         return createdAt;
     }
-    public Integer getPrice() {
+
+    public Price getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Publication publication)) return false;
+        return id.equals(publication.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

@@ -1,18 +1,20 @@
 package co.dazma.api.users.domain;
 
+import co.dazma.api.shared.domain.Municipality;
+
 import java.util.UUID;
 
 public class User {
     private final UUID id;
-    private String name;
-    private String phone;
-    private String municipality;
+    private final Name name;
+    private final Phone phone;
+    private final Municipality municipality;
     private final String externalId;
     private State state;
-    private Role role;
+    private final Role role;
+    private final Email email;
 
-
-    public User(UUID id, String name, String phone, String municipality, String externalId, State state, Role role) {
+    private User(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role, Email email) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -20,14 +22,15 @@ public class User {
         this.externalId = externalId;
         this.state = state;
         this.role = role;
+        this.email = email;
     }
 
-    public static User register(String name, String phone, String municipality, String externalId) {
-        requireText(externalId, "externalId");
-        requireText(name, "name");
-        requireText(phone, "phone");
-        requireText(municipality, "municipality");
-        return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER);
+    public static User register(Name name, Phone phone, Municipality municipality, String externalId, Email email) {
+        return new User(UUID.randomUUID(), name, phone, municipality, externalId, State.ACTIVE, Role.USER, email);
+    }
+
+    public static User restore(UUID id, Name name, Phone phone, Municipality municipality, String externalId, State state, Role role, Email email) {
+        return new User(id, name, phone, municipality, externalId, state, role, email);
     }
 
     private static void requireText(String value, String fieldName) {
@@ -51,19 +54,31 @@ public class User {
         return state == State.ACTIVE;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     public UUID getId() {
         return id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public String getPhone() {
+    public Phone getPhone() {
         return phone;
     }
 
-    public String getMunicipality() {
+    public Municipality getMunicipality() {
         return municipality;
     }
 
@@ -79,6 +94,9 @@ public class User {
         return externalId;
     }
 
+    public Email getEmail() {
+        return email;
+    }
 
 
 }

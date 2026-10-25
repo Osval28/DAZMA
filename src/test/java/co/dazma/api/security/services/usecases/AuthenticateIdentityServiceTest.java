@@ -1,5 +1,6 @@
 package co.dazma.api.security.services.usecases;
 
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,9 @@ import static org.mockito.Mockito.when;
 
 class AuthenticateIdentityServiceTest {
 
+    private static final AuthenticatedIdentity IDENTITY =
+            new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true);
+
     private IdentityTokenVerifier identityTokenVerifier;
     private AuthenticateIdentityService service;
 
@@ -22,23 +26,21 @@ class AuthenticateIdentityServiceTest {
     }
 
     @Test
-    void shouldReturnUidProvidedByIdentityVerifier() {
-        when(identityTokenVerifier.verify("valid-token"))
-                .thenReturn("firebase-user-123");
+    void shouldReturnTheIdentityProvidedByTheVerifier() {
+        when(identityTokenVerifier.verify("valid-token", true))
+                .thenReturn(IDENTITY);
 
-        String uid = service.authenticate("valid-token");
-
-        assertEquals("firebase-user-123", uid);
+        assertEquals(IDENTITY, service.authenticate("valid-token", true));
     }
 
     @Test
     void shouldPropagateInvalidIdentityToken() {
-        when(identityTokenVerifier.verify("invalid-token"))
+        when(identityTokenVerifier.verify("invalid-token", true))
                 .thenThrow(new InvalidIdentityTokenException());
 
         assertThrows(
                 InvalidIdentityTokenException.class,
-                () -> service.authenticate("invalid-token")
+                () -> service.authenticate("invalid-token", true)
         );
     }
 }

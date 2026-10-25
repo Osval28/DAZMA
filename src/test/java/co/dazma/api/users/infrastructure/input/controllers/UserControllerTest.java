@@ -1,12 +1,23 @@
 package co.dazma.api.users.infrastructure.input.controllers;
 
+import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.domain.Email;
+import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -24,26 +35,38 @@ class UserControllerTest {
     void setUp() {
         registerUserUseCase = mock(RegisterUserUseCase.class);
         UserController controller = new UserController(registerUserUseCase);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
+                .build();
+        AuthenticatedUser authenticatedUser =
+                new AuthenticatedUser("firebase-123", "ana@dazma.store", true);
+        SecurityContextHolder.getContext().setAuthentication(
+                UsernamePasswordAuthenticationToken.authenticated(authenticatedUser, null, List.of())
+        );
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     void shouldRegisterUserUsingTheAuthenticatedExternalId() throws Exception {
-        User registeredUser = User.register(
-                "Ana",
-                "3001234567",
-                "Rionegro",
-                "firebase-123"
+        User registeredUser = User.register(new Name("Ana"),
+                new Phone("3001234567"),
+                new Municipality("Rionegro"),
+                "firebase-123",
+                new Email("ana@dazma.store")
         );
         when(registerUserUseCase.registerUser(
                 "Ana",
                 "3001234567",
                 "Rionegro",
-                "firebase-123"
+                "firebase-123",
+                "ana@dazma.store"
         )).thenReturn(registeredUser);
 
         mockMvc.perform(post("/api/users")
-                        .principal(() -> "firebase-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -64,7 +87,8 @@ class UserControllerTest {
                 "Ana",
                 "3001234567",
                 "Rionegro",
-                "firebase-123"
+                "firebase-123",
+                "ana@dazma.store"
         );
     }
 }

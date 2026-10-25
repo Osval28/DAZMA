@@ -1,12 +1,15 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
+import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.AuthenticatedUser;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import jakarta.servlet.http.Cookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -25,6 +28,9 @@ import static org.mockito.Mockito.when;
 
 class FirebaseAuthenticationFilterTest {
 
+    private static final AuthenticatedIdentity IDENTITY =
+            new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true);
+
     private AuthenticateIdentityUseCase authenticateIdentityUseCase;
     private ApiAuthenticationEntryPoint authenticationEntryPoint;
     private FirebaseAuthenticationFilter filter;
@@ -40,7 +46,7 @@ class FirebaseAuthenticationFilterTest {
                 authenticateIdentityUseCase,
                 authenticationEntryPoint
         );
-        request = new MockHttpServletRequest();
+        request = new MockHttpServletRequest("GET", "/api/users");
         response = new MockHttpServletResponse();
         filterChain = mock(FilterChain.class);
     }
@@ -51,10 +57,10 @@ class FirebaseAuthenticationFilterTest {
     }
 
     @Test
-    void shouldCreateAuthenticationWhenBearerTokenIsValid() throws Exception {
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer valid-token");
-        when(authenticateIdentityUseCase.authenticate("valid-token"))
-                .thenReturn("firebase-user-123");
+    void shouldCreateAuthenticationWhenSessionCookieIsValid() throws Exception {
+        request.setCookies(new Cookie("dazma_session", "valid-token"));
+        when(authenticateIdentityUseCase.authenticate("valid-token", false))
+                .thenReturn(IDENTITY);
 
         filter.doFilter(request, response, filterChain);
 
@@ -62,11 +68,15 @@ class FirebaseAuthenticationFilterTest {
         assertNotNull(authentication);
         assertTrue(authentication.isAuthenticated());
         assertEquals("firebase-user-123", authentication.getName());
+        assertEquals(
+                new AuthenticatedUser("firebase-user-123", "ana@dazma.store", true),
+                authentication.getPrincipal()
+        );
         verify(filterChain).doFilter(request, response);
     }
 
     @Test
-    void shouldContinueWithoutAuthenticationWhenAuthorizationHeaderIsMissing() throws Exception {
+    void shouldContinueWithoutAuthenticationWhenSessionCookieIsMissing() throws Exception {
         filter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
@@ -75,10 +85,10 @@ class FirebaseAuthenticationFilterTest {
     }
 
     @Test
-    void shouldReturnUnauthorizedWhenBearerTokenIsInvalid() throws Exception {
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer invalid-token");
+    void shouldReturnUnauthorizedWhenSessionCookieIsInvalid() throws Exception {
+        request.setCookies(new Cookie("dazma_session", "invalid-token"));
         InvalidIdentityTokenException exception = new InvalidIdentityTokenException();
-        when(authenticateIdentityUseCase.authenticate("invalid-token"))
+        when(authenticateIdentityUseCase.authenticate("invalid-token", false))
                 .thenThrow(exception);
 
         filter.doFilter(request, response, filterChain);
@@ -86,5 +96,40 @@ class FirebaseAuthenticationFilterTest {
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(authenticationEntryPoint).commenceInvalidToken(request, response, exception);
         verify(filterChain, never()).doFilter(request, response);
+    }
+
+    @Test
+    void shouldIgnoreABearerHeader() throws Exception {
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer valid-token");
+
+        filter.doFilter(request, response, filterChain);
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verifyNoInteractions(authenticateIdentityUseCase);
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void shouldNotValidateTheCookieWhenOpeningASession() throws Exception {
+        request.setRequestURI("/api/sessions");
+        request.setCookies(new Cookie("dazma_session", "expired-token"));
+
+        filter.doFilter(request, response, filterChain);
+
+        verifyNoInteractions(authenticateIdentityUseCase);
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void shouldRequireAnActiveSessionWhenTheRequestChangesState() throws Exception {
+        request.setMethod("POST");
+        request.setCookies(new Cookie("dazma_session", "valid-token"));
+        when(authenticateIdentityUseCase.authenticate("valid-token", true))
+                .thenReturn(IDENTITY);
+
+        filter.doFilter(request, response, filterChain);
+
+        verify(authenticateIdentityUseCase).authenticate("valid-token", true);
+        verify(filterChain).doFilter(request, response);
     }
 }
