@@ -8,11 +8,16 @@ import co.dazma.api.publications.domain.PublicationPhoto;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.mapper.PublicationMapStructCacheMapper;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import co.dazma.api.shared.domain.Municipality;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -26,8 +31,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,6 +47,8 @@ class RedisPublicationCacheAdapterTest {
     private StringRedisTemplate redisTemplate;
     private ValueOperations<String, String> valueOperations;
     private RedisPublicationCacheAdapter adapter;
+    private Logger adapterLogger;
+    private ListAppender<ILoggingEvent> logs;
 
     @BeforeEach
     @SuppressWarnings("unchecked")
@@ -53,6 +62,15 @@ class RedisPublicationCacheAdapterTest {
                 Mappers.getMapper(PublicationMapStructCacheMapper.class),
                 new PublicationCacheProperties(KEY_PREFIX, TTL)
         );
+        adapterLogger = (Logger) LoggerFactory.getLogger(RedisPublicationCacheAdapter.class);
+        logs = new ListAppender<>();
+        logs.start();
+        adapterLogger.addAppender(logs);
+    }
+
+    @AfterEach
+    void tearDown() {
+        adapterLogger.detachAppender(logs);
     }
 
     @Test
@@ -95,6 +113,43 @@ class RedisPublicationCacheAdapterTest {
                 .thenThrow(new RedisConnectionFailureException("Redis caído"));
 
         assertTrue(adapter.findById(publicationId).isEmpty());
+    }
+
+    @Test
+    void shouldLogTheRootCauseWhenTheConnectionFails() {
+        UUID publicationId = UUID.randomUUID();
+        when(valueOperations.get(anyString())).thenThrow(new RedisConnectionFailureException(
+                "Unable to connect to Redis",
+                new IllegalStateException("Connection timed out after 2000 ms")
+        ));
+
+        assertTrue(adapter.findById(publicationId).isEmpty());
+
+        String message = logs.list.getFirst().getFormattedMessage();
+        assertTrue(message.contains(
+                "RedisConnectionFailureException <- IllegalStateException: Connection timed out after 2000 ms"
+        ));
+    }
+
+    @Test
+    void shouldNotFailWhenTheCacheCannotBeWritten() {
+        Publication publication = publication();
+        doThrow(new RedisConnectionFailureException("Redis caído"))
+                .when(valueOperations).set(anyString(), anyString(), any(Duration.class));
+
+        adapter.save(publication);
+
+        assertTrue(logs.list.getFirst().getFormattedMessage().contains("RedisConnectionFailureException"));
+    }
+
+    @Test
+    void shouldNotFailWhenTheCacheCannotBeEvicted() {
+        UUID publicationId = UUID.randomUUID();
+        when(redisTemplate.delete(anyString())).thenThrow(new RedisConnectionFailureException("Redis caído"));
+
+        adapter.evict(publicationId);
+
+        assertTrue(logs.list.getFirst().getFormattedMessage().contains("RedisConnectionFailureException"));
     }
 
     @Test

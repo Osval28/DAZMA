@@ -48,7 +48,7 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
             return Optional.of(cacheMapper.toDomain(entity));
         } catch (DataAccessException | JacksonException exception) {
             log.warn("No se pudo leer la publicación de la caché; se usará la base de datos. key={}, causa={}",
-                    key, exception.getClass().getSimpleName());
+                    key, describe(exception));
             return Optional.empty();
         } catch (DomainInvalidException exception) {
             log.warn("La publicación en caché ya no cumple las reglas del dominio; se descarta. key={}, causa={}",
@@ -66,7 +66,7 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
             redisTemplate.opsForValue().set(key, json, properties.ttl());
         } catch (DataAccessException | JacksonException exception) {
             log.warn("No se pudo guardar la publicación en la caché. key={}, causa={}",
-                    key, exception.getClass().getSimpleName());
+                    key, describe(exception));
         }
     }
 
@@ -77,7 +77,24 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
             redisTemplate.delete(key);
         } catch (DataAccessException exception) {
             log.warn("No se pudo invalidar la publicación en la caché; expirará por TTL. key={}, causa={}",
-                    key, exception.getClass().getSimpleName());
+                    key, describe(exception));
         }
+    }
+
+    /**
+     * Includes the root cause (for example, a timeout or an authentication error) so connection
+     * problems can be diagnosed. Lettuce messages do not contain the password.
+     */
+    private static String describe(Exception exception) {
+        Throwable rootCause = exception;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
+        if (rootCause == exception) {
+            return exception.getClass().getSimpleName();
+        }
+        return exception.getClass().getSimpleName()
+                + " <- " + rootCause.getClass().getSimpleName()
+                + ": " + rootCause.getMessage();
     }
 }
