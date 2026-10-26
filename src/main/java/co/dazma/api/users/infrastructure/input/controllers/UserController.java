@@ -2,8 +2,12 @@ package co.dazma.api.users.infrastructure.input.controllers;
 
 import co.dazma.api.security.AuthenticatedUser;
 import co.dazma.api.users.domain.User;
+import co.dazma.api.users.infrastructure.input.dto.MyProfileResponseDto;
 import co.dazma.api.users.infrastructure.input.dto.RegisterUserRequestDto;
 import co.dazma.api.users.infrastructure.input.dto.UserResponseDto;
+import co.dazma.api.users.services.input.dto.GetMyProfileInputDto;
+import co.dazma.api.users.services.input.dto.GetMyProfileOutputDto;
+import co.dazma.api.users.services.input.ports.GetMyProfileUseCase;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,9 +19,19 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final RegisterUserUseCase registerUserUseCase;
+    private final GetMyProfileUseCase getMyProfileUseCase;
 
-    public UserController(RegisterUserUseCase registerUserUseCase) {
+    public UserController(RegisterUserUseCase registerUserUseCase, GetMyProfileUseCase getMyProfileUseCase) {
         this.registerUserUseCase = registerUserUseCase;
+        this.getMyProfileUseCase = getMyProfileUseCase;
+    }
+
+    @GetMapping("/me")
+    public MyProfileResponseDto getMyProfile(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        GetMyProfileOutputDto profile = getMyProfileUseCase.get(
+                new GetMyProfileInputDto(authenticatedUser.getName())
+        );
+        return MyProfileResponseDto.from(profile, authenticatedUser.emailVerified());
     }
 
     @PostMapping
