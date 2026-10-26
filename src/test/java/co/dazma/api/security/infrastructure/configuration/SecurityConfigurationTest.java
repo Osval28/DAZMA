@@ -12,6 +12,7 @@ import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthentication
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.infrastructure.input.controllers.UserController;
+import co.dazma.api.users.services.input.ports.GetMyProfileUseCase;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
 import co.dazma.api.shared.domain.Municipality;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
@@ -68,6 +69,9 @@ class SecurityConfigurationTest {
 
     @MockitoBean
     private RegisterUserUseCase registerUserUseCase;
+
+    @MockitoBean
+    private GetMyProfileUseCase getMyProfileUseCase;
 
     @MockitoBean
     private AuthenticateIdentityUseCase authenticateIdentityUseCase;
