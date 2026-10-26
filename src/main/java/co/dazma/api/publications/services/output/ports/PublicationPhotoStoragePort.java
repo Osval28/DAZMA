@@ -3,6 +3,7 @@ package co.dazma.api.publications.services.output.ports;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +26,9 @@ public interface PublicationPhotoStoragePort {
     Optional<StoredPublicationPhoto> promoteUploadedPhoto(UUID ownerId, UUID photoId);
 
     void discardPhotos(List<String> objectKeys);
+
+    /**
+     * Genera una URL temporal de solo lectura para una fotografía ya publicada.
+     */
+    URI authorizeDownload(String objectKey, Duration validity);
 }

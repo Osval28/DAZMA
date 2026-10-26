@@ -13,3 +13,7 @@ services:
       - "3000:3000"
       - "4317:4317"
       - "4318:4318"
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
