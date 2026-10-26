@@ -12,6 +12,8 @@ import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
@@ -89,6 +91,39 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
         assertEquals(expectedObjectKey, request.putObjectRequest().key());
         assertEquals("image/jpeg", request.putObjectRequest().contentType());
         assertEquals(2_000_000, request.putObjectRequest().contentLength());
+    }
+
+    @Test
+    void shouldGenerateATemporaryDownloadUrlForAPublishedPhoto() throws Exception {
+        Duration validity = Duration.ofMinutes(10);
+        PresignedGetObjectRequest presignedRequest = mock(PresignedGetObjectRequest.class);
+        when(presignedRequest.url()).thenReturn(
+                URI.create("https://storage.example/download").toURL()
+        );
+        when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
+                .thenReturn(presignedRequest);
+
+        URI url = adapter.authorizeDownload("publications/owner/photo", validity);
+
+        ArgumentCaptor<GetObjectPresignRequest> captor =
+                ArgumentCaptor.forClass(GetObjectPresignRequest.class);
+        verify(s3Presigner).presignGetObject(captor.capture());
+        assertEquals(URI.create("https://storage.example/download"), url);
+        assertEquals(validity, captor.getValue().signatureDuration());
+        assertEquals(BUCKET_NAME, captor.getValue().getObjectRequest().bucket());
+        assertEquals("publications/owner/photo", captor.getValue().getObjectRequest().key());
+    }
+
+    @Test
+    void shouldRejectADownloadWithoutKeyOrValidity() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> adapter.authorizeDownload(" ", Duration.ofMinutes(10))
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> adapter.authorizeDownload("publications/owner/photo", Duration.ZERO)
+        );
     }
 
     @Test

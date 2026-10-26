@@ -6,11 +6,13 @@ import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePo
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
@@ -133,6 +135,27 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
                     .key(objectKey)
                     .build());
         }
+    }
+
+    @Override
+    public URI authorizeDownload(String objectKey, Duration validity) {
+        String normalizedObjectKey = requireText(
+                objectKey,
+                "La clave de la fotografía es obligatoria"
+        );
+        if (validity == null || validity.isZero() || validity.isNegative()) {
+            throw new IllegalArgumentException("La vigencia de descarga debe ser mayor que cero");
+        }
+
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(validity)
+                .getObjectRequest(GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(normalizedObjectKey)
+                        .build())
+                .build();
+
+        return URI.create(s3Presigner.presignGetObject(presignRequest).url().toString());
     }
 
     private static String createPendingObjectKey(UUID ownerId, UUID photoId) {

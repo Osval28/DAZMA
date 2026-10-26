@@ -344,7 +344,7 @@ components:
     PublicationResponse:
       type: object
       additionalProperties: false
-      required: [id, name, type, description, municipality, status, owner, photos, createdAt]
+      required: [id, name, type, description, municipality, price, status, owner, photos, createdAt]
       properties:
         id:
           type: string
@@ -357,6 +357,11 @@ components:
           type: string
         municipality:
           type: string
+        price:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Valor de negocio indicado para la publicación.
         status:
           $ref: '#/components/schemas/PublicationStatus'
         owner:
@@ -372,13 +377,11 @@ components:
     PublicationOwner:
       type: object
       additionalProperties: false
-      required: [id, name]
+      required: [id]
       properties:
         id:
           type: string
           format: uuid
-        name:
-          type: string
 
     PublicationPhoto:
       type: object
@@ -391,6 +394,7 @@ components:
         url:
           type: string
           format: uri
+          description: URL firmada de solo lectura; vence según dazma.publications.photo-download.validity.
         position:
           type: integer
           minimum: 0

@@ -24,6 +24,8 @@ import java.util.List;
 @Configuration
 public class SecurityConfiguration {
 
+    static final String PUBLIC_PUBLICATION_DETAIL_PATH = "/api/publications/{publicationId}";
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -53,6 +55,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, SessionController.CSRF_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, SessionController.PATH).permitAll()
                         .requestMatchers(HttpMethod.DELETE, SessionController.PATH).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_PUBLICATION_DETAIL_PATH).permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().denyAll()
                 );
