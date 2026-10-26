@@ -198,6 +198,20 @@ class SecurityConfigurationTest {
     }
 
     @Test
+    void shouldNotHideErrorDispatchesBehindAuthentication() throws Exception {
+        mockMvc.perform(get("/error").with(request -> {
+                    request.setDispatcherType(jakarta.servlet.DispatcherType.ERROR);
+                    return request;
+                }))
+                .andExpect(result -> org.junit.jupiter.api.Assertions.assertNotEquals(
+                        401,
+                        result.getResponse().getStatus()
+                ));
+
+        verifyNoInteractions(authenticateIdentityUseCase);
+    }
+
+    @Test
     void shouldReturnForbiddenProblemWhenAuthenticatedUserAccessesDeniedRoute() throws Exception {
         when(authenticateIdentityUseCase.authenticate("valid-token", false))
                 .thenReturn(new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true));
