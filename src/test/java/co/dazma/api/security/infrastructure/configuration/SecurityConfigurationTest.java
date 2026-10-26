@@ -46,7 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = {
         UserController.class,
-        SecurityConfigurationTest.HealthController.class
+        SecurityConfigurationTest.HealthController.class,
+        SecurityConfigurationTest.PublicationDetailController.class
 })
 @Import({
         SecurityConfiguration.class,
@@ -185,6 +186,14 @@ class SecurityConfigurationTest {
     }
 
     @Test
+    void shouldAllowPublicationDetailWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/api/publications/{publicationId}", java.util.UUID.randomUUID()))
+                .andExpect(status().isOk());
+
+        verifyNoInteractions(authenticateIdentityUseCase);
+    }
+
+    @Test
     void shouldReturnForbiddenProblemWhenAuthenticatedUserAccessesDeniedRoute() throws Exception {
         when(authenticateIdentityUseCase.authenticate("valid-token", false))
                 .thenReturn(new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true));
@@ -221,6 +230,15 @@ class SecurityConfigurationTest {
         }
     }
 
+    @RestController
+    public static class PublicationDetailController {
+
+        @GetMapping(SecurityConfiguration.PUBLIC_PUBLICATION_DETAIL_PATH)
+        String detail() {
+            return "{}";
+        }
+    }
+
     @TestConfiguration(proxyBeanMethods = false)
     static class FilterTestConfiguration {
 
@@ -248,6 +266,11 @@ class SecurityConfigurationTest {
         @Bean
         HealthController healthController() {
             return new HealthController();
+        }
+
+        @Bean
+        PublicationDetailController publicationDetailController() {
+            return new PublicationDetailController();
         }
     }
 }

@@ -3,6 +3,7 @@ package co.dazma.api.publications.infrastructure.output.repositories.nonstructur
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.entities.PublicationCacheEntity;
 import co.dazma.api.publications.services.output.ports.PublicationCachePort;
+import co.dazma.api.shared.domain.errors.DomainInvalidException;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,11 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
         } catch (DataAccessException | JacksonException exception) {
             log.warn("No se pudo leer la publicación de la caché; se usará la base de datos. key={}, causa={}",
                     key, exception.getClass().getSimpleName());
+            return Optional.empty();
+        } catch (DomainInvalidException exception) {
+            log.warn("La publicación en caché ya no cumple las reglas del dominio; se descarta. key={}, causa={}",
+                    key, exception.getClass().getSimpleName());
+            evict(publicationId);
             return Optional.empty();
         }
     }
