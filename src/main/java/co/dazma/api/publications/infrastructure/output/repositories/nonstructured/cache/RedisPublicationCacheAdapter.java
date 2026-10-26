@@ -47,11 +47,11 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
             PublicationCacheEntity entity = jsonMapper.readValue(json, PublicationCacheEntity.class);
             return Optional.of(cacheMapper.toDomain(entity));
         } catch (DataAccessException | JacksonException exception) {
-            log.warn("Could not read publication from cache; falling back to the database. key={}, cause={}",
+            log.warn("No se pudo leer la publicación de la caché; se usará la base de datos. key={}, causa={}",
                     key, describe(exception));
             return Optional.empty();
         } catch (DomainInvalidException exception) {
-            log.warn("Cached publication no longer satisfies domain rules; discarding it. key={}, cause={}",
+            log.warn("La publicación en caché ya no cumple las reglas del dominio; se descarta. key={}, causa={}",
                     key, exception.getClass().getSimpleName());
             evict(publicationId);
             return Optional.empty();
@@ -65,7 +65,7 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
             String json = jsonMapper.writeValueAsString(cacheMapper.toEntity(publication));
             redisTemplate.opsForValue().set(key, json, properties.ttl());
         } catch (DataAccessException | JacksonException exception) {
-            log.warn("Could not write publication to cache. key={}, cause={}",
+            log.warn("No se pudo guardar la publicación en la caché. key={}, causa={}",
                     key, describe(exception));
         }
     }
@@ -76,7 +76,7 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
         try {
             redisTemplate.delete(key);
         } catch (DataAccessException exception) {
-            log.warn("Could not evict publication from cache; it will expire by TTL. key={}, cause={}",
+            log.warn("No se pudo invalidar la publicación en la caché; expirará por TTL. key={}, causa={}",
                     key, describe(exception));
         }
     }
