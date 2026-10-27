@@ -27,6 +27,18 @@ public enum ChatErrorCode implements ErrorCode {
     SELF_CHAT_NOT_ALLOWED(
             "CHAT_SELF_NOT_ALLOWED",
             "chat.self.not-allowed"
+    ),
+    PARTICIPANT_EXTERNAL_ID_REQUIRED(
+            "CHAT_PARTICIPANT_EXTERNAL_ID_REQUIRED",
+            "chat.participant.external-id.required"
+    ),
+    PARTICIPANT_NOT_READY(
+            "CHAT_PARTICIPANT_NOT_READY",
+            "chat.participant.not-ready"
+    ),
+    PARTICIPANT_CANNOT_OPERATE(
+            "CHAT_PARTICIPANT_CANNOT_OPERATE",
+            "chat.participant.cannot-operate"
     );
 
     private final String code;
