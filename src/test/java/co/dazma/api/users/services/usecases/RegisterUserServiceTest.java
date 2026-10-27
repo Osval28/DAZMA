@@ -6,9 +6,12 @@ import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
+import co.dazma.api.users.events.UserRegistered;
+import co.dazma.api.users.services.output.ports.UserEventsPort;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.support.TransactionOperations;
 
 import java.util.Optional;
 
@@ -19,12 +22,18 @@ import static org.mockito.Mockito.*;
 class RegisterUserServiceTest {
 
     private UserRepositoryPort userRepository;
+    private UserEventsPort userEvents;
     private RegisterUserService registerUserService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepositoryPort.class);
-        registerUserService = new RegisterUserService(userRepository);
+        userEvents = mock(UserEventsPort.class);
+        registerUserService = new RegisterUserService(
+                userRepository,
+                userEvents,
+                TransactionOperations.withoutTransaction()
+        );
     }
 
     @Test
@@ -48,6 +57,24 @@ class RegisterUserServiceTest {
         assertEquals("firebase-123", registeredUser.getExternalId());
 
         verify(userRepository).save(registeredUser);
+    }
+
+    @Test
+    void shouldAnnounceTheRegisteredUserWithItsEmail() {
+        when(userRepository.findByExternalId("firebase-123"))
+                .thenReturn(Optional.empty());
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        User registeredUser = registerUserService.registerUser(
+                "Ana",
+                "3001234567",
+                "Rionegro",
+                "firebase-123",
+                "ana@dazma.store"
+        );
+
+        verify(userEvents).publish(new UserRegistered(registeredUser.getId(), "ana@dazma.store"));
     }
 
     @Test
@@ -75,5 +102,6 @@ class RegisterUserServiceTest {
 
         assertEquals("USER_ALREADY_REGISTERED", exception.code());
         verify(userRepository, never()).save(any(User.class));
+        verifyNoInteractions(userEvents);
     }
 }

@@ -1,10 +1,8 @@
 package co.dazma.api.notifications.services.input.ports;
 
-import co.dazma.api.notifications.domain.EmailMessage;
+import co.dazma.api.notifications.services.input.dto.SendEmailInputDto;
 
 public interface SendEmailUseCase {
 
-    void send(EmailMessage emailMessage);
-
-
+    void send(SendEmailInputDto input);
 }

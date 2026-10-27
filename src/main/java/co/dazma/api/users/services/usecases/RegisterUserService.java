@@ -6,17 +6,28 @@ import co.dazma.api.users.domain.Phone;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserAlreadyRegisteredException;
+import co.dazma.api.users.events.UserRegistered;
 import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import co.dazma.api.users.services.output.ports.UserEventsPort;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionOperations;
 
 @Service
 public class RegisterUserService implements RegisterUserUseCase {
 
     private final UserRepositoryPort userRepository;
+    private final UserEventsPort userEvents;
+    private final TransactionOperations transaction;
 
-    public RegisterUserService(UserRepositoryPort userRepository) {
+    public RegisterUserService(
+            UserRepositoryPort userRepository,
+            UserEventsPort userEvents,
+            TransactionOperations transaction
+    ) {
         this.userRepository = userRepository;
+        this.userEvents = userEvents;
+        this.transaction = transaction;
     }
 
     @Override
@@ -28,6 +39,12 @@ public class RegisterUserService implements RegisterUserUseCase {
         User user = User.register(new Name(name), new Phone(phone), new Municipality(municipality),
                 externalId, new Email(email));
 
-        return userRepository.save(user);
+        return transaction.execute(status -> saveAndAnnounce(user));
+    }
+
+    private User saveAndAnnounce(User user) {
+        User savedUser = userRepository.save(user);
+        userEvents.publish(new UserRegistered(savedUser.getId(), savedUser.getEmail().value()));
+        return savedUser;
     }
 }
