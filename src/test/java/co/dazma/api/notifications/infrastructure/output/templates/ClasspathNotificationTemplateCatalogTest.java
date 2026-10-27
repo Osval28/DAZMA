@@ -33,4 +33,13 @@ class ClasspathNotificationTemplateCatalogTest {
         assertTrue(content.body().contains("<meta charset=\"UTF-8\">"));
         assertTrue(content.body().contains("¡Tu publicación ya está disponible!"));
     }
+
+    @Test
+    void shouldRenderTheAccountCreatedTemplateAsUtf8Html() {
+        NotificationContent content = catalog.render(NotificationType.ACCOUNT_CREATED, Map.of());
+
+        assertEquals("Bienvenido a DAZMA", content.subject());
+        assertTrue(content.body().contains("<meta charset=\"UTF-8\">"));
+        assertTrue(content.body().contains("¡Tu cuenta ya está lista!"));
+    }
 }

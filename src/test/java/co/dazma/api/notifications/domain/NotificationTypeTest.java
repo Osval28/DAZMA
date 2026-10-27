@@ -9,5 +9,6 @@ class NotificationTypeTest {
     @Test
     void shouldExposeAKebabCaseKey() {
         assertEquals("publication-created", NotificationType.PUBLICATION_CREATED.key());
+        assertEquals("account-created", NotificationType.ACCOUNT_CREATED.key());
     }
 }
