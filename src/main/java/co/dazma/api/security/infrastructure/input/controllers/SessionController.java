@@ -6,8 +6,8 @@ import co.dazma.api.security.infrastructure.input.dto.OpenSessionRequestDto;
 import co.dazma.api.security.services.input.dto.CloseSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionOutputDto;
-import co.dazma.api.security.services.input.ports.CloseSessionUseCase;
-import co.dazma.api.security.services.input.ports.OpenSessionUseCase;
+import co.dazma.api.security.services.input.ports.CloseSessionInputPort;
+import co.dazma.api.security.services.input.ports.OpenSessionInputPort;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +33,15 @@ public class SessionController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionController.class);
 
-    private final OpenSessionUseCase openSessionUseCase;
-    private final CloseSessionUseCase closeSessionUseCase;
+    private final OpenSessionInputPort openSessionInputPort;
+    private final CloseSessionInputPort closeSessionInputPort;
 
     public SessionController(
-            OpenSessionUseCase openSessionUseCase,
-            CloseSessionUseCase closeSessionUseCase
+            OpenSessionInputPort openSessionInputPort,
+            CloseSessionInputPort closeSessionInputPort
     ) {
-        this.openSessionUseCase = openSessionUseCase;
-        this.closeSessionUseCase = closeSessionUseCase;
+        this.openSessionInputPort = openSessionInputPort;
+        this.closeSessionInputPort = closeSessionInputPort;
     }
 
     @GetMapping("/csrf")
@@ -52,7 +52,7 @@ public class SessionController {
 
     @PostMapping
     public ResponseEntity<Void> open(@RequestBody @Valid OpenSessionRequestDto request) {
-        OpenSessionOutputDto session = openSessionUseCase.open(new OpenSessionInputDto(request.idToken()));
+        OpenSessionOutputDto session = openSessionInputPort.execute(new OpenSessionInputDto(request.idToken()));
 
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE,
@@ -75,7 +75,7 @@ public class SessionController {
 
     private void revokeQuietly(String sessionToken) {
         try {
-            closeSessionUseCase.close(new CloseSessionInputDto(sessionToken));
+            closeSessionInputPort.execute(new CloseSessionInputDto(sessionToken));
         } catch (SessionRevocationException exception) {
             LOGGER.warn("No se pudo revocar la sesión en Firebase; la cookie se elimina de todas formas.", exception);
         }

@@ -4,8 +4,8 @@ import co.dazma.api.security.domain.SessionRevocationException;
 import co.dazma.api.security.services.input.dto.CloseSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionOutputDto;
-import co.dazma.api.security.services.input.ports.CloseSessionUseCase;
-import co.dazma.api.security.services.input.ports.OpenSessionUseCase;
+import co.dazma.api.security.services.input.ports.CloseSessionInputPort;
+import co.dazma.api.security.services.input.ports.OpenSessionInputPort;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,23 +35,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class SessionControllerTest {
 
-    private OpenSessionUseCase openSessionUseCase;
-    private CloseSessionUseCase closeSessionUseCase;
+    private OpenSessionInputPort openSessionInputPort;
+    private CloseSessionInputPort closeSessionInputPort;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        openSessionUseCase = mock(OpenSessionUseCase.class);
-        closeSessionUseCase = mock(CloseSessionUseCase.class);
+        openSessionInputPort = mock(OpenSessionInputPort.class);
+        closeSessionInputPort = mock(CloseSessionInputPort.class);
         mockMvc = MockMvcBuilders
-                .standaloneSetup(new SessionController(openSessionUseCase, closeSessionUseCase))
+                .standaloneSetup(new SessionController(openSessionInputPort, closeSessionInputPort))
                 .setCustomArgumentResolvers(new CsrfTokenArgumentResolver())
                 .build();
     }
 
     @Test
     void shouldOpenASessionWithAnHttpOnlyCookie() throws Exception {
-        when(openSessionUseCase.open(new OpenSessionInputDto("id-token")))
+        when(openSessionInputPort.execute(new OpenSessionInputDto("id-token")))
                 .thenReturn(new OpenSessionOutputDto("session-token", Duration.ofHours(8)));
 
         mockMvc.perform(post("/api/sessions")
@@ -90,7 +90,7 @@ class SessionControllerTest {
                                 """))
                 .andExpect(status().isBadRequest());
 
-        verify(openSessionUseCase, never()).open(any());
+        verify(openSessionInputPort, never()).execute(any());
     }
 
     @Test
@@ -103,13 +103,13 @@ class SessionControllerTest {
                         containsString("Max-Age=0")
                 )));
 
-        verify(closeSessionUseCase).close(new CloseSessionInputDto("session-token"));
+        verify(closeSessionInputPort).execute(new CloseSessionInputDto("session-token"));
     }
 
     @Test
     void shouldExpireTheCookieEvenWhenTheRevocationFails() throws Exception {
         doThrow(new SessionRevocationException(new IllegalStateException("Firebase no disponible")))
-                .when(closeSessionUseCase).close(new CloseSessionInputDto("session-token"));
+                .when(closeSessionInputPort).execute(new CloseSessionInputDto("session-token"));
 
         mockMvc.perform(delete("/api/sessions")
                         .cookie(new Cookie("dazma_session", "session-token")))
@@ -123,7 +123,7 @@ class SessionControllerTest {
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Max-Age=0")));
 
-        verifyNoInteractions(closeSessionUseCase);
+        verifyNoInteractions(closeSessionInputPort);
     }
 
 }

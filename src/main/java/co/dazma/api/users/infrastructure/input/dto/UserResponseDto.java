@@ -1,19 +1,19 @@
 package co.dazma.api.users.infrastructure.input.dto;
 
-import co.dazma.api.users.domain.User;
+import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
 
 import java.util.UUID;
 
 public record UserResponseDto(UUID id, String name, String phone, String municipality, String state, String role) {
 
-    public static UserResponseDto fromModel(User user) {
+    public static UserResponseDto from(RegisterUserOutputDto user) {
         return new UserResponseDto(
-                user.getId(),
-                user.getName().value(),
-                user.getPhone().number(),
-                user.getMunicipality().name(),
-                user.getState().name(),
-                user.getRole().name()
+                user.id(),
+                user.name(),
+                user.phone(),
+                user.municipality(),
+                user.state().name(),
+                user.role().name()
         );
     }
 }

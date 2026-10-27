@@ -4,14 +4,22 @@ import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthentication
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseSessionTokenIssuer;
-import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
-import co.dazma.api.security.services.input.ports.CloseSessionUseCase;
-import co.dazma.api.security.services.input.ports.OpenSessionUseCase;
+import co.dazma.api.security.services.input.adapters.AuthenticateIdentityInputAdapter;
+import co.dazma.api.security.services.input.adapters.CloseSessionInputAdapter;
+import co.dazma.api.security.services.input.adapters.OpenSessionInputAdapter;
+import co.dazma.api.security.services.input.adapters.mappers.AuthenticatedIdentityMapper;
+import co.dazma.api.security.services.input.adapters.mappers.SessionMapper;
+import co.dazma.api.security.services.input.ports.AuthenticateIdentityInputPort;
+import co.dazma.api.security.services.input.ports.CloseSessionInputPort;
+import co.dazma.api.security.services.input.ports.OpenSessionInputPort;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
 import co.dazma.api.security.services.output.ports.SessionTokenIssuer;
-import co.dazma.api.security.services.usecases.AuthenticateIdentityService;
-import co.dazma.api.security.services.usecases.CloseSessionService;
-import co.dazma.api.security.services.usecases.OpenSessionService;
+import co.dazma.api.security.services.usecases.contract.AuthenticateIdentityUseCase;
+import co.dazma.api.security.services.usecases.contract.CloseSessionUseCase;
+import co.dazma.api.security.services.usecases.contract.OpenSessionUseCase;
+import co.dazma.api.security.services.usecases.impl.AuthenticateIdentityService;
+import co.dazma.api.security.services.usecases.impl.CloseSessionService;
+import co.dazma.api.security.services.usecases.impl.OpenSessionService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -97,12 +105,29 @@ public class FirebaseConfiguration {
     }
 
     @Bean
+    public OpenSessionInputPort openSessionInputPort(OpenSessionUseCase openSessionUseCase) {
+        return new OpenSessionInputAdapter(openSessionUseCase, new SessionMapper());
+    }
+
+    @Bean
+    public CloseSessionInputPort closeSessionInputPort(CloseSessionUseCase closeSessionUseCase) {
+        return new CloseSessionInputAdapter(closeSessionUseCase);
+    }
+
+    @Bean
+    public AuthenticateIdentityInputPort authenticateIdentityInputPort(
+            AuthenticateIdentityUseCase authenticateIdentityUseCase
+    ) {
+        return new AuthenticateIdentityInputAdapter(authenticateIdentityUseCase, new AuthenticatedIdentityMapper());
+    }
+
+    @Bean
     public FirebaseAuthenticationFilter firebaseAuthenticationFilter(
-            AuthenticateIdentityUseCase authenticateIdentityUseCase,
+            AuthenticateIdentityInputPort authenticateIdentityInputPort,
             ApiAuthenticationEntryPoint authenticationEntryPoint
     ) {
         return new FirebaseAuthenticationFilter(
-                authenticateIdentityUseCase,
+                authenticateIdentityInputPort,
                 authenticationEntryPoint
         );
     }

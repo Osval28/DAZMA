@@ -4,7 +4,7 @@ import co.dazma.api.publications.infrastructure.input.dto.AuthorizePublicationPh
 import co.dazma.api.publications.infrastructure.input.dto.PublicationPhotoUploadAuthorizationResponseDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
-import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
+import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadInputPort;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +19,12 @@ import java.security.Principal;
 @RequestMapping("/api/publications/photos")
 public class PublicationPhotoUploadController {
 
-    private final AuthorizePublicationPhotoUploadUseCase authorizeUploadUseCase;
+    private final AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort;
 
     public PublicationPhotoUploadController(
-            AuthorizePublicationPhotoUploadUseCase authorizeUploadUseCase
+            AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort
     ) {
-        this.authorizeUploadUseCase = authorizeUploadUseCase;
+        this.authorizeUploadInputPort = authorizeUploadInputPort;
     }
 
     @PostMapping("/upload-authorizations")
@@ -33,7 +33,7 @@ public class PublicationPhotoUploadController {
             @RequestBody @Valid AuthorizePublicationPhotoUploadRequestDto request,
             Principal principal
     ) {
-        AuthorizePublicationPhotoUploadOutputDto authorization = authorizeUploadUseCase.authorize(
+        AuthorizePublicationPhotoUploadOutputDto authorization = authorizeUploadInputPort.execute(
                 new AuthorizePublicationPhotoUploadInputDto(
                         principal.getName(),
                         request.contentType(),

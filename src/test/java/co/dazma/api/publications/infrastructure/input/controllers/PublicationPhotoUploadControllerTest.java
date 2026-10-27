@@ -2,7 +2,7 @@ package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
-import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadUseCase;
+import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadInputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -22,14 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class PublicationPhotoUploadControllerTest {
 
-    private AuthorizePublicationPhotoUploadUseCase authorizeUploadUseCase;
+    private AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        authorizeUploadUseCase = mock(AuthorizePublicationPhotoUploadUseCase.class);
+        authorizeUploadInputPort = mock(AuthorizePublicationPhotoUploadInputPort.class);
         PublicationPhotoUploadController controller = new PublicationPhotoUploadController(
-                authorizeUploadUseCase
+                authorizeUploadInputPort
         );
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
@@ -38,7 +38,7 @@ class PublicationPhotoUploadControllerTest {
     void shouldAuthorizeTheUploadForTheAuthenticatedUser() throws Exception {
         UUID photoId = UUID.randomUUID();
         Instant expiration = Instant.parse("2026-10-20T22:30:00Z");
-        when(authorizeUploadUseCase.authorize(
+        when(authorizeUploadInputPort.execute(
                 new AuthorizePublicationPhotoUploadInputDto(
                         "firebase-123",
                         "image/jpeg",
@@ -64,7 +64,7 @@ class PublicationPhotoUploadControllerTest {
                 .andExpect(jsonPath("$.uploadUrl").value("https://storage.example/upload"))
                 .andExpect(jsonPath("$.expiresAt").value("2026-10-20T22:30:00Z"));
 
-        verify(authorizeUploadUseCase).authorize(
+        verify(authorizeUploadInputPort).execute(
                 new AuthorizePublicationPhotoUploadInputDto(
                         "firebase-123",
                         "image/jpeg",
