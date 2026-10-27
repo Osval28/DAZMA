@@ -2,9 +2,11 @@ package co.dazma.api.security.infrastructure.output.firebase;
 
 import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +25,10 @@ class FirebaseIdentityTokenVerifierTest {
     @BeforeEach
     void setUp() {
         firebaseAuth = mock(FirebaseAuth.class);
-        verifier = new FirebaseIdentityTokenVerifier(firebaseAuth);
+        verifier = new FirebaseIdentityTokenVerifier(
+                firebaseAuth,
+                new ExternalDependencyObservation(ObservationRegistry.NOOP)
+        );
     }
 
     @Test

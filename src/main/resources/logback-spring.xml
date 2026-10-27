@@ -6,6 +6,7 @@
 
     <appender name="OpenTelemetry"
               class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+        <captureKeyValuePairAttributes>true</captureKeyValuePairAttributes>
         <captureMdcAttributes>traceId,spanId</captureMdcAttributes>
     </appender>
 
