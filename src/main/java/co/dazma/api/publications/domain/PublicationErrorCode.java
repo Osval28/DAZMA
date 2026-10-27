@@ -28,10 +28,6 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_OWNER_EXTERNAL_ID_REQUIRED",
             "publication.owner.external-id.required"
     ),
-    OWNER_STATE_REQUIRED(
-            "PUBLICATION_OWNER_STATE_REQUIRED",
-            "publication.owner.state.required"
-    ),
     NAME_REQUIRED(
             "PUBLICATION_NAME_REQUIRED",
             "publication.name.required"
