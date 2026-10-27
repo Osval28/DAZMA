@@ -2,7 +2,6 @@ package co.dazma.api.notifications.infrastructure.output.externalservices.resend
 
 import co.dazma.api.notifications.domain.EmailMessage;
 import co.dazma.api.notifications.infrastructure.configuration.ResendProperties;
-import co.dazma.api.notifications.services.output.ports.NotificationDeliveryException;
 import co.dazma.api.notifications.services.output.ports.NotificationGateway;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
@@ -47,7 +46,7 @@ public class ResendNotificationGateway implements NotificationGateway {
             resend.emails().send(email, options);
         } catch (ResendException exception) {
             throw new NotificationDeliveryException(
-                    "Resend no pudo enviar el correo (estado HTTP: " + exception.getStatusCode() + ")",
+                    exception.getStatusCode(),
                     isRetryable(exception.getStatusCode()),
                     exception
             );

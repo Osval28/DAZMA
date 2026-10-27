@@ -2,7 +2,6 @@ package co.dazma.api.notifications.infrastructure.output.externalservices.resend
 
 import co.dazma.api.notifications.domain.EmailMessage;
 import co.dazma.api.notifications.infrastructure.configuration.ResendProperties;
-import co.dazma.api.notifications.services.output.ports.NotificationDeliveryException;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.core.net.RequestOptions;
