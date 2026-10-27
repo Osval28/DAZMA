@@ -2,10 +2,12 @@ package co.dazma.api.security.infrastructure.output.firebase;
 
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.domain.SessionRevocationException;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.SessionCookieOptions;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +33,10 @@ class FirebaseSessionTokenIssuerTest {
     @BeforeEach
     void setUp() {
         firebaseAuth = mock(FirebaseAuth.class);
-        issuer = new FirebaseSessionTokenIssuer(firebaseAuth);
+        issuer = new FirebaseSessionTokenIssuer(
+                firebaseAuth,
+                new ExternalDependencyObservation(ObservationRegistry.NOOP)
+        );
     }
 
     @Test

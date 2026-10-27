@@ -1,6 +1,6 @@
 package co.dazma.api.users.infrastructure.input.controllers;
 
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.users.infrastructure.input.dto.MyProfileResponseDto;
 import co.dazma.api.users.infrastructure.input.dto.RegisterUserRequestDto;
 import co.dazma.api.users.infrastructure.input.dto.UserResponseDto;
@@ -28,25 +28,25 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public MyProfileResponseDto getMyProfile(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+    public MyProfileResponseDto getMyProfile(@AuthenticationPrincipal CurrentUser currentUser) {
         GetMyProfileOutputDto profile = getMyProfileInputPort.execute(
-                new GetMyProfileInputDto(authenticatedUser.getName())
+                new GetMyProfileInputDto(currentUser.getName())
         );
-        return MyProfileResponseDto.from(profile, authenticatedUser.emailVerified());
+        return MyProfileResponseDto.from(profile, currentUser.emailVerified());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto registerUser(
             @RequestBody @Valid RegisterUserRequestDto request,
-            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+            @AuthenticationPrincipal CurrentUser currentUser
     ) {
         RegisterUserOutputDto registeredUser = registerUserInputPort.execute(new RegisterUserInputDto(
                 request.name(),
                 request.phone(),
                 request.municipality(),
-                authenticatedUser.getName(),
-                authenticatedUser.email()
+                currentUser.getName(),
+                currentUser.email()
         ));
 
         return UserResponseDto.from(registeredUser);

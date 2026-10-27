@@ -1,7 +1,7 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.services.input.dto.AuthenticateIdentityInputDto;
 import co.dazma.api.security.services.input.dto.AuthenticateIdentityOutputDto;
@@ -70,7 +70,7 @@ class FirebaseAuthenticationFilterTest {
         assertTrue(authentication.isAuthenticated());
         assertEquals("firebase-user-123", authentication.getName());
         assertEquals(
-                new AuthenticatedUser("firebase-user-123", "ana@dazma.store", true),
+                new CurrentUser("firebase-user-123", "ana@dazma.store", true),
                 authentication.getPrincipal()
         );
         verify(filterChain).doFilter(request, response);

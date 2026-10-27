@@ -3,6 +3,7 @@ package co.dazma.api.security.infrastructure.output.firebase;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.domain.SessionRevocationException;
 import co.dazma.api.security.services.output.ports.SessionTokenIssuer;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.SessionCookieOptions;
@@ -15,15 +16,24 @@ public class FirebaseSessionTokenIssuer implements SessionTokenIssuer {
     private static final String AUTH_TIME_CLAIM = "auth_time";
 
     private final FirebaseAuth firebaseAuth;
+    private final ExternalDependencyObservation observations;
 
-    public FirebaseSessionTokenIssuer(FirebaseAuth firebaseAuth) {
+    public FirebaseSessionTokenIssuer(
+            FirebaseAuth firebaseAuth,
+            ExternalDependencyObservation observations
+    ) {
         this.firebaseAuth = firebaseAuth;
+        this.observations = observations;
     }
 
     @Override
     public Instant signInTimeOf(String idToken) {
         try {
-            Object authTime = firebaseAuth.verifyIdToken(idToken).getClaims().get(AUTH_TIME_CLAIM);
+            Object authTime = observations.observeChecked(
+                    "firebase",
+                    "verify_id_token",
+                    () -> firebaseAuth.verifyIdToken(idToken)
+            ).getClaims().get(AUTH_TIME_CLAIM);
             if (!(authTime instanceof Number seconds)) {
                 throw new InvalidIdentityTokenException();
             }
@@ -39,7 +49,11 @@ public class FirebaseSessionTokenIssuer implements SessionTokenIssuer {
                 .setExpiresIn(validity.toMillis())
                 .build();
         try {
-            return firebaseAuth.createSessionCookie(idToken, options);
+            return observations.observeChecked(
+                    "firebase",
+                    "issue_session",
+                    () -> firebaseAuth.createSessionCookie(idToken, options)
+            );
         } catch (FirebaseAuthException exception) {
             throw new InvalidIdentityTokenException(exception);
         }
@@ -48,7 +62,11 @@ public class FirebaseSessionTokenIssuer implements SessionTokenIssuer {
     @Override
     public void revokeSessions(String uid) {
         try {
-            firebaseAuth.revokeRefreshTokens(uid);
+            observations.observeChecked(
+                    "firebase",
+                    "revoke_sessions",
+                    () -> firebaseAuth.revokeRefreshTokens(uid)
+            );
         } catch (FirebaseAuthException exception) {
             throw new SessionRevocationException(exception);
         }

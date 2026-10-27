@@ -8,10 +8,12 @@ import co.dazma.api.security.services.input.ports.AuthenticateIdentityInputPort;
 import co.dazma.api.security.services.usecases.contract.AuthenticateIdentityUseCase;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
 import co.dazma.api.security.services.usecases.impl.AuthenticateIdentityService;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -98,7 +100,10 @@ class FirebaseConfigurationTest {
         ApiAuthenticationEntryPoint authenticationEntryPoint =
                 mock(ApiAuthenticationEntryPoint.class);
 
-        IdentityTokenVerifier verifier = configuration.identityTokenVerifier(firebaseAuth);
+        IdentityTokenVerifier verifier = configuration.identityTokenVerifier(
+                firebaseAuth,
+                new ExternalDependencyObservation(ObservationRegistry.NOOP)
+        );
         AuthenticateIdentityUseCase useCase = configuration.authenticateIdentityUseCase(verifier);
         AuthenticateIdentityInputPort inputPort = configuration.authenticateIdentityInputPort(useCase);
         FirebaseAuthenticationFilter filter = configuration.firebaseAuthenticationFilter(

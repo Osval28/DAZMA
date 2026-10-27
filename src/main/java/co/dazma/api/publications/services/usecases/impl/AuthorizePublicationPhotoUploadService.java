@@ -5,7 +5,6 @@ import co.dazma.api.publications.domain.PhotoUploadRequest;
 import co.dazma.api.publications.domain.PublicationErrorCode;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort;
-import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.usecases.contract.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.publications.services.usecases.models.PhotoUploadGrant;
@@ -19,18 +18,18 @@ import java.util.UUID;
 public class AuthorizePublicationPhotoUploadService
         implements AuthorizePublicationPhotoUploadUseCase {
 
-    private final PublicationOwnerPort publicationOwners;
+    private final OperatingOwnerResolver operatingOwners;
     private final PublicationPhotoStoragePort photoStorage;
     private final PhotoUploadParametersPort parameters;
 
     public AuthorizePublicationPhotoUploadService(
-            PublicationOwnerPort publicationOwners,
+            OperatingOwnerResolver operatingOwners,
             PublicationPhotoStoragePort photoStorage,
             PhotoUploadParametersPort parameters
     ) {
-        this.publicationOwners = Objects.requireNonNull(
-                publicationOwners,
-                "El puerto de propietarios de publicaciones es obligatorio"
+        this.operatingOwners = Objects.requireNonNull(
+                operatingOwners,
+                "El resolutor de propietarios de publicaciones es obligatorio"
         );
         this.photoStorage = Objects.requireNonNull(
                 photoStorage,
@@ -44,7 +43,7 @@ public class AuthorizePublicationPhotoUploadService
 
     @Override
     public PhotoUploadGrant execute(PhotoUploadRequest request) {
-        UUID ownerId = publicationOwners.resolveOperatingOwner(request.ownerExternalId());
+        UUID ownerId = operatingOwners.resolve(request.ownerExternalId());
         String contentType = normalizeContentType(request.contentType());
         validateContentLength(request.contentLength());
 
@@ -96,5 +95,4 @@ public class AuthorizePublicationPhotoUploadService
             );
         }
     }
-
 }
