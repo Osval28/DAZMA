@@ -6,14 +6,18 @@ import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
+import co.dazma.api.publications.domain.PublicationOwner;
+import co.dazma.api.publications.domain.PublicationOwnerCannotOperateException;
 import co.dazma.api.publications.domain.PublicationOwnerEmailNotVerifiedException;
+import co.dazma.api.publications.domain.PublicationOwnerNotReadyException;
+import co.dazma.api.publications.domain.PublicationOwnerState;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationDraft;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.events.PublicationCreated;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
-import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
+import co.dazma.api.publications.services.output.ports.PublicationOwnerRepositoryPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.shared.domain.Municipality;
@@ -50,7 +54,7 @@ class CreatePublicationServiceTest {
     private static final Instant NOW = Instant.parse("2026-10-20T20:00:00Z");
     private static final String EXTERNAL_ID = "firebase-123";
 
-    private PublicationOwnerPort publicationOwners;
+    private PublicationOwnerRepositoryPort ownerRepository;
     private UUID ownerId;
     private PublicationRepositoryPort publicationRepository;
     private PublicationPhotoStoragePort photoStorage;
@@ -60,15 +64,16 @@ class CreatePublicationServiceTest {
 
     @BeforeEach
     void setUp() {
-        publicationOwners = mock(PublicationOwnerPort.class);
+        ownerRepository = mock(PublicationOwnerRepositoryPort.class);
         ownerId = UUID.randomUUID();
-        when(publicationOwners.resolveOperatingOwner(EXTERNAL_ID)).thenReturn(ownerId);
+        when(ownerRepository.findByExternalId(EXTERNAL_ID))
+                .thenReturn(Optional.of(new PublicationOwner(ownerId, EXTERNAL_ID, PublicationOwnerState.ACTIVE)));
         publicationRepository = mock(PublicationRepositoryPort.class);
         photoStorage = mock(PublicationPhotoStoragePort.class);
         publicationEvents = mock(PublicationEventsPort.class);
         transaction = new RecordingTransaction();
         service = new CreatePublicationService(
-                publicationOwners,
+                new OperatingOwnerResolver(ownerRepository),
                 publicationRepository,
                 photoStorage,
                 publicationEvents,
@@ -221,7 +226,7 @@ class CreatePublicationServiceTest {
         );
 
         verifyNoInteractions(
-                publicationOwners,
+                ownerRepository,
                 photoStorage,
                 publicationRepository,
                 publicationEvents
@@ -256,15 +261,26 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldNotTouchStorageWhenTheOwnerCannotOperate() {
-        IllegalStateException rejection = new IllegalStateException("cannot operate");
-        when(publicationOwners.resolveOperatingOwner(EXTERNAL_ID)).thenThrow(rejection);
+        when(ownerRepository.findByExternalId(EXTERNAL_ID))
+                .thenReturn(Optional.of(new PublicationOwner(ownerId, EXTERNAL_ID, PublicationOwnerState.SUSPENDED)));
 
-        IllegalStateException thrown = assertThrows(
-                IllegalStateException.class,
+        assertThrows(
+                PublicationOwnerCannotOperateException.class,
                 () -> service.execute(draft(List.of(UUID.randomUUID())))
         );
 
-        assertSame(rejection, thrown);
+        verifyNoInteractions(photoStorage, publicationRepository, publicationEvents);
+    }
+
+    @Test
+    void shouldAnswerNotReadyWhenTheOwnerCopyHasNotArrivedYet() {
+        when(ownerRepository.findByExternalId(EXTERNAL_ID)).thenReturn(Optional.empty());
+
+        assertThrows(
+                PublicationOwnerNotReadyException.class,
+                () -> service.execute(draft(List.of(UUID.randomUUID())))
+        );
+
         verifyNoInteractions(photoStorage, publicationRepository, publicationEvents);
     }
 

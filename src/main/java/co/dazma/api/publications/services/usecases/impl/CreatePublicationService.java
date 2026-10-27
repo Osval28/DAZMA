@@ -4,7 +4,6 @@ import co.dazma.api.publications.domain.*;
 import co.dazma.api.publications.events.PublicationCreated;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
-import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.publications.services.usecases.contract.CreatePublicationUseCase;
@@ -20,7 +19,7 @@ import java.util.UUID;
 @Service
 public class CreatePublicationService implements CreatePublicationUseCase {
 
-    private final PublicationOwnerPort publicationOwners;
+    private final OperatingOwnerResolver operatingOwners;
     private final PublicationRepositoryPort publicationRepository;
     private final PublicationPhotoStoragePort photoStorage;
     private final PublicationEventsPort publicationEvents;
@@ -28,16 +27,16 @@ public class CreatePublicationService implements CreatePublicationUseCase {
     private final Clock clock;
 
     public CreatePublicationService(
-            PublicationOwnerPort publicationOwners,
+            OperatingOwnerResolver operatingOwners,
             PublicationRepositoryPort publicationRepository,
             PublicationPhotoStoragePort photoStorage,
             PublicationEventsPort publicationEvents,
             TransactionOperations transaction,
             Clock clock
     ) {
-        this.publicationOwners = Objects.requireNonNull(
-                publicationOwners,
-                "El puerto de propietarios de publicaciones es obligatorio"
+        this.operatingOwners = Objects.requireNonNull(
+                operatingOwners,
+                "El resolutor de propietarios de publicaciones es obligatorio"
         );
         this.publicationRepository = Objects.requireNonNull(
                 publicationRepository,
@@ -61,7 +60,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
             throw new PublicationOwnerEmailNotVerifiedException();
         }
 
-        UUID ownerId = publicationOwners.resolveOperatingOwner(draft.ownerExternalId());
+        UUID ownerId = operatingOwners.resolve(draft.ownerExternalId());
 
         List<String> promotedObjectKeys = new ArrayList<>();
         Publication savedPublication;

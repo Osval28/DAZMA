@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.input.mapper.PublicationWebMapper;
@@ -125,7 +125,7 @@ class PublicationControllerTest {
     }
 
     private void setAuthenticatedUser(boolean emailVerified) {
-        AuthenticatedUser authenticatedUser = new AuthenticatedUser(
+        CurrentUser authenticatedUser = new CurrentUser(
                 "firebase-123",
                 "ana@dazma.store",
                 emailVerified
