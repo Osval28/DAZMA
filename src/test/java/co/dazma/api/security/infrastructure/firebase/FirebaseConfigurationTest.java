@@ -3,9 +3,11 @@ package co.dazma.api.security.infrastructure.firebase;
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
-import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
+import co.dazma.api.security.services.input.adapters.AuthenticateIdentityInputAdapter;
+import co.dazma.api.security.services.input.ports.AuthenticateIdentityInputPort;
+import co.dazma.api.security.services.usecases.contract.AuthenticateIdentityUseCase;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
-import co.dazma.api.security.services.usecases.AuthenticateIdentityService;
+import co.dazma.api.security.services.usecases.impl.AuthenticateIdentityService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -98,8 +100,9 @@ class FirebaseConfigurationTest {
 
         IdentityTokenVerifier verifier = configuration.identityTokenVerifier(firebaseAuth);
         AuthenticateIdentityUseCase useCase = configuration.authenticateIdentityUseCase(verifier);
+        AuthenticateIdentityInputPort inputPort = configuration.authenticateIdentityInputPort(useCase);
         FirebaseAuthenticationFilter filter = configuration.firebaseAuthenticationFilter(
-                useCase,
+                inputPort,
                 authenticationEntryPoint
         );
         FilterRegistrationBean<FirebaseAuthenticationFilter> registration =
@@ -107,6 +110,7 @@ class FirebaseConfigurationTest {
 
         assertInstanceOf(FirebaseIdentityTokenVerifier.class, verifier);
         assertInstanceOf(AuthenticateIdentityService.class, useCase);
+        assertInstanceOf(AuthenticateIdentityInputAdapter.class, inputPort);
         assertInstanceOf(FirebaseAuthenticationFilter.class, filter);
         assertSame(filter, registration.getFilter());
         org.junit.jupiter.api.Assertions.assertFalse(registration.isEnabled());

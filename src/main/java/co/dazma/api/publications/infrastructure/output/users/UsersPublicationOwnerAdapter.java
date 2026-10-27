@@ -1,7 +1,7 @@
 package co.dazma.api.publications.infrastructure.output.users;
 
 import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
-import co.dazma.api.users.services.input.ports.ResolveUserIdUseCase;
+import co.dazma.api.users.services.input.ports.ResolveUserIdInputPort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -9,14 +9,14 @@ import java.util.UUID;
 @Component
 public class UsersPublicationOwnerAdapter implements PublicationOwnerPort {
 
-    private final ResolveUserIdUseCase resolveUserIdUseCase;
+    private final ResolveUserIdInputPort resolveUserIdInputPort;
 
-    public UsersPublicationOwnerAdapter(ResolveUserIdUseCase resolveUserIdUseCase) {
-        this.resolveUserIdUseCase = resolveUserIdUseCase;
+    public UsersPublicationOwnerAdapter(ResolveUserIdInputPort resolveUserIdInputPort) {
+        this.resolveUserIdInputPort = resolveUserIdInputPort;
     }
 
     @Override
     public UUID resolveOperatingOwner(String externalId) {
-        return resolveUserIdUseCase.resolveByExternalId(externalId);
+        return resolveUserIdInputPort.execute(externalId);
     }
 }

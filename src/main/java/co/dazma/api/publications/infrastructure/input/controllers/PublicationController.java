@@ -7,8 +7,8 @@ import co.dazma.api.publications.infrastructure.input.dto.GetPublicationResponse
 import co.dazma.api.publications.infrastructure.input.mapper.PublicationWebMapper;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
-import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
-import co.dazma.api.publications.services.input.ports.GetPublicationUseCase;
+import co.dazma.api.publications.services.input.ports.CreatePublicationInputPort;
+import co.dazma.api.publications.services.input.ports.GetPublicationInputPort;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,17 +27,17 @@ import java.util.UUID;
 @RequestMapping("/api/publications")
 public class PublicationController {
 
-    private final CreatePublicationUseCase createPublicationUseCase;
-    private final GetPublicationUseCase getPublicationUseCase;
+    private final CreatePublicationInputPort createPublicationInputPort;
+    private final GetPublicationInputPort getPublicationInputPort;
     private final PublicationWebMapper publicationWebMapper;
 
     public PublicationController(
-            CreatePublicationUseCase createPublicationUseCase,
-            GetPublicationUseCase getPublicationUseCase,
+            CreatePublicationInputPort createPublicationInputPort,
+            GetPublicationInputPort getPublicationInputPort,
             PublicationWebMapper publicationWebMapper
     ) {
-        this.createPublicationUseCase = createPublicationUseCase;
-        this.getPublicationUseCase = getPublicationUseCase;
+        this.createPublicationInputPort = createPublicationInputPort;
+        this.getPublicationInputPort = getPublicationInputPort;
         this.publicationWebMapper = publicationWebMapper;
     }
 
@@ -47,7 +47,7 @@ public class PublicationController {
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
             UriComponentsBuilder uriBuilder
     ) {
-        CreatePublicationOutputDto publication = createPublicationUseCase.create(
+        CreatePublicationOutputDto publication = createPublicationInputPort.execute(
                 new CreatePublicationInputDto(
                         authenticatedUser.uid(),
                         authenticatedUser.emailVerified(),
@@ -73,7 +73,7 @@ public class PublicationController {
     @GetMapping("/{publicationId}")
     public ResponseEntity<GetPublicationResponseDto> getById(@PathVariable UUID publicationId) {
         return ResponseEntity.ok(
-                publicationWebMapper.toResponse(getPublicationUseCase.getById(publicationId))
+                publicationWebMapper.toResponse(getPublicationInputPort.execute(publicationId))
         );
     }
 }

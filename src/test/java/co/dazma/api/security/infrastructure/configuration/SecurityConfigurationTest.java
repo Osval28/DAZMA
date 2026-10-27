@@ -1,20 +1,20 @@
 package co.dazma.api.security.infrastructure.configuration;
 
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.Name;
-import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.infrastructure.input.errors.ApiAccessDeniedHandler;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.input.errors.SecurityProblemWriter;
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
-import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
-import co.dazma.api.users.domain.User;
+import co.dazma.api.security.services.input.dto.AuthenticateIdentityInputDto;
+import co.dazma.api.security.services.input.dto.AuthenticateIdentityOutputDto;
+import co.dazma.api.security.services.input.ports.AuthenticateIdentityInputPort;
+import co.dazma.api.users.domain.Role;
+import co.dazma.api.users.domain.State;
 import co.dazma.api.users.infrastructure.input.controllers.UserController;
-import co.dazma.api.users.services.input.ports.GetMyProfileUseCase;
-import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
+import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
+import co.dazma.api.users.services.input.ports.GetMyProfileInputPort;
+import co.dazma.api.users.services.input.ports.RegisterUserInputPort;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import org.junit.jupiter.api.Test;
@@ -69,20 +69,20 @@ class SecurityConfigurationTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private RegisterUserUseCase registerUserUseCase;
+    private RegisterUserInputPort registerUserInputPort;
 
     @MockitoBean
-    private GetMyProfileUseCase getMyProfileUseCase;
+    private GetMyProfileInputPort getMyProfileInputPort;
 
     @MockitoBean
-    private AuthenticateIdentityUseCase authenticateIdentityUseCase;
+    private AuthenticateIdentityInputPort authenticateIdentityInputPort;
 
     @Test
     void shouldAllowHealthEndpointWithoutAuthentication() throws Exception {
         mockMvc.perform(get("/actuator/health"))
                 .andExpect(status().isOk());
 
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(authenticateIdentityInputPort);
     }
 
     @Test
@@ -101,8 +101,8 @@ class SecurityConfigurationTest {
                 .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"))
                 .andExpect(jsonPath("$.instance").value("/api/users"));
 
-        verifyNoInteractions(registerUserUseCase);
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(registerUserInputPort);
+        verifyNoInteractions(authenticateIdentityInputPort);
     }
 
     @Test
@@ -116,8 +116,8 @@ class SecurityConfigurationTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"));
 
-        verifyNoInteractions(registerUserUseCase);
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(registerUserInputPort);
+        verifyNoInteractions(authenticateIdentityInputPort);
     }
 
     @Test
@@ -129,12 +129,12 @@ class SecurityConfigurationTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
 
-        verifyNoInteractions(registerUserUseCase);
+        verifyNoInteractions(registerUserInputPort);
     }
 
     @Test
     void shouldRejectProtectedEndpointWhenTokenIsInvalid() throws Exception {
-        when(authenticateIdentityUseCase.authenticate("invalid-token", true))
+        when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("invalid-token", true)))
                 .thenThrow(new InvalidIdentityTokenException());
 
         mockMvc.perform(post("/api/users")
@@ -150,26 +150,23 @@ class SecurityConfigurationTest {
                 .andExpect(jsonPath("$.code").value("IDENTITY_TOKEN_INVALID"))
                 .andExpect(jsonPath("$.instance").value("/api/users"));
 
-        verifyNoInteractions(registerUserUseCase);
+        verifyNoInteractions(registerUserInputPort);
     }
 
     @Test
     void shouldUseFirebaseUidAsPrincipalWhenTokenIsValid() throws Exception {
-        User registeredUser = User.register(new Name("Ana"),
-                new Phone("3001234567"),
-                new Municipality("Rionegro"),
-                "firebase-user-123",
-                new Email("ana@dazma.store")
-        );
-        when(authenticateIdentityUseCase.authenticate("valid-token", true))
-                .thenReturn(new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true));
-        when(registerUserUseCase.registerUser(
+        RegisterUserInputDto expectedInput = new RegisterUserInputDto(
                 "Ana",
                 "3001234567",
                 "Rionegro",
                 "firebase-user-123",
                 "ana@dazma.store"
-        )).thenReturn(registeredUser);
+        );
+        when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("valid-token", true)))
+                .thenReturn(new AuthenticateIdentityOutputDto("firebase-user-123", "ana@dazma.store", true));
+        when(registerUserInputPort.execute(expectedInput)).thenReturn(new RegisterUserOutputDto(
+                java.util.UUID.randomUUID(), "Ana", "3001234567", "Rionegro", State.ACTIVE, Role.USER
+        ));
 
         mockMvc.perform(post("/api/users")
                         .cookie(new MockCookie("dazma_session", "valid-token"))
@@ -180,13 +177,7 @@ class SecurityConfigurationTest {
                 .andExpect(jsonPath("$.name").value("Ana"))
                 .andExpect(jsonPath("$.role").value("USER"));
 
-        verify(registerUserUseCase).registerUser(
-                "Ana",
-                "3001234567",
-                "Rionegro",
-                "firebase-user-123",
-                "ana@dazma.store"
-        );
+        verify(registerUserInputPort).execute(expectedInput);
     }
 
     @Test
@@ -194,7 +185,7 @@ class SecurityConfigurationTest {
         mockMvc.perform(get("/api/publications/{publicationId}", java.util.UUID.randomUUID()))
                 .andExpect(status().isOk());
 
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(authenticateIdentityInputPort);
     }
 
     @Test
@@ -208,13 +199,13 @@ class SecurityConfigurationTest {
                         result.getResponse().getStatus()
                 ));
 
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(authenticateIdentityInputPort);
     }
 
     @Test
     void shouldReturnForbiddenProblemWhenAuthenticatedUserAccessesDeniedRoute() throws Exception {
-        when(authenticateIdentityUseCase.authenticate("valid-token", false))
-                .thenReturn(new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true));
+        when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("valid-token", false)))
+                .thenReturn(new AuthenticateIdentityOutputDto("firebase-user-123", "ana@dazma.store", true));
 
         mockMvc.perform(get("/denied")
                         .cookie(new MockCookie("dazma_session", "valid-token")))
@@ -262,11 +253,11 @@ class SecurityConfigurationTest {
 
         @Bean
         FirebaseAuthenticationFilter firebaseAuthenticationFilter(
-                AuthenticateIdentityUseCase authenticateIdentityUseCase,
+                AuthenticateIdentityInputPort authenticateIdentityInputPort,
                 ApiAuthenticationEntryPoint authenticationEntryPoint
         ) {
             return new FirebaseAuthenticationFilter(
-                    authenticateIdentityUseCase,
+                    authenticateIdentityInputPort,
                     authenticationEntryPoint
             );
         }
