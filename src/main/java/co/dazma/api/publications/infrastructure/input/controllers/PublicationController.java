@@ -1,5 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
+import co.dazma.api.security.AuthenticatedUser;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.GetPublicationResponseDto;
@@ -10,6 +11,7 @@ import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
 import co.dazma.api.publications.services.input.ports.GetPublicationUseCase;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -43,12 +44,13 @@ public class PublicationController {
     @PostMapping
     public ResponseEntity<CreatePublicationResponseDto> create(
             @RequestBody @Valid CreatePublicationRequestDto request,
-            Principal principal,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
             UriComponentsBuilder uriBuilder
     ) {
         CreatePublicationOutputDto publication = createPublicationUseCase.create(
                 new CreatePublicationInputDto(
-                        principal.getName(),
+                        authenticatedUser.uid(),
+                        authenticatedUser.emailVerified(),
                         request.name(),
                         publicationWebMapper.toDomain(request.type()),
                         request.description(),

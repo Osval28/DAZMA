@@ -12,6 +12,10 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_OWNER_REQUIRED",
             "publication.owner.required"
     ),
+    OWNER_EMAIL_NOT_VERIFIED(
+            "PUBLICATION_OWNER_EMAIL_NOT_VERIFIED",
+            "publication.owner.email-not-verified"
+    ),
     NAME_REQUIRED(
             "PUBLICATION_NAME_REQUIRED",
             "publication.name.required"

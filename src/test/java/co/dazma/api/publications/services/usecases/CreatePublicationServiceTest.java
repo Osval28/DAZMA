@@ -5,6 +5,7 @@ import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
+import co.dazma.api.publications.domain.PublicationOwnerEmailNotVerifiedException;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.events.PublicationCreated;
@@ -204,6 +205,7 @@ class CreatePublicationServiceTest {
     void shouldNotTouchStorageWhenAFieldIsInvalid() {
         CreatePublicationInputDto invalid = new CreatePublicationInputDto(
                 EXTERNAL_ID,
+                true,
                 "   ",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",
@@ -215,6 +217,33 @@ class CreatePublicationServiceTest {
         assertThrows(InvalidPublicationException.class, () -> service.create(invalid));
 
         verifyNoInteractions(photoStorage, publicationRepository, publicationEvents);
+    }
+
+    @Test
+    void shouldRejectUnverifiedOwnerBeforeAnySideEffect() {
+        CreatePublicationInputDto unverified = new CreatePublicationInputDto(
+                EXTERNAL_ID,
+                false,
+                "Bicicleta",
+                PublicationType.EXCHANGE,
+                "Bicicleta de montaña en buen estado",
+                "Rionegro",
+                900_000,
+                List.of(UUID.randomUUID())
+        );
+
+        assertThrows(
+                PublicationOwnerEmailNotVerifiedException.class,
+                () -> service.create(unverified)
+        );
+
+        verifyNoInteractions(
+                publicationOwners,
+                photoStorage,
+                publicationRepository,
+                publicationEvents
+        );
+        assertFalse(transaction.active);
     }
 
     @Test
@@ -259,6 +288,7 @@ class CreatePublicationServiceTest {
     private CreatePublicationInputDto input(List<UUID> photoIds) {
         return new CreatePublicationInputDto(
                 EXTERNAL_ID,
+                true,
                 "Bicicleta",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",

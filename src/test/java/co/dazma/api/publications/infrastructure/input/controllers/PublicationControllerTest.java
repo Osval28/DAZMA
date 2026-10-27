@@ -1,5 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
+import co.dazma.api.security.AuthenticatedUser;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.input.mapper.PublicationWebMapper;
@@ -14,11 +15,15 @@ import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -63,7 +68,14 @@ class PublicationControllerTest {
                         )
                 )
                 .setControllerAdvice(exceptionHandler)
+                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
+        setAuthenticatedUser(true);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -77,6 +89,7 @@ class PublicationControllerTest {
         );
         CreatePublicationInputDto expectedInput = new CreatePublicationInputDto(
                 "firebase-123",
+                true,
                 "Bicicleta",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",
@@ -109,6 +122,21 @@ class PublicationControllerTest {
                 .andExpect(jsonPath("$.createdAt").value(createdAt.toString()));
 
         verify(createPublicationUseCase).create(expectedInput);
+    }
+
+    private void setAuthenticatedUser(boolean emailVerified) {
+        AuthenticatedUser authenticatedUser = new AuthenticatedUser(
+                "firebase-123",
+                "ana@dazma.store",
+                emailVerified
+        );
+        SecurityContextHolder.getContext().setAuthentication(
+                UsernamePasswordAuthenticationToken.authenticated(
+                        authenticatedUser,
+                        null,
+                        List.of()
+                )
+        );
     }
 
     @Test

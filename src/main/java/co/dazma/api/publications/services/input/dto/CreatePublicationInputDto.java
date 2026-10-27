@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public record CreatePublicationInputDto(
         String ownerExternalId,
+        boolean ownerEmailVerified,
         String name,
         PublicationType type,
         String description,

@@ -60,6 +60,9 @@ public class CreatePublicationService implements CreatePublicationUseCase {
 
     @Override
     public CreatePublicationOutputDto create(CreatePublicationInputDto input) {
+        if (!input.ownerEmailVerified()) {
+            throw new PublicationOwnerEmailNotVerifiedException();
+        }
 
         UUID ownerId = publicationOwners.resolveOperatingOwner(input.ownerExternalId());
         Name name = new Name(input.name());
