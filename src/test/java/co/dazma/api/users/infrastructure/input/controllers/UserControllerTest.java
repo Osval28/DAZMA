@@ -1,6 +1,6 @@
 package co.dazma.api.users.infrastructure.input.controllers;
 
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
@@ -56,8 +56,8 @@ class UserControllerTest {
                 .setControllerAdvice(exceptionHandler)
                 .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
-        AuthenticatedUser authenticatedUser =
-                new AuthenticatedUser("firebase-123", "ana@dazma.store", true);
+        CurrentUser authenticatedUser =
+                new CurrentUser("firebase-123", "ana@dazma.store", true);
         SecurityContextHolder.getContext().setAuthentication(
                 UsernamePasswordAuthenticationToken.authenticated(authenticatedUser, null, List.of())
         );

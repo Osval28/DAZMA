@@ -2,9 +2,11 @@ package co.dazma.api.publications.services.usecases.impl;
 
 import co.dazma.api.publications.domain.InvalidPublicationException;
 import co.dazma.api.publications.domain.PhotoUploadRequest;
+import co.dazma.api.publications.domain.PublicationOwner;
+import co.dazma.api.publications.domain.PublicationOwnerState;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort;
-import co.dazma.api.publications.services.output.ports.PublicationOwnerPort;
+import co.dazma.api.publications.services.output.ports.PublicationOwnerRepositoryPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.usecases.models.PhotoUploadGrant;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,23 +38,24 @@ class AuthorizePublicationPhotoUploadServiceTest {
     private static final Duration UPLOAD_VALIDITY = Duration.ofMinutes(5);
     private static final String EXTERNAL_ID = "firebase-123";
 
-    private PublicationOwnerPort publicationOwners;
+    private PublicationOwnerRepositoryPort ownerRepository;
     private UUID ownerId;
     private PublicationPhotoStoragePort photoStorage;
     private AuthorizePublicationPhotoUploadService service;
 
     @BeforeEach
     void setUp() {
-        publicationOwners = mock(PublicationOwnerPort.class);
+        ownerRepository = mock(PublicationOwnerRepositoryPort.class);
         ownerId = UUID.randomUUID();
-        when(publicationOwners.resolveOperatingOwner(EXTERNAL_ID)).thenReturn(ownerId);
+        when(ownerRepository.findByExternalId(EXTERNAL_ID))
+                .thenReturn(Optional.of(new PublicationOwner(ownerId, EXTERNAL_ID, PublicationOwnerState.ACTIVE)));
         photoStorage = mock(PublicationPhotoStoragePort.class);
         PhotoUploadParametersPort parameters = mock(PhotoUploadParametersPort.class);
         when(parameters.allowedContentTypes()).thenReturn(Set.of("image/jpeg", "image/png", "image/webp"));
         when(parameters.maximumContentLength()).thenReturn(MAXIMUM_CONTENT_LENGTH);
         when(parameters.uploadValidity()).thenReturn(UPLOAD_VALIDITY);
         service = new AuthorizePublicationPhotoUploadService(
-                publicationOwners,
+                new OperatingOwnerResolver(ownerRepository),
                 photoStorage,
                 parameters
         );

@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationRequestDto;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.GetPublicationResponseDto;
@@ -44,13 +44,13 @@ public class PublicationController {
     @PostMapping
     public ResponseEntity<CreatePublicationResponseDto> create(
             @RequestBody @Valid CreatePublicationRequestDto request,
-            @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
+            @AuthenticationPrincipal CurrentUser currentUser,
             UriComponentsBuilder uriBuilder
     ) {
         CreatePublicationOutputDto publication = createPublicationInputPort.execute(
                 new CreatePublicationInputDto(
-                        authenticatedUser.uid(),
-                        authenticatedUser.emailVerified(),
+                        currentUser.uid(),
+                        currentUser.emailVerified(),
                         request.name(),
                         publicationWebMapper.toDomain(request.type()),
                         request.description(),

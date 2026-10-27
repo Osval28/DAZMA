@@ -18,7 +18,7 @@ class UserRegisteredListenerTest {
         UserRegisteredListener listener = new UserRegisteredListener(registerRecipientInputPort);
         UUID userId = UUID.randomUUID();
 
-        listener.on(new UserRegistered(userId, "ana@dazma.store"));
+        listener.on(new UserRegistered(userId, "firebase-123", "ana@dazma.store", "ACTIVE"));
 
         verify(registerRecipientInputPort).execute(new RegisterRecipientInputDto(userId, "ana@dazma.store"));
     }

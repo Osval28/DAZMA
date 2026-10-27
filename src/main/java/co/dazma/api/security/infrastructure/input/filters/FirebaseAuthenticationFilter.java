@@ -1,6 +1,6 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.infrastructure.input.controllers.SessionController;
 import co.dazma.api.security.infrastructure.input.cookies.SessionCookies;
@@ -69,7 +69,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
             AuthenticateIdentityOutputDto identity = authenticateIdentityInputPort.execute(
                     new AuthenticateIdentityInputDto(token, changesState(request))
             );
-            AuthenticatedUser principal = new AuthenticatedUser(
+            CurrentUser principal = new CurrentUser(
                     identity.uid(),
                     identity.email(),
                     identity.emailVerified()
