@@ -27,6 +27,22 @@ public enum NotificationErrorCode implements ErrorCode {
     IDEMPOTENCY_KEY_TOO_LONG(
             "NOTIFICATION_IDEMPOTENCY_KEY_TOO_LONG",
             "notification.idempotency-key.too-long"
+    ),
+    RECIPIENT_NOT_FOUND(
+            "NOTIFICATION_RECIPIENT_NOT_FOUND",
+            "notification.recipient.not-found"
+    ),
+    TEMPLATE_NOT_FOUND(
+            "NOTIFICATION_TEMPLATE_NOT_FOUND",
+            "notification.template.not-found"
+    ),
+    TEMPLATE_DATA_MISSING(
+            "NOTIFICATION_TEMPLATE_DATA_MISSING",
+            "notification.template.data-missing"
+    ),
+    DELIVERY_FAILED(
+            "NOTIFICATION_DELIVERY_FAILED",
+            "notification.delivery.failed"
     );
 
     private final String code;
