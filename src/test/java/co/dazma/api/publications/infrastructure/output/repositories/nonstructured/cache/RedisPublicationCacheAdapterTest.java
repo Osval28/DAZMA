@@ -12,6 +12,8 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +62,8 @@ class RedisPublicationCacheAdapterTest {
                 redisTemplate,
                 JsonMapper.builder().build(),
                 Mappers.getMapper(PublicationMapStructCacheMapper.class),
-                new PublicationCacheProperties(KEY_PREFIX, TTL)
+                new PublicationCacheProperties(KEY_PREFIX, TTL),
+                new ExternalDependencyObservation(ObservationRegistry.NOOP)
         );
         adapterLogger = (Logger) LoggerFactory.getLogger(RedisPublicationCacheAdapter.class);
         logs = new ListAppender<>();

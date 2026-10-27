@@ -5,6 +5,7 @@ import co.dazma.api.publications.infrastructure.output.repositories.nonstructure
 import co.dazma.api.publications.services.output.ports.PublicationCachePort;
 import co.dazma.api.shared.domain.errors.DomainInvalidException;
 import co.dazma.api.shared.infrastructure.DomainMapper;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -25,22 +26,29 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
     private final JsonMapper jsonMapper;
     private final DomainMapper<PublicationCacheEntity, Publication> cacheMapper;
     private final PublicationCacheProperties properties;
+    private final ExternalDependencyObservation observations;
 
     public RedisPublicationCacheAdapter(StringRedisTemplate redisTemplate,
                                         JsonMapper jsonMapper,
                                         DomainMapper<PublicationCacheEntity, Publication> cacheMapper,
-                                        PublicationCacheProperties properties) {
+                                        PublicationCacheProperties properties,
+                                        ExternalDependencyObservation observations) {
         this.redisTemplate = redisTemplate;
         this.jsonMapper = jsonMapper;
         this.cacheMapper = cacheMapper;
         this.properties = properties;
+        this.observations = observations;
     }
 
     @Override
     public Optional<Publication> findById(UUID publicationId) {
         String key = properties.keyFor(publicationId);
         try {
-            String json = redisTemplate.opsForValue().get(key);
+            String json = observations.observe(
+                    "redis",
+                    "get_publication",
+                    () -> redisTemplate.opsForValue().get(key)
+            );
             if (json == null) {
                 return Optional.empty();
             }
@@ -63,7 +71,11 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
         String key = properties.keyFor(publication.getId());
         try {
             String json = jsonMapper.writeValueAsString(cacheMapper.toEntity(publication));
-            redisTemplate.opsForValue().set(key, json, properties.ttl());
+            observations.observe(
+                    "redis",
+                    "save_publication",
+                    () -> redisTemplate.opsForValue().set(key, json, properties.ttl())
+            );
         } catch (DataAccessException | JacksonException exception) {
             log.warn("No se pudo guardar la publicación en la caché. key={}, causa={}",
                     key, describe(exception));
@@ -74,7 +86,11 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
     public void evict(UUID publicationId) {
         String key = properties.keyFor(publicationId);
         try {
-            redisTemplate.delete(key);
+            observations.observe(
+                    "redis",
+                    "evict_publication",
+                    () -> redisTemplate.delete(key)
+            );
         } catch (DataAccessException exception) {
             log.warn("No se pudo invalidar la publicación en la caché; expirará por TTL. key={}, causa={}",
                     key, describe(exception));
