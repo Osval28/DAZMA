@@ -1,21 +1,18 @@
 package co.dazma.api.users.infrastructure.input.controllers;
 
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
-import co.dazma.api.shared.domain.Municipality;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
-import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserNotFoundException;
 import co.dazma.api.users.services.input.dto.GetMyProfileInputDto;
 import co.dazma.api.users.services.input.dto.GetMyProfileOutputDto;
-import co.dazma.api.users.services.input.ports.GetMyProfileUseCase;
-import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
+import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
+import co.dazma.api.users.services.input.ports.GetMyProfileInputPort;
+import co.dazma.api.users.services.input.ports.RegisterUserInputPort;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,15 +38,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserControllerTest {
 
-    private RegisterUserUseCase registerUserUseCase;
-    private GetMyProfileUseCase getMyProfileUseCase;
+    private RegisterUserInputPort registerUserInputPort;
+    private GetMyProfileInputPort getMyProfileInputPort;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        registerUserUseCase = mock(RegisterUserUseCase.class);
-        getMyProfileUseCase = mock(GetMyProfileUseCase.class);
-        UserController controller = new UserController(registerUserUseCase, getMyProfileUseCase);
+        registerUserInputPort = mock(RegisterUserInputPort.class);
+        getMyProfileInputPort = mock(GetMyProfileInputPort.class);
+        UserController controller = new UserController(registerUserInputPort, getMyProfileInputPort);
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
@@ -59,8 +56,8 @@ class UserControllerTest {
                 .setControllerAdvice(exceptionHandler)
                 .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
-        AuthenticatedUser authenticatedUser =
-                new AuthenticatedUser("firebase-123", "ana@dazma.store", true);
+        CurrentUser authenticatedUser =
+                new CurrentUser("firebase-123", "ana@dazma.store", true);
         SecurityContextHolder.getContext().setAuthentication(
                 UsernamePasswordAuthenticationToken.authenticated(authenticatedUser, null, List.of())
         );
@@ -73,19 +70,17 @@ class UserControllerTest {
 
     @Test
     void shouldRegisterUserUsingTheAuthenticatedExternalId() throws Exception {
-        User registeredUser = User.register(new Name("Ana"),
-                new Phone("3001234567"),
-                new Municipality("Rionegro"),
-                "firebase-123",
-                new Email("ana@dazma.store")
-        );
-        when(registerUserUseCase.registerUser(
+        UUID id = UUID.randomUUID();
+        RegisterUserInputDto expectedInput = new RegisterUserInputDto(
                 "Ana",
                 "3001234567",
                 "Rionegro",
                 "firebase-123",
                 "ana@dazma.store"
-        )).thenReturn(registeredUser);
+        );
+        when(registerUserInputPort.execute(expectedInput)).thenReturn(new RegisterUserOutputDto(
+                id, "Ana", "3001234567", "Rionegro", State.ACTIVE, Role.USER
+        ));
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -97,26 +92,20 @@ class UserControllerTest {
                                 }
                                 """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(registeredUser.getId().toString()))
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.name").value("Ana"))
                 .andExpect(jsonPath("$.phone").value("3001234567"))
                 .andExpect(jsonPath("$.municipality").value("Rionegro"))
                 .andExpect(jsonPath("$.state").value("ACTIVE"))
                 .andExpect(jsonPath("$.role").value("USER"));
 
-        verify(registerUserUseCase).registerUser(
-                "Ana",
-                "3001234567",
-                "Rionegro",
-                "firebase-123",
-                "ana@dazma.store"
-        );
+        verify(registerUserInputPort).execute(expectedInput);
     }
 
     @Test
     void shouldReturnTheProfileOfTheAuthenticatedUserWithTheEmailVerificationFromTheSession() throws Exception {
         UUID id = UUID.randomUUID();
-        when(getMyProfileUseCase.get(new GetMyProfileInputDto("firebase-123")))
+        when(getMyProfileInputPort.execute(new GetMyProfileInputDto("firebase-123")))
                 .thenReturn(new GetMyProfileOutputDto(id, "Ana", "3001234567", "Rionegro",
                         "ana@dazma.store", State.ACTIVE, Role.USER));
 
@@ -132,7 +121,7 @@ class UserControllerTest {
 
     @Test
     void shouldAnswerNotFoundWhenTheAuthenticatedUserHasNoProfile() throws Exception {
-        when(getMyProfileUseCase.get(new GetMyProfileInputDto("firebase-123")))
+        when(getMyProfileInputPort.execute(new GetMyProfileInputDto("firebase-123")))
                 .thenThrow(new UserNotFoundException());
 
         mockMvc.perform(get("/api/users/me"))

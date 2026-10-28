@@ -1,10 +1,11 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
-import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
-import co.dazma.api.security.AuthenticatedUser;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
-import co.dazma.api.security.services.input.ports.AuthenticateIdentityUseCase;
+import co.dazma.api.security.services.input.dto.AuthenticateIdentityInputDto;
+import co.dazma.api.security.services.input.dto.AuthenticateIdentityOutputDto;
+import co.dazma.api.security.services.input.ports.AuthenticateIdentityInputPort;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,10 +29,10 @@ import static org.mockito.Mockito.when;
 
 class FirebaseAuthenticationFilterTest {
 
-    private static final AuthenticatedIdentity IDENTITY =
-            new AuthenticatedIdentity("firebase-user-123", "ana@dazma.store", true);
+    private static final AuthenticateIdentityOutputDto IDENTITY =
+            new AuthenticateIdentityOutputDto("firebase-user-123", "ana@dazma.store", true);
 
-    private AuthenticateIdentityUseCase authenticateIdentityUseCase;
+    private AuthenticateIdentityInputPort authenticateIdentityInputPort;
     private ApiAuthenticationEntryPoint authenticationEntryPoint;
     private FirebaseAuthenticationFilter filter;
     private MockHttpServletRequest request;
@@ -40,10 +41,10 @@ class FirebaseAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        authenticateIdentityUseCase = mock(AuthenticateIdentityUseCase.class);
+        authenticateIdentityInputPort = mock(AuthenticateIdentityInputPort.class);
         authenticationEntryPoint = mock(ApiAuthenticationEntryPoint.class);
         filter = new FirebaseAuthenticationFilter(
-                authenticateIdentityUseCase,
+                authenticateIdentityInputPort,
                 authenticationEntryPoint
         );
         request = new MockHttpServletRequest("GET", "/api/users");
@@ -59,7 +60,7 @@ class FirebaseAuthenticationFilterTest {
     @Test
     void shouldCreateAuthenticationWhenSessionCookieIsValid() throws Exception {
         request.setCookies(new Cookie("dazma_session", "valid-token"));
-        when(authenticateIdentityUseCase.authenticate("valid-token", false))
+        when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("valid-token", false)))
                 .thenReturn(IDENTITY);
 
         filter.doFilter(request, response, filterChain);
@@ -69,7 +70,7 @@ class FirebaseAuthenticationFilterTest {
         assertTrue(authentication.isAuthenticated());
         assertEquals("firebase-user-123", authentication.getName());
         assertEquals(
-                new AuthenticatedUser("firebase-user-123", "ana@dazma.store", true),
+                new CurrentUser("firebase-user-123", "ana@dazma.store", true),
                 authentication.getPrincipal()
         );
         verify(filterChain).doFilter(request, response);
@@ -80,7 +81,7 @@ class FirebaseAuthenticationFilterTest {
         filter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(authenticateIdentityInputPort);
         verify(filterChain).doFilter(request, response);
     }
 
@@ -88,7 +89,7 @@ class FirebaseAuthenticationFilterTest {
     void shouldReturnUnauthorizedWhenSessionCookieIsInvalid() throws Exception {
         request.setCookies(new Cookie("dazma_session", "invalid-token"));
         InvalidIdentityTokenException exception = new InvalidIdentityTokenException();
-        when(authenticateIdentityUseCase.authenticate("invalid-token", false))
+        when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("invalid-token", false)))
                 .thenThrow(exception);
 
         filter.doFilter(request, response, filterChain);
@@ -105,7 +106,7 @@ class FirebaseAuthenticationFilterTest {
         filter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(authenticateIdentityInputPort);
         verify(filterChain).doFilter(request, response);
     }
 
@@ -116,7 +117,7 @@ class FirebaseAuthenticationFilterTest {
 
         filter.doFilter(request, response, filterChain);
 
-        verifyNoInteractions(authenticateIdentityUseCase);
+        verifyNoInteractions(authenticateIdentityInputPort);
         verify(filterChain).doFilter(request, response);
     }
 
@@ -124,12 +125,12 @@ class FirebaseAuthenticationFilterTest {
     void shouldRequireAnActiveSessionWhenTheRequestChangesState() throws Exception {
         request.setMethod("POST");
         request.setCookies(new Cookie("dazma_session", "valid-token"));
-        when(authenticateIdentityUseCase.authenticate("valid-token", true))
+        when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("valid-token", true)))
                 .thenReturn(IDENTITY);
 
         filter.doFilter(request, response, filterChain);
 
-        verify(authenticateIdentityUseCase).authenticate("valid-token", true);
+        verify(authenticateIdentityInputPort).execute(new AuthenticateIdentityInputDto("valid-token", true));
         verify(filterChain).doFilter(request, response);
     }
 }

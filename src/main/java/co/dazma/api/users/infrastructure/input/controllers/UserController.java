@@ -1,14 +1,15 @@
 package co.dazma.api.users.infrastructure.input.controllers;
 
-import co.dazma.api.security.AuthenticatedUser;
-import co.dazma.api.users.domain.User;
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.users.infrastructure.input.dto.MyProfileResponseDto;
 import co.dazma.api.users.infrastructure.input.dto.RegisterUserRequestDto;
 import co.dazma.api.users.infrastructure.input.dto.UserResponseDto;
 import co.dazma.api.users.services.input.dto.GetMyProfileInputDto;
 import co.dazma.api.users.services.input.dto.GetMyProfileOutputDto;
-import co.dazma.api.users.services.input.ports.GetMyProfileUseCase;
-import co.dazma.api.users.services.input.ports.RegisterUserUseCase;
+import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
+import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
+import co.dazma.api.users.services.input.ports.GetMyProfileInputPort;
+import co.dazma.api.users.services.input.ports.RegisterUserInputPort;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,36 +19,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final RegisterUserUseCase registerUserUseCase;
-    private final GetMyProfileUseCase getMyProfileUseCase;
+    private final RegisterUserInputPort registerUserInputPort;
+    private final GetMyProfileInputPort getMyProfileInputPort;
 
-    public UserController(RegisterUserUseCase registerUserUseCase, GetMyProfileUseCase getMyProfileUseCase) {
-        this.registerUserUseCase = registerUserUseCase;
-        this.getMyProfileUseCase = getMyProfileUseCase;
+    public UserController(RegisterUserInputPort registerUserInputPort, GetMyProfileInputPort getMyProfileInputPort) {
+        this.registerUserInputPort = registerUserInputPort;
+        this.getMyProfileInputPort = getMyProfileInputPort;
     }
 
     @GetMapping("/me")
-    public MyProfileResponseDto getMyProfile(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        GetMyProfileOutputDto profile = getMyProfileUseCase.get(
-                new GetMyProfileInputDto(authenticatedUser.getName())
+    public MyProfileResponseDto getMyProfile(@AuthenticationPrincipal CurrentUser currentUser) {
+        GetMyProfileOutputDto profile = getMyProfileInputPort.execute(
+                new GetMyProfileInputDto(currentUser.getName())
         );
-        return MyProfileResponseDto.from(profile, authenticatedUser.emailVerified());
+        return MyProfileResponseDto.from(profile, currentUser.emailVerified());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto registerUser(
             @RequestBody @Valid RegisterUserRequestDto request,
-            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+            @AuthenticationPrincipal CurrentUser currentUser
     ) {
-        User registeredUser = registerUserUseCase.registerUser(
+        RegisterUserOutputDto registeredUser = registerUserInputPort.execute(new RegisterUserInputDto(
                 request.name(),
                 request.phone(),
                 request.municipality(),
-                authenticatedUser.getName(),
-                authenticatedUser.email()
-        );
+                currentUser.getName(),
+                currentUser.email()
+        ));
 
-        return UserResponseDto.fromModel(registeredUser);
+        return UserResponseDto.from(registeredUser);
     }
 }

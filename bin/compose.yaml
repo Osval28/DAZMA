@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: dazma
+      POSTGRES_USER: dazma
+      POSTGRES_PASSWORD: dazma
+    ports:
+      - "5432:5432"

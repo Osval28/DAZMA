@@ -3,6 +3,7 @@ package co.dazma.api.publications.infrastructure.output.storage.r2;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -32,11 +33,13 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
     private final String bucketName;
+    private final ExternalDependencyObservation observations;
 
     public CloudflareR2PublicationPhotoStorageAdapter(
             S3Client s3Client,
             S3Presigner s3Presigner,
-            String bucketName
+            String bucketName,
+            ExternalDependencyObservation observations
     ) {
         this.s3Client = Objects.requireNonNull(s3Client, "El cliente de R2 es obligatorio");
         this.s3Presigner = Objects.requireNonNull(
@@ -44,6 +47,10 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
                 "El generador de permisos de R2 es obligatorio"
         );
         this.bucketName = requireText(bucketName, "El nombre del bucket es obligatorio");
+        this.observations = Objects.requireNonNull(
+                observations,
+                "El observador de dependencias es obligatorio"
+        );
     }
 
     @Override
@@ -80,8 +87,11 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
                 .putObjectRequest(putObjectRequest)
                 .build();
 
-        PresignedPutObjectRequest presignedRequest =
-                s3Presigner.presignPutObject(presignRequest);
+        PresignedPutObjectRequest presignedRequest = observations.observe(
+                "cloudflare_r2",
+                "presign_upload",
+                () -> s3Presigner.presignPutObject(presignRequest)
+        );
 
         return new PhotoStorageUploadAuthorization(
                 objectKey,
@@ -102,7 +112,11 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
 
         HeadObjectResponse response;
         try {
-            response = s3Client.headObject(headRequest);
+            response = observations.observe(
+                    "cloudflare_r2",
+                    "head_object",
+                    () -> s3Client.headObject(headRequest)
+            );
         } catch (S3Exception exception) {
             if (exception.statusCode() == 404) {
                 return Optional.empty();
@@ -111,12 +125,16 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
         }
 
         String publishedKey = createPublishedObjectKey(ownerId);
-        s3Client.copyObject(CopyObjectRequest.builder()
-                .sourceBucket(bucketName)
-                .sourceKey(pendingKey)
-                .destinationBucket(bucketName)
-                .destinationKey(publishedKey)
-                .build());
+        observations.observe(
+                "cloudflare_r2",
+                "copy_object",
+                () -> s3Client.copyObject(CopyObjectRequest.builder()
+                        .sourceBucket(bucketName)
+                        .sourceKey(pendingKey)
+                        .destinationBucket(bucketName)
+                        .destinationKey(publishedKey)
+                        .build())
+        );
 
         return Optional.of(new StoredPublicationPhoto(
                 photoId,
@@ -130,10 +148,14 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
     public void discardPhotos(List<String> objectKeys) {
         Objects.requireNonNull(objectKeys, "Las claves de las fotografías son obligatorias");
         for (String objectKey : objectKeys) {
-            s3Client.deleteObject(DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectKey)
-                    .build());
+            observations.observe(
+                    "cloudflare_r2",
+                    "delete_object",
+                    () -> s3Client.deleteObject(DeleteObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(objectKey)
+                            .build())
+            );
         }
     }
 
@@ -155,7 +177,11 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
                         .build())
                 .build();
 
-        return URI.create(s3Presigner.presignGetObject(presignRequest).url().toString());
+        return observations.observe(
+                "cloudflare_r2",
+                "presign_download",
+                () -> URI.create(s3Presigner.presignGetObject(presignRequest).url().toString())
+        );
     }
 
     private static String createPendingObjectKey(UUID ownerId, UUID photoId) {

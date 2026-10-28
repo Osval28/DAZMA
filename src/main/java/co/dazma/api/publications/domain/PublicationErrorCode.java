@@ -12,6 +12,22 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_OWNER_REQUIRED",
             "publication.owner.required"
     ),
+    OWNER_EMAIL_NOT_VERIFIED(
+            "PUBLICATION_OWNER_EMAIL_NOT_VERIFIED",
+            "publication.owner.email-not-verified"
+    ),
+    OWNER_NOT_READY(
+            "PUBLICATION_OWNER_NOT_READY",
+            "publication.owner.not-ready"
+    ),
+    OWNER_CANNOT_OPERATE(
+            "PUBLICATION_OWNER_CANNOT_OPERATE",
+            "publication.owner.cannot-operate"
+    ),
+    OWNER_EXTERNAL_ID_REQUIRED(
+            "PUBLICATION_OWNER_EXTERNAL_ID_REQUIRED",
+            "publication.owner.external-id.required"
+    ),
     NAME_REQUIRED(
             "PUBLICATION_NAME_REQUIRED",
             "publication.name.required"

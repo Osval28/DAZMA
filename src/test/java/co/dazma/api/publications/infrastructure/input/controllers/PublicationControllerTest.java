@@ -1,5 +1,6 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
+import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.input.mapper.PublicationWebMapper;
@@ -8,17 +9,21 @@ import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.input.dto.GetPublicationOutputDto;
 import co.dazma.api.publications.services.input.dto.GetPublicationPhotoOutputDto;
 import co.dazma.api.publications.domain.PublicationNotFoundException;
-import co.dazma.api.publications.services.input.ports.CreatePublicationUseCase;
-import co.dazma.api.publications.services.input.ports.GetPublicationUseCase;
+import co.dazma.api.publications.services.input.ports.CreatePublicationInputPort;
+import co.dazma.api.publications.services.input.ports.GetPublicationInputPort;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -40,14 +45,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class PublicationControllerTest {
 
-    private CreatePublicationUseCase createPublicationUseCase;
-    private GetPublicationUseCase getPublicationUseCase;
+    private CreatePublicationInputPort createPublicationInputPort;
+    private GetPublicationInputPort getPublicationInputPort;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        createPublicationUseCase = mock(CreatePublicationUseCase.class);
-        getPublicationUseCase = mock(GetPublicationUseCase.class);
+        createPublicationInputPort = mock(CreatePublicationInputPort.class);
+        getPublicationInputPort = mock(GetPublicationInputPort.class);
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
@@ -57,13 +62,20 @@ class PublicationControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(
                         new PublicationController(
-                                createPublicationUseCase,
-                                getPublicationUseCase,
+                                createPublicationInputPort,
+                                getPublicationInputPort,
                                 Mappers.getMapper(PublicationWebMapper.class)
                         )
                 )
                 .setControllerAdvice(exceptionHandler)
+                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
+        setAuthenticatedUser(true);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -77,6 +89,7 @@ class PublicationControllerTest {
         );
         CreatePublicationInputDto expectedInput = new CreatePublicationInputDto(
                 "firebase-123",
+                true,
                 "Bicicleta",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",
@@ -84,7 +97,7 @@ class PublicationControllerTest {
                 900_000,
                 List.of(photoId)
         );
-        when(createPublicationUseCase.create(expectedInput)).thenReturn(publication);
+        when(createPublicationInputPort.execute(expectedInput)).thenReturn(publication);
 
         mockMvc.perform(post("/api/publications")
                         .principal(() -> "firebase-123")
@@ -108,7 +121,22 @@ class PublicationControllerTest {
                 .andExpect(jsonPath("$.status").value("PUBLISHED"))
                 .andExpect(jsonPath("$.createdAt").value(createdAt.toString()));
 
-        verify(createPublicationUseCase).create(expectedInput);
+        verify(createPublicationInputPort).execute(expectedInput);
+    }
+
+    private void setAuthenticatedUser(boolean emailVerified) {
+        CurrentUser authenticatedUser = new CurrentUser(
+                "firebase-123",
+                "ana@dazma.store",
+                emailVerified
+        );
+        SecurityContextHolder.getContext().setAuthentication(
+                UsernamePasswordAuthenticationToken.authenticated(
+                        authenticatedUser,
+                        null,
+                        List.of()
+                )
+        );
     }
 
     @Test
@@ -119,7 +147,7 @@ class PublicationControllerTest {
                         .content(requestWithoutPrice()))
                 .andExpect(status().isBadRequest());
 
-        verify(createPublicationUseCase, never()).create(any());
+        verify(createPublicationInputPort, never()).execute(any());
     }
 
     @Disabled("GlobalExceptionHandler todavía no maneja MethodArgumentNotValidException")
@@ -152,7 +180,7 @@ class PublicationControllerTest {
         UUID publicationId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        when(getPublicationUseCase.getById(publicationId)).thenReturn(new GetPublicationOutputDto(
+        when(getPublicationInputPort.execute(publicationId)).thenReturn(new GetPublicationOutputDto(
                 publicationId,
                 ownerId,
                 "Bicicleta",
@@ -185,7 +213,7 @@ class PublicationControllerTest {
     @Test
     void shouldReturnNotFoundWhenPublicationDoesNotExist() throws Exception {
         UUID publicationId = UUID.randomUUID();
-        when(getPublicationUseCase.getById(publicationId))
+        when(getPublicationInputPort.execute(publicationId))
                 .thenThrow(new PublicationNotFoundException(publicationId));
 
         mockMvc.perform(get("/api/publications/{publicationId}", publicationId))

@@ -2,11 +2,13 @@ package co.dazma.api.notifications.infrastructure.output.externalservices.resend
 
 import co.dazma.api.notifications.domain.EmailMessage;
 import co.dazma.api.notifications.infrastructure.configuration.ResendProperties;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.core.net.RequestOptions;
 import com.resend.services.emails.Emails;
 import com.resend.services.emails.model.CreateEmailOptions;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +51,11 @@ class ResendNotificationGatewayTest {
                 Duration.ofSeconds(5),
                 Duration.ofSeconds(10)
         );
-        gateway = new ResendNotificationGateway(resend, properties);
+        gateway = new ResendNotificationGateway(
+                resend,
+                properties,
+                new ExternalDependencyObservation(ObservationRegistry.NOOP)
+        );
     }
 
     @Test

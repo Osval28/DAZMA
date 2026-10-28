@@ -4,6 +4,7 @@ import co.dazma.api.publications.domain.InvalidPublicationException;
 import co.dazma.api.publications.domain.PublicationErrorCode;
 import co.dazma.api.publications.domain.PublicationNotFoundException;
 import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
+import co.dazma.api.publications.domain.PublicationOwnerEmailNotVerifiedException;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
@@ -86,6 +87,25 @@ class PublicationExceptionHandlingTest {
         );
         assertEquals(
                 "PUBLICATION_PHOTO_UPLOAD_NOT_AVAILABLE",
+                response.getBody().getProperties().get("code")
+        );
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenOwnerEmailIsNotVerified() {
+        ResponseEntity<ProblemDetail> response = handler.handleNotAllowed(
+                new PublicationOwnerEmailNotVerifiedException(),
+                request
+        );
+
+        assertEquals(403, response.getStatusCode().value());
+        assertEquals("Operación no permitida", response.getBody().getTitle());
+        assertEquals(
+                "Debes verificar tu correo electrónico antes de crear una publicación.",
+                response.getBody().getDetail()
+        );
+        assertEquals(
+                "PUBLICATION_OWNER_EMAIL_NOT_VERIFIED",
                 response.getBody().getProperties().get("code")
         );
     }
