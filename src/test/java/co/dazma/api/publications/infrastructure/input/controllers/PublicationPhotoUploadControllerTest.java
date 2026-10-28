@@ -50,7 +50,7 @@ class PublicationPhotoUploadControllerTest {
                 expiration
         ));
 
-        mockMvc.perform(post("/api/publications/photos/upload-authorizations")
+        mockMvc.perform(post("/publications/api/v1/photos/upload-authorizations")
                         .principal(() -> "firebase-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

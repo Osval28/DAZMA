@@ -45,10 +45,10 @@ Render monta los archivos secretos en tiempo de ejecución bajo `/etc/secrets/<f
 ## 4. Prueba completa después del despliegue
 
 1. Obtener un token vigente de Firebase para un usuario que ya tenga perfil en DAZMA.
-2. Solicitar una autorización con `POST /api/publications/photos/upload-authorizations`.
+2. Solicitar una autorización con `POST /publications/api/v1/photos/upload-authorizations`.
 3. Cargar el archivo con `PUT` a la dirección `uploadUrl`, usando exactamente el mismo `Content-Type` informado al pedir la autorización.
 4. Conservar el `photoId` recibido.
-5. Crear la publicación con `POST /api/publications`, enviando ese identificador dentro de `photoUploadIds`.
+5. Crear la publicación con `POST /publications/api/v1/publications`, enviando ese identificador dentro de `photoUploadIds`.
 6. Confirmar una respuesta `201 Created`, el encabezado `Location` y un registro de publicación con su fotografía en PostgreSQL.
 7. Repetir la creación con un `photoId` inexistente y comprobar que el backend responda `409 Conflict` y no guarde la publicación.
 

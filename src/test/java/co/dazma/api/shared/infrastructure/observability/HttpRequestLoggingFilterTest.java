@@ -50,13 +50,13 @@ class HttpRequestLoggingFilterTest {
 
     @Test
     void shouldLogCompletedRequestWithNormalizedRouteAndWithoutSensitiveData() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/publications/123");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/publications/api/v1/publications/123");
         request.setQueryString("token=secret-query-value");
         request.addHeader("Authorization", AUTHORIZATION);
         request.addHeader("Cookie", SESSION_COOKIE);
         request.setAttribute(
                 HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE,
-                "/api/publications/{publicationId}"
+                "/publications/api/v1/publications/{publicationId}"
         );
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -67,7 +67,7 @@ class HttpRequestLoggingFilterTest {
         assertEquals(Level.INFO, event.getLevel());
         assertEquals("http.request.completed", fields.get("event.name"));
         assertEquals("GET", fields.get("http.request.method"));
-        assertEquals("/api/publications/{publicationId}", fields.get("http.route"));
+        assertEquals("/publications/api/v1/publications/{publicationId}", fields.get("http.route"));
         assertEquals("200", fields.get("http.response.status_code"));
         assertTrue(Long.parseLong(fields.get("duration_ms")) >= 0);
 
@@ -75,12 +75,12 @@ class HttpRequestLoggingFilterTest {
         assertFalse(serializedEvent.contains("secret-query-value"));
         assertFalse(serializedEvent.contains(AUTHORIZATION));
         assertFalse(serializedEvent.contains(SESSION_COOKIE));
-        assertFalse(serializedEvent.contains("/api/publications/123"));
+        assertFalse(serializedEvent.contains("/publications/api/v1/publications/123"));
     }
 
     @Test
     void shouldLogServerFailureAtWarnLevelAndRethrowIt() {
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/publications");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/publications/api/v1/publications");
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain failingChain = (servletRequest, servletResponse) -> {
             throw new ServletException("database unavailable");

@@ -16,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users/api/v1/users")
 public class UserController {
 
     private final RegisterUserInputPort registerUserInputPort;

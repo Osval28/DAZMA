@@ -36,7 +36,7 @@ class UserExceptionHandlingTest {
         handler = new GlobalExceptionHandler(new ApiProblemFactory(messageResolver));
 
         request = new MockHttpServletRequest();
-        request.setRequestURI("/api/users");
+        request.setRequestURI("/users/api/v1/users");
         request.addPreferredLocale(Locale.forLanguageTag("es"));
     }
 
@@ -150,6 +150,6 @@ class UserExceptionHandlingTest {
         assertEquals(title, problem.getTitle());
         assertEquals(detail, problem.getDetail());
         assertEquals(code, problem.getProperties().get("code"));
-        assertEquals("/api/users", problem.getInstance().toString());
+        assertEquals("/users/api/v1/users", problem.getInstance().toString());
     }
 }

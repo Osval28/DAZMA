@@ -35,7 +35,7 @@ class PublicationExceptionHandlingTest {
         handler = new GlobalExceptionHandler(new ApiProblemFactory(messageResolver));
 
         request = new MockHttpServletRequest();
-        request.setRequestURI("/api/publications");
+        request.setRequestURI("/publications/api/v1/publications");
         request.addPreferredLocale(Locale.forLanguageTag("es"));
     }
 
@@ -50,13 +50,13 @@ class PublicationExceptionHandlingTest {
         assertEquals("Solicitud inválida", response.getBody().getTitle());
         assertEquals("El nombre de la publicación es obligatorio.", response.getBody().getDetail());
         assertEquals("PUBLICATION_NAME_REQUIRED", response.getBody().getProperties().get("code"));
-        assertEquals("/api/publications", response.getBody().getInstance().toString());
+        assertEquals("/publications/api/v1/publications", response.getBody().getInstance().toString());
     }
 
     @Test
     void shouldReturnNotFoundForAnUnavailablePublication() {
         UUID publicationId = UUID.randomUUID();
-        request.setRequestURI("/api/publications/" + publicationId);
+        request.setRequestURI("/publications/api/v1/publications/" + publicationId);
 
         ResponseEntity<ProblemDetail> response = handler.handleNotFound(
                 new PublicationNotFoundException(publicationId),
@@ -66,7 +66,7 @@ class PublicationExceptionHandlingTest {
         assertEquals(404, response.getStatusCode().value());
         assertEquals("Recurso no encontrado", response.getBody().getTitle());
         assertEquals("PUBLICATION_NOT_FOUND", response.getBody().getProperties().get("code"));
-        assertEquals("/api/publications/" + publicationId, response.getBody().getInstance().toString());
+        assertEquals("/publications/api/v1/publications/" + publicationId, response.getBody().getInstance().toString());
     }
 
     @Test

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/publications/photos")
+@RequestMapping("/publications/api/v1/photos")
 public class PublicationPhotoUploadController {
 
     private final AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort;

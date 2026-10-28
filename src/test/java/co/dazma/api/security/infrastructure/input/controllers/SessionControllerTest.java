@@ -54,7 +54,7 @@ class SessionControllerTest {
         when(openSessionInputPort.execute(new OpenSessionInputDto("id-token")))
                 .thenReturn(new OpenSessionOutputDto("session-token", Duration.ofHours(8)));
 
-        mockMvc.perform(post("/api/sessions")
+        mockMvc.perform(post("/security/api/v1/sessions")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 { "idToken": "id-token" }
@@ -74,7 +74,7 @@ class SessionControllerTest {
     void shouldIssueTheCsrfTokenBeforeOpeningASession() throws Exception {
         CsrfToken csrfToken = mock(CsrfToken.class);
 
-        mockMvc.perform(get("/api/sessions/csrf")
+        mockMvc.perform(get("/security/api/v1/sessions/csrf")
                         .requestAttr(CsrfToken.class.getName(), csrfToken))
                 .andExpect(status().isNoContent());
 
@@ -83,7 +83,7 @@ class SessionControllerTest {
 
     @Test
     void shouldRejectABlankIdTokenBeforeCallingTheUseCase() throws Exception {
-        mockMvc.perform(post("/api/sessions")
+        mockMvc.perform(post("/security/api/v1/sessions")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 { "idToken": " " }
@@ -95,7 +95,7 @@ class SessionControllerTest {
 
     @Test
     void shouldCloseTheSessionAndExpireTheCookie() throws Exception {
-        mockMvc.perform(delete("/api/sessions")
+        mockMvc.perform(delete("/security/api/v1/sessions")
                         .cookie(new Cookie("dazma_session", "session-token")))
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, allOf(
@@ -111,7 +111,7 @@ class SessionControllerTest {
         doThrow(new SessionRevocationException(new IllegalStateException("Firebase no disponible")))
                 .when(closeSessionInputPort).execute(new CloseSessionInputDto("session-token"));
 
-        mockMvc.perform(delete("/api/sessions")
+        mockMvc.perform(delete("/security/api/v1/sessions")
                         .cookie(new Cookie("dazma_session", "session-token")))
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Max-Age=0")));
@@ -119,7 +119,7 @@ class SessionControllerTest {
 
     @Test
     void shouldExpireTheCookieEvenWithoutAnOpenSession() throws Exception {
-        mockMvc.perform(delete("/api/sessions"))
+        mockMvc.perform(delete("/security/api/v1/sessions"))
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Max-Age=0")));
 
