@@ -47,7 +47,7 @@ class FirebaseAuthenticationFilterTest {
                 authenticateIdentityInputPort,
                 authenticationEntryPoint
         );
-        request = new MockHttpServletRequest("GET", "/api/users");
+        request = new MockHttpServletRequest("GET", "/users/api/v1/users");
         response = new MockHttpServletResponse();
         filterChain = mock(FilterChain.class);
     }
@@ -112,7 +112,7 @@ class FirebaseAuthenticationFilterTest {
 
     @Test
     void shouldNotValidateTheCookieWhenOpeningASession() throws Exception {
-        request.setRequestURI("/api/sessions");
+        request.setRequestURI("/security/api/v1/sessions");
         request.setCookies(new Cookie("dazma_session", "expired-token"));
 
         filter.doFilter(request, response, filterChain);

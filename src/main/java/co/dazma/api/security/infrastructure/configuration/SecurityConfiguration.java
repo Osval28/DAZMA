@@ -25,7 +25,8 @@ import java.util.List;
 @Configuration
 public class SecurityConfiguration {
 
-    static final String PUBLIC_PUBLICATION_DETAIL_PATH = "/api/publications/{publicationId}";
+    static final String API_PATH_PATTERN = "/*/api/v1/**";
+    static final String PUBLIC_PUBLICATION_DETAIL_PATH = "/publications/api/v1/publications/{publicationId}";
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -58,7 +59,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, SessionController.PATH).permitAll()
                         .requestMatchers(HttpMethod.DELETE, SessionController.PATH).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_PUBLICATION_DETAIL_PATH).permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(API_PATH_PATTERN).authenticated()
                         .anyRequest().denyAll()
                 );
 
@@ -89,7 +90,7 @@ public class SecurityConfiguration {
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration(API_PATH_PATTERN, configuration);
         return source;
     }
 }

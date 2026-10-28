@@ -82,7 +82,7 @@ class UserControllerTest {
                 id, "Ana", "3001234567", "Rionegro", State.ACTIVE, Role.USER
         ));
 
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/users/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -109,7 +109,7 @@ class UserControllerTest {
                 .thenReturn(new GetMyProfileOutputDto(id, "Ana", "3001234567", "Rionegro",
                         "ana@dazma.store", State.ACTIVE, Role.USER));
 
-        mockMvc.perform(get("/api/users/me"))
+        mockMvc.perform(get("/users/api/v1/users/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.name").value("Ana"))
@@ -124,7 +124,7 @@ class UserControllerTest {
         when(getMyProfileInputPort.execute(new GetMyProfileInputDto("firebase-123")))
                 .thenThrow(new UserNotFoundException());
 
-        mockMvc.perform(get("/api/users/me"))
+        mockMvc.perform(get("/users/api/v1/users/me"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("USER_NOT_FOUND"));
     }
