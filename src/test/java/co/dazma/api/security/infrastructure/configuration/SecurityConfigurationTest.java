@@ -87,7 +87,7 @@ class SecurityConfigurationTest {
 
     @Test
     void shouldRejectProtectedEndpointWithoutToken() throws Exception {
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/users/api/v1/users")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
@@ -99,7 +99,7 @@ class SecurityConfigurationTest {
                         "Se requiere autenticación para acceder a este recurso."
                 ))
                 .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"))
-                .andExpect(jsonPath("$.instance").value("/api/users"));
+                .andExpect(jsonPath("$.instance").value("/users/api/v1/users"));
 
         verifyNoInteractions(registerUserInputPort);
         verifyNoInteractions(authenticateIdentityInputPort);
@@ -107,7 +107,7 @@ class SecurityConfigurationTest {
 
     @Test
     void shouldNotAuthenticateUsingABearerHeader() throws Exception {
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/users/api/v1/users")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer valid-token")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +122,7 @@ class SecurityConfigurationTest {
 
     @Test
     void shouldRejectAStateChangingRequestWithoutCsrfToken() throws Exception {
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/users/api/v1/users")
                         .cookie(new MockCookie("dazma_session", "valid-token"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRegistrationBody()))
@@ -137,7 +137,7 @@ class SecurityConfigurationTest {
         when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("invalid-token", true)))
                 .thenThrow(new InvalidIdentityTokenException());
 
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/users/api/v1/users")
                         .cookie(new MockCookie("dazma_session", "invalid-token"))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -148,7 +148,7 @@ class SecurityConfigurationTest {
                 .andExpect(jsonPath("$.title").value("Autenticación requerida"))
                 .andExpect(jsonPath("$.detail").value("El token de identidad no es válido."))
                 .andExpect(jsonPath("$.code").value("IDENTITY_TOKEN_INVALID"))
-                .andExpect(jsonPath("$.instance").value("/api/users"));
+                .andExpect(jsonPath("$.instance").value("/users/api/v1/users"));
 
         verifyNoInteractions(registerUserInputPort);
     }
@@ -168,7 +168,7 @@ class SecurityConfigurationTest {
                 java.util.UUID.randomUUID(), "Ana", "3001234567", "Rionegro", State.ACTIVE, Role.USER
         ));
 
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/users/api/v1/users")
                         .cookie(new MockCookie("dazma_session", "valid-token"))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +182,7 @@ class SecurityConfigurationTest {
 
     @Test
     void shouldAllowPublicationDetailWithoutAuthentication() throws Exception {
-        mockMvc.perform(get("/api/publications/{publicationId}", java.util.UUID.randomUUID()))
+        mockMvc.perform(get("/publications/api/v1/publications/{publicationId}", java.util.UUID.randomUUID()))
                 .andExpect(status().isOk());
 
         verifyNoInteractions(authenticateIdentityInputPort);

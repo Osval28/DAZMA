@@ -5,7 +5,7 @@ info:
   description: Contrato para crear y consultar el detalle de una publicación
 
 paths:
-  /api/publications/photos/upload-authorizations:
+  /publications/api/v1/photos/upload-authorizations:
     post:
       tags: [Publication photos]
       summary: Autorizar la carga de una fotografía
@@ -47,7 +47,7 @@ paths:
         '404':
           $ref: '#/components/responses/AuthenticatedUserNotFound'
 
-  /api/publications:
+  /publications/api/v1/publications:
     post:
       tags: [Publications]
       summary: Crear una publicación
@@ -82,7 +82,7 @@ paths:
               description: Dirección del detalle de la publicación creada.
               schema:
                 type: string
-                example: /api/publications/7db541ee-42e3-4b75-8f79-210886414e3a
+                example: /publications/api/v1/publications/7db541ee-42e3-4b75-8f79-210886414e3a
           content:
             application/json:
               schema:
@@ -96,7 +96,7 @@ paths:
         '409':
           $ref: '#/components/responses/UploadConflict'
 
-  /api/publications/{publicationId}:
+  /publications/api/v1/publications/{publicationId}:
     get:
       tags: [Publications]
       summary: Consultar el detalle de una publicación
@@ -124,7 +124,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /api/sessions/csrf:
+  /security/api/v1/sessions/csrf:
     get:
       tags: [Sessions]
       summary: Obtener el token CSRF
@@ -144,7 +144,7 @@ paths:
               schema:
                 type: string
 
-  /api/sessions:
+  /security/api/v1/sessions:
     post:
       tags: [Sessions]
       summary: Iniciar sesión
@@ -205,7 +205,7 @@ components:
       type: apiKey
       in: cookie
       name: dazma_session
-      description: Cookie de sesión HttpOnly emitida por `POST /api/sessions`.
+      description: Cookie de sesión HttpOnly emitida por `POST /security/api/v1/sessions`.
     csrfHeader:
       type: apiKey
       in: header
@@ -427,4 +427,4 @@ components:
           example: PUBLICATION_INVALID
         instance:
           type: string
-          example: /api/publications
+          example: /publications/api/v1/publications

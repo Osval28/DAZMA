@@ -23,7 +23,7 @@ class ApiProblemFactoryTest {
         ErrorMessageResolver messageResolver = new ErrorMessageResolver(messageSource);
         ApiProblemFactory factory = new ApiProblemFactory(messageResolver);
         UUID publicationId = UUID.randomUUID();
-        URI instance = URI.create("/api/publications/" + publicationId);
+        URI instance = URI.create("/publications/api/v1/publications/" + publicationId);
 
         ProblemDetail problem = factory.create(
                 new PublicationNotFoundException(publicationId),

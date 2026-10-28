@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @ConditionalOnProperty(name = "firebase.enabled", havingValue = "true", matchIfMissing = true)
 public class SessionController {
 
-    public static final String PATH = "/api/sessions";
+    public static final String PATH = "/security/api/v1/sessions";
     public static final String CSRF_PATH = PATH + "/csrf";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionController.class);

@@ -99,7 +99,7 @@ class PublicationControllerTest {
         );
         when(createPublicationInputPort.execute(expectedInput)).thenReturn(publication);
 
-        mockMvc.perform(post("/api/publications")
+        mockMvc.perform(post("/publications/api/v1/publications")
                         .principal(() -> "firebase-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -115,7 +115,7 @@ class PublicationControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string(
                         "Location",
-                        "http://localhost/api/publications/" + publication.id()
+                        "http://localhost/publications/api/v1/publications/" + publication.id()
                 ))
                 .andExpect(jsonPath("$.id").value(publication.id().toString()))
                 .andExpect(jsonPath("$.status").value("PUBLISHED"))
@@ -141,7 +141,7 @@ class PublicationControllerTest {
 
     @Test
     void shouldRejectRequestWithoutPriceBeforeCallingUseCase() throws Exception {
-        mockMvc.perform(post("/api/publications")
+        mockMvc.perform(post("/publications/api/v1/publications")
                         .principal(() -> "firebase-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestWithoutPrice()))
@@ -153,14 +153,14 @@ class PublicationControllerTest {
     @Disabled("GlobalExceptionHandler todavía no maneja MethodArgumentNotValidException")
     @Test
     void shouldDescribeTheInvalidFieldsInTheProblemDetail() throws Exception {
-        mockMvc.perform(post("/api/publications")
+        mockMvc.perform(post("/publications/api/v1/publications")
                         .principal(() -> "firebase-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestWithoutPrice()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("PUBLICATION_REQUEST_BODY_INVALID"))
                 .andExpect(jsonPath("$.fields[0]").value("price"))
-                .andExpect(jsonPath("$.instance").value("/api/publications"));
+                .andExpect(jsonPath("$.instance").value("/publications/api/v1/publications"));
     }
 
     private String requestWithoutPrice() {
@@ -197,7 +197,7 @@ class PublicationControllerTest {
                 ))
         ));
 
-        mockMvc.perform(get("/api/publications/{publicationId}", publicationId))
+        mockMvc.perform(get("/publications/api/v1/publications/{publicationId}", publicationId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(publicationId.toString()))
                 .andExpect(jsonPath("$.type").value("EXCHANGE"))
@@ -216,7 +216,7 @@ class PublicationControllerTest {
         when(getPublicationInputPort.execute(publicationId))
                 .thenThrow(new PublicationNotFoundException(publicationId));
 
-        mockMvc.perform(get("/api/publications/{publicationId}", publicationId))
+        mockMvc.perform(get("/publications/api/v1/publications/{publicationId}", publicationId))
                 .andExpect(status().isNotFound());
     }
 }
