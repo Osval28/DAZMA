@@ -12,6 +12,7 @@ import co.dazma.api.security.services.output.ports.SessionTokenIssuer;
 import co.dazma.api.security.services.usecases.AuthenticateIdentityService;
 import co.dazma.api.security.services.usecases.CloseSessionService;
 import co.dazma.api.security.services.usecases.OpenSessionService;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -62,13 +63,19 @@ public class FirebaseConfiguration {
     }
 
     @Bean
-    public IdentityTokenVerifier identityTokenVerifier(FirebaseAuth firebaseAuth) {
-        return new FirebaseIdentityTokenVerifier(firebaseAuth);
+    public IdentityTokenVerifier identityTokenVerifier(
+            FirebaseAuth firebaseAuth,
+            ExternalDependencyObservation observations
+    ) {
+        return new FirebaseIdentityTokenVerifier(firebaseAuth, observations);
     }
 
     @Bean
-    public SessionTokenIssuer sessionTokenIssuer(FirebaseAuth firebaseAuth) {
-        return new FirebaseSessionTokenIssuer(firebaseAuth);
+    public SessionTokenIssuer sessionTokenIssuer(
+            FirebaseAuth firebaseAuth,
+            ExternalDependencyObservation observations
+    ) {
+        return new FirebaseSessionTokenIssuer(firebaseAuth, observations);
     }
 
     @Bean

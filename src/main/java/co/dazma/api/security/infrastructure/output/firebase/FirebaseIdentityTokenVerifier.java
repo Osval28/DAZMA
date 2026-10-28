@@ -3,6 +3,7 @@ package co.dazma.api.security.infrastructure.output.firebase;
 import co.dazma.api.security.domain.AuthenticatedIdentity;
 import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -10,9 +11,14 @@ import com.google.firebase.auth.FirebaseToken;
 public class FirebaseIdentityTokenVerifier implements IdentityTokenVerifier {
 
     private final FirebaseAuth firebaseAuth;
+    private final ExternalDependencyObservation observations;
 
-    public FirebaseIdentityTokenVerifier(FirebaseAuth firebaseAuth) {
+    public FirebaseIdentityTokenVerifier(
+            FirebaseAuth firebaseAuth,
+            ExternalDependencyObservation observations
+    ) {
         this.firebaseAuth = firebaseAuth;
+        this.observations = observations;
     }
 
     @Override
@@ -22,7 +28,11 @@ public class FirebaseIdentityTokenVerifier implements IdentityTokenVerifier {
         }
 
         try {
-            FirebaseToken token = firebaseAuth.verifySessionCookie(sessionToken, checkRevoked);
+            FirebaseToken token = observations.observeChecked(
+                    "firebase",
+                    "verify_session",
+                    () -> firebaseAuth.verifySessionCookie(sessionToken, checkRevoked)
+            );
             if (token.getEmail() == null || token.getEmail().isBlank()) {
                 throw new InvalidIdentityTokenException();
             }

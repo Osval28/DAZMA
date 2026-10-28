@@ -2,6 +2,8 @@ package co.dazma.api.publications.infrastructure.output.storage.r2;
 
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
+import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -50,7 +52,8 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
         adapter = new CloudflareR2PublicationPhotoStorageAdapter(
                 s3Client,
                 s3Presigner,
-                BUCKET_NAME
+                BUCKET_NAME,
+                new ExternalDependencyObservation(ObservationRegistry.NOOP)
         );
     }
 
