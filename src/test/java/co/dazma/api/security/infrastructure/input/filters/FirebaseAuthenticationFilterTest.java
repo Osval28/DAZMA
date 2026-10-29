@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -33,7 +32,6 @@ class FirebaseAuthenticationFilterTest {
             new AuthenticateIdentityOutputDto("firebase-user-123", "ana@dazma.store", true);
 
     private AuthenticateIdentityInputPort authenticateIdentityInputPort;
-    private ApiAuthenticationEntryPoint authenticationEntryPoint;
     private FirebaseAuthenticationFilter filter;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -42,11 +40,7 @@ class FirebaseAuthenticationFilterTest {
     @BeforeEach
     void setUp() {
         authenticateIdentityInputPort = mock(AuthenticateIdentityInputPort.class);
-        authenticationEntryPoint = mock(ApiAuthenticationEntryPoint.class);
-        filter = new FirebaseAuthenticationFilter(
-                authenticateIdentityInputPort,
-                authenticationEntryPoint
-        );
+        filter = new FirebaseAuthenticationFilter(authenticateIdentityInputPort);
         request = new MockHttpServletRequest("GET", "/users/api/v1/users");
         response = new MockHttpServletResponse();
         filterChain = mock(FilterChain.class);
@@ -86,17 +80,17 @@ class FirebaseAuthenticationFilterTest {
     }
 
     @Test
-    void shouldReturnUnauthorizedWhenSessionCookieIsInvalid() throws Exception {
+    void shouldContinueAnonymouslyAndExpireTheCookieWhenSessionCookieIsInvalid() throws Exception {
         request.setCookies(new Cookie("dazma_session", "invalid-token"));
-        InvalidIdentityTokenException exception = new InvalidIdentityTokenException();
         when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("invalid-token", false)))
-                .thenThrow(exception);
+                .thenThrow(new InvalidIdentityTokenException());
 
         filter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(authenticationEntryPoint).commenceInvalidToken(request, response, exception);
-        verify(filterChain, never()).doFilter(request, response);
+        assertEquals(Boolean.TRUE, request.getAttribute(ApiAuthenticationEntryPoint.INVALID_SESSION_ATTRIBUTE));
+        assertTrue(response.getHeader(HttpHeaders.SET_COOKIE).contains("Max-Age=0"));
+        verify(filterChain).doFilter(request, response);
     }
 
     @Test

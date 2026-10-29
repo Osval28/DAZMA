@@ -35,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -43,6 +44,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {
@@ -197,6 +199,17 @@ class SecurityConfigurationTest {
     }
 
     @Test
+    void shouldServeThePublicListAnonymouslyAndExpireAnInvalidSessionCookie() throws Exception {
+        when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("expired-token", false)))
+                .thenThrow(new InvalidIdentityTokenException());
+
+        mockMvc.perform(get("/publications/api/v1/publications")
+                        .cookie(new MockCookie("dazma_session", "expired-token")))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Max-Age=0")));
+    }
+
+    @Test
     void shouldAllowPublicationListWithoutAuthentication() throws Exception {
         mockMvc.perform(get("/publications/api/v1/publications"))
                 .andExpect(status().isOk());
@@ -279,13 +292,9 @@ class SecurityConfigurationTest {
 
         @Bean
         FirebaseAuthenticationFilter firebaseAuthenticationFilter(
-                AuthenticateIdentityInputPort authenticateIdentityInputPort,
-                ApiAuthenticationEntryPoint authenticationEntryPoint
+                AuthenticateIdentityInputPort authenticateIdentityInputPort
         ) {
-            return new FirebaseAuthenticationFilter(
-                    authenticateIdentityInputPort,
-                    authenticationEntryPoint
-            );
+            return new FirebaseAuthenticationFilter(authenticateIdentityInputPort);
         }
 
         @Bean
