@@ -14,7 +14,7 @@ public class MyProfileMapper implements OutputMapper<User, GetMyProfileOutputDto
                 user.getId(),
                 user.getName().value(),
                 user.getPhone().number(),
-                user.getMunicipality().name(),
+                user.getMunicipality().code(),
                 user.getEmail().value(),
                 user.getState(),
                 user.getRole()

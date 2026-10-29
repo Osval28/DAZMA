@@ -44,7 +44,7 @@ public interface PublicationMapStructCacheMapper extends DomainMapper<Publicatio
     PublicationStatus toDomain(PublicationStatusCacheEntity status);
 
     default String map(Municipality municipality) {
-        return municipality == null ? null : municipality.name();
+        return municipality == null ? null : municipality.code();
     }
 
     default String map(Description description) {

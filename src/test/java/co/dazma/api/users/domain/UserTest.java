@@ -10,7 +10,7 @@ class UserTest {
     @Test
     void registeredUserShouldBeActiveAndHaveUserRole() {
 
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"));
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"));
 
         assertEquals(State.ACTIVE, user.getState());
         assertEquals(Role.USER, user.getRole());
@@ -21,7 +21,7 @@ class UserTest {
     void cannotRegisterUserWithEmptyName() {
         InvalidUserException exception = assertThrows(
                 InvalidUserException.class,
-                () -> User.register(new Name(""), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"))
+                () -> User.register(new Name(""), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"))
         );
 
         assertEquals("USER_NAME_REQUIRED", exception.code());
@@ -29,7 +29,7 @@ class UserTest {
 
     @Test
     void cannotSuspendAlreadySuspendedUser() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"));
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"));
         user.suspend();
 
         UserAlreadySuspendedException exception = assertThrows(
@@ -42,7 +42,7 @@ class UserTest {
 
     @Test
     void cannotReactivateActiveUser() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"));
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"));
 
         UserNotSuspendedException exception = assertThrows(
                 UserNotSuspendedException.class,
@@ -54,23 +54,23 @@ class UserTest {
 
     @Test
     void canOperateReturnsTrueForActiveUser() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"));
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"));
         assertTrue(user.canOperate());
     }
 
     @Test
     void registeredUserKeepsTheProvidedData() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"));
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"));
 
         assertEquals(new Name("Ana"), user.getName());
         assertEquals(new Phone("3001234567"), user.getPhone());
-        assertEquals("Rionegro", user.getMunicipality().name());
+        assertEquals("05615", user.getMunicipality().code());
         assertEquals("uid-123", user.getExternalId());
     }
 
     @Test
     void canOperateReturnsFalseForInactiveUser() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"));
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"));
         user.suspend();
 
         assertFalse(user.canOperate());
@@ -78,7 +78,7 @@ class UserTest {
 
     @Test
     void suspendedUserCanBeReactivated() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"), "uid-123", new Email("ana@dazma.store"));
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"), "uid-123", new Email("ana@dazma.store"));
         user.suspend();
 
         user.reactivate();

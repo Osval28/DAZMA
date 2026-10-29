@@ -1,6 +1,8 @@
 package co.dazma.api.users.services.usecases.impl;
 
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
+import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
 import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.Phone;
@@ -23,15 +25,19 @@ import static org.mockito.Mockito.*;
 class RegisterUserServiceTest {
 
     private UserRepositoryPort userRepository;
+    private MunicipalityCatalogPort municipalityCatalog;
     private UserEventsPort userEvents;
     private RegisterUserService registerUserService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepositoryPort.class);
+        municipalityCatalog = mock(MunicipalityCatalogPort.class);
+        when(municipalityCatalog.exists(new Municipality("05615"))).thenReturn(true);
         userEvents = mock(UserEventsPort.class);
         registerUserService = new RegisterUserService(
                 userRepository,
+                municipalityCatalog,
                 userEvents,
                 TransactionOperations.withoutTransaction()
         );
@@ -74,7 +80,7 @@ class RegisterUserServiceTest {
     void shouldRejectAnAlreadyRegisteredUser() {
         User existingUser = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 "firebase-123",
                 new Email("ana@dazma.store")
         );
@@ -92,11 +98,25 @@ class RegisterUserServiceTest {
         verifyNoInteractions(userEvents);
     }
 
+    @Test
+    void shouldRejectAMunicipalityThatIsNotInTheCatalog() {
+        when(municipalityCatalog.exists(new Municipality("05615"))).thenReturn(false);
+
+        InvalidMunicipalityException exception = assertThrows(
+                InvalidMunicipalityException.class,
+                () -> registerUserService.execute(anaRegistration())
+        );
+
+        assertEquals("MUNICIPALITY_NOT_FOUND", exception.code());
+        verify(userRepository, never()).save(any(User.class));
+        verifyNoInteractions(userEvents);
+    }
+
     private static UserRegistration anaRegistration() {
         return new UserRegistration(
                 new Name("Ana"),
                 new Phone("3001234567"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 "firebase-123",
                 new Email("ana@dazma.store")
         );

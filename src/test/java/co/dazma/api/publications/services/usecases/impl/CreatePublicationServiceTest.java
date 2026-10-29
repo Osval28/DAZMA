@@ -21,6 +21,8 @@ import co.dazma.api.publications.services.output.ports.PublicationOwnerRepositor
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
+import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -56,6 +58,7 @@ class CreatePublicationServiceTest {
 
     private PublicationOwnerRepositoryPort ownerRepository;
     private UUID ownerId;
+    private MunicipalityCatalogPort municipalityCatalog;
     private PublicationRepositoryPort publicationRepository;
     private PublicationPhotoStoragePort photoStorage;
     private PublicationEventsPort publicationEvents;
@@ -68,12 +71,15 @@ class CreatePublicationServiceTest {
         ownerId = UUID.randomUUID();
         when(ownerRepository.findByExternalId(EXTERNAL_ID))
                 .thenReturn(Optional.of(new PublicationOwner(ownerId, EXTERNAL_ID, PublicationOwnerState.ACTIVE)));
+        municipalityCatalog = mock(MunicipalityCatalogPort.class);
+        when(municipalityCatalog.exists(new Municipality("05615"))).thenReturn(true);
         publicationRepository = mock(PublicationRepositoryPort.class);
         photoStorage = mock(PublicationPhotoStoragePort.class);
         publicationEvents = mock(PublicationEventsPort.class);
         transaction = new RecordingTransaction();
         service = new CreatePublicationService(
                 new OperatingOwnerResolver(ownerRepository),
+                municipalityCatalog,
                 publicationRepository,
                 photoStorage,
                 publicationEvents,
@@ -112,6 +118,19 @@ class CreatePublicationServiceTest {
         assertEquals(publication.getId(), result.getId());
         assertEquals(PublicationStatus.PUBLISHED, result.getStatus());
         assertEquals(NOW, result.getCreatedAt());
+    }
+
+    @Test
+    void shouldRejectAMunicipalityThatIsNotInTheCatalogBeforeTouchingPhotosOrRepository() {
+        when(municipalityCatalog.exists(new Municipality("05615"))).thenReturn(false);
+
+        InvalidMunicipalityException exception = assertThrows(
+                InvalidMunicipalityException.class,
+                () -> service.execute(draft(List.of(UUID.randomUUID())))
+        );
+
+        assertEquals("MUNICIPALITY_NOT_FOUND", exception.code());
+        verifyNoInteractions(photoStorage, publicationRepository, publicationEvents);
     }
 
     @Test
@@ -215,7 +234,7 @@ class CreatePublicationServiceTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 new Price(900_000),
                 List.of(UUID.randomUUID())
         );
@@ -291,7 +310,7 @@ class CreatePublicationServiceTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 new Price(900_000),
                 photoIds
         );

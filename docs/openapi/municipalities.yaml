@@ -1,0 +1,23 @@
+openapi: 3.0.3
+info:
+  title: DAZMA - Catálogo de municipios
+  version: 1.0.0
+paths:
+  /shared/api/v1/municipalities:
+    get:
+      summary: Lista los municipios disponibles
+      description: Público. Respuesta cacheable por un día. El código DIVIPOLA es el valor que se envía en `municipality`.
+      responses:
+        '200':
+          description: Municipios ordenados por nombre
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [code, name, department]
+                  properties:
+                    code: { type: string, example: '05615' }
+                    name: { type: string, example: Rionegro }
+                    department: { type: string, example: Antioquia }

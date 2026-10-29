@@ -4,8 +4,10 @@ public enum MunicipalityErrorCode implements ErrorCode {
 
     MUNICIPALITY_REQUIRED("MUNICIPALITY_REQUIRED",
             "municipality.required"),
-    MUNICIPALITY_TOO_LONG("MUNICIPALITY_TOO_LONG",
-            "municipality.too-long");
+    MUNICIPALITY_INVALID_FORMAT("MUNICIPALITY_INVALID_FORMAT",
+            "municipality.invalid-format"),
+    MUNICIPALITY_NOT_FOUND("MUNICIPALITY_NOT_FOUND",
+            "municipality.not-found");
 
     private final String code;
     private final String messageKey;

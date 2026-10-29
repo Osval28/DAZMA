@@ -33,7 +33,7 @@ public class RegisterUserMapper
                 user.getId(),
                 user.getName().value(),
                 user.getPhone().number(),
-                user.getMunicipality().name(),
+                user.getMunicipality().code(),
                 user.getState(),
                 user.getRole()
         );

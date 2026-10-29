@@ -1,0 +1,153 @@
+openapi: 3.1.0
+info:
+  title: DAZMA Users API
+  version: 1.0.0
+  description: Perfil del usuario autenticado
+
+paths:
+  /users/api/v1/users:
+    post:
+      tags: [Users]
+      summary: Completar el perfil del usuario autenticado
+      description: |
+        Se llama una sola vez, después de iniciar sesión por primera vez con Firebase. El usuario se
+        identifica por la cookie de sesión (`dazma_session`); el correo sale del token, nunca del cuerpo.
+
+        Responde 409 (`USER_ALREADY_REGISTERED`) si el usuario ya tiene perfil y 400
+        (`MUNICIPALITY_NOT_FOUND`) si el municipio no está en el catálogo. Crear el perfil dispara el correo
+        `account-created` y deja al usuario listo para publicar; si publica en los primeros segundos puede
+        recibir `PUBLICATION_OWNER_NOT_READY` (409): reintentar tras unos segundos.
+      operationId: registerUser
+      security:
+        - sessionCookie: []
+          csrfHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+            example:
+              name: Ana Gómez
+              phone: '3001234567'
+              municipality: '05615'
+      responses:
+        '201':
+          description: Perfil creado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ProblemResponse'
+        '401':
+          $ref: '#/components/responses/ProblemResponse'
+        '409':
+          $ref: '#/components/responses/ProblemResponse'
+
+  /users/api/v1/users/me:
+    get:
+      tags: [Users]
+      summary: Consultar el perfil propio
+      description: |
+        Devuelve el perfil del usuario autenticado. `emailVerified` se lee de la cookie de sesión, no de
+        Firebase en vivo: cambia a `true` solo cuando el usuario abre una sesión nueva después de verificar
+        su correo (ver `docs/guia-frontend.md`). Responde 404 (`USER_NOT_FOUND`) si todavía no completó el perfil.
+      operationId: getMyProfile
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Perfil del usuario.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyProfile'
+        '401':
+          $ref: '#/components/responses/ProblemResponse'
+        '404':
+          $ref: '#/components/responses/ProblemResponse'
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: dazma_session
+      description: Cookie de sesión HttpOnly emitida por `POST /security/api/v1/sessions`.
+    csrfHeader:
+      type: apiKey
+      in: header
+      name: X-XSRF-TOKEN
+      description: Valor de la cookie `XSRF-TOKEN`, obligatorio en toda solicitud que no sea GET.
+
+  responses:
+    ProblemResponse:
+      description: Error con el formato uniforme `application/problem+json` (campos `status`, `title`, `detail`, `code`).
+      content:
+        application/problem+json:
+          schema:
+            type: object
+            required: [status, title, detail]
+            properties:
+              status:
+                type: integer
+              title:
+                type: string
+              detail:
+                type: string
+              code:
+                type: string
+
+  schemas:
+    RegisterUserRequest:
+      type: object
+      additionalProperties: false
+      required: [name, phone, municipality]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        phone:
+          type: string
+          description: Celular colombiano de 10 dígitos que empieza por 3; se ignoran espacios, guiones, paréntesis y signo +.
+          examples: ['3001234567']
+        municipality:
+          type: string
+          pattern: '^[0-9]{5}$'
+          description: Código DIVIPOLA tomado de `GET /shared/api/v1/municipalities`.
+
+    User:
+      type: object
+      additionalProperties: false
+      required: [id, name, phone, municipality, state, role]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        phone:
+          type: string
+        municipality:
+          type: string
+          pattern: '^[0-9]{5}$'
+        state:
+          type: string
+          enum: [ACTIVE, SUSPENDED]
+        role:
+          type: string
+
+    MyProfile:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          required: [email, emailVerified]
+          properties:
+            email:
+              type: string
+              format: email
+            emailVerified:
+              type: boolean
+              description: Valor congelado en la cookie de sesión vigente.

@@ -33,7 +33,7 @@ public interface UserMapStructDomainMapper extends DomainMapper<UserEntity, User
     }
 
     default String map(Municipality municipality) {
-        return municipality == null ? null : municipality.name();
+        return municipality == null ? null : municipality.code();
     }
 
     default String map(Email email) {

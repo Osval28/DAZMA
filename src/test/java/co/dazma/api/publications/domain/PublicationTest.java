@@ -26,7 +26,7 @@ class PublicationTest {
                 new Name("  Bicicleta de montaña  "),
                 PublicationType.EXCHANGE,
                 new Description("  Bicicleta en buen estado  "),
-                new Municipality("  Rionegro  "),
+                new Municipality("  05615  "),
                 List.of(photo),
                 CREATED_AT,
                 new Price(PRICE)
@@ -37,7 +37,7 @@ class PublicationTest {
         assertEquals(new Name("Bicicleta de montaña"), publication.getName());
         assertEquals(PublicationType.EXCHANGE, publication.getType());
         assertEquals(new Description("Bicicleta en buen estado"), publication.getDescription());
-        assertEquals(new Municipality("Rionegro"), publication.getMunicipality());
+        assertEquals(new Municipality("05615"), publication.getMunicipality());
         assertEquals(PublicationStatus.PUBLISHED, publication.getStatus());
         assertEquals(List.of(photo), publication.getPhotos());
         assertEquals(CREATED_AT, publication.getCreatedAt());
@@ -55,7 +55,7 @@ class PublicationTest {
                         new Name(" "),
                         PublicationType.EXCHANGE,
                         new Description("Descripción"),
-                        new Municipality("Rionegro"),
+                        new Municipality("05615"),
                         List.of(photo(0)),
                         CREATED_AT,
                         new Price(PRICE)
@@ -68,7 +68,7 @@ class PublicationTest {
                         new Name("Bicicleta"),
                         PublicationType.EXCHANGE,
                         new Description(" "),
-                        new Municipality("Rionegro"),
+                        new Municipality("05615"),
                         List.of(photo(0)),
                         CREATED_AT,
                         new Price(PRICE)
@@ -168,7 +168,7 @@ class PublicationTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Descripción"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 photos,
                 CREATED_AT,
                 new Price(PRICE)

@@ -38,26 +38,26 @@ class RegisterUserInputAdapterTest {
 
     @Test
     void shouldTranslateTheInputIntoDomainAndTheResultIntoOutput() {
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"),
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"),
                 "firebase-123", new Email("ana@dazma.store"));
         when(useCase.execute(any(UserRegistration.class))).thenReturn(user);
 
         RegisterUserOutputDto output = adapter.execute(new RegisterUserInputDto(
-                "Ana", "3001234567", "Rionegro", "firebase-123", "ana@dazma.store"
+                "Ana", "3001234567", "05615", "firebase-123", "ana@dazma.store"
         ));
 
         ArgumentCaptor<UserRegistration> registration = ArgumentCaptor.forClass(UserRegistration.class);
         verify(useCase).execute(registration.capture());
         assertEquals(new Name("Ana"), registration.getValue().name());
         assertEquals(new Phone("3001234567"), registration.getValue().phone());
-        assertEquals(new Municipality("Rionegro"), registration.getValue().municipality());
+        assertEquals(new Municipality("05615"), registration.getValue().municipality());
         assertEquals("firebase-123", registration.getValue().externalId());
         assertEquals(new Email("ana@dazma.store"), registration.getValue().email());
 
         assertEquals(user.getId(), output.id());
         assertEquals("Ana", output.name());
         assertEquals("3001234567", output.phone());
-        assertEquals("Rionegro", output.municipality());
+        assertEquals("05615", output.municipality());
         assertEquals(State.ACTIVE, output.state());
         assertEquals(Role.USER, output.role());
     }
@@ -65,7 +65,7 @@ class RegisterUserInputAdapterTest {
     @Test
     void shouldNotCallTheUseCaseWhenTheInputIsNotValidDomain() {
         assertThrows(InvalidUserException.class, () -> adapter.execute(new RegisterUserInputDto(
-                " ", "3001234567", "Rionegro", "firebase-123", "ana@dazma.store"
+                " ", "3001234567", "05615", "firebase-123", "ana@dazma.store"
         )));
 
         verifyNoInteractions(useCase);
