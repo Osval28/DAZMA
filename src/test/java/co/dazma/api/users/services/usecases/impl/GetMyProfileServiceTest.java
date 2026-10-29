@@ -64,7 +64,7 @@ class GetMyProfileServiceTest {
     }
 
     private static User registeredUser() {
-        return User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"),
+        return User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"),
                 "firebase-123", new Email("ana@dazma.store"));
     }
 }

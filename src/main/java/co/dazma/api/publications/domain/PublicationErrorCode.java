@@ -128,6 +128,14 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_PHOTO_CONTENT_LENGTH_EXCEEDED",
             "publication.photo.content-length.exceeded"
     ),
+    PAGE_INVALID(
+            "PUBLICATION_PAGE_INVALID",
+            "publication.page.invalid"
+    ),
+    PAGE_SIZE_INVALID(
+            "PUBLICATION_PAGE_SIZE_INVALID",
+            "publication.page-size.invalid"
+    ),
     CREATE_REQUEST_REQUIRED(
             "PUBLICATION_CREATE_REQUEST_REQUIRED",
             "publication.create.request.required"

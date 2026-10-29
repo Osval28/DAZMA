@@ -3,16 +3,19 @@ package co.dazma.api.shared.domain;
 import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
 import co.dazma.api.shared.domain.errors.MunicipalityErrorCode;
 
-public record Municipality(String name) {
-    private static final int MAX_LENGTH = 255;
+import java.util.regex.Pattern;
+
+public record Municipality(String code) {
+
+    private static final Pattern DIVIPOLA_FORMAT = Pattern.compile("\\d{5}");
 
     public Municipality {
-        name = name.trim();
-        if (name.isBlank()) {
+        code = code.trim();
+        if (code.isBlank()) {
             throw new InvalidMunicipalityException(MunicipalityErrorCode.MUNICIPALITY_REQUIRED);
         }
-        if (name.codePointCount(0, name.length()) > MAX_LENGTH) {
-            throw new InvalidMunicipalityException(MunicipalityErrorCode.MUNICIPALITY_TOO_LONG,MAX_LENGTH);
+        if (!DIVIPOLA_FORMAT.matcher(code).matches()) {
+            throw new InvalidMunicipalityException(MunicipalityErrorCode.MUNICIPALITY_INVALID_FORMAT);
         }
     }
 

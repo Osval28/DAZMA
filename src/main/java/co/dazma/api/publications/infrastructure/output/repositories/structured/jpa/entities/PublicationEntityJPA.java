@@ -5,6 +5,7 @@ import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationTypeEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class PublicationEntityJPA {
     private Integer price;
 
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
     @OrderBy("position ASC")
     private List<PublicationPhotoEntityJPA> photos = new ArrayList<PublicationPhotoEntityJPA>();
 

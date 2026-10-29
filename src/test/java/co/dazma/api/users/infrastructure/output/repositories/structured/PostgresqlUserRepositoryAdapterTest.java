@@ -48,7 +48,7 @@ class PostgresqlUserRepositoryAdapterTest {
                 id,
                 "Ana",
                 "3001234567",
-                "Rionegro",
+                "05615",
                 "firebase-123",
                 State.ACTIVE,
                 Role.USER,
@@ -82,7 +82,7 @@ class PostgresqlUserRepositoryAdapterTest {
     void shouldConvertDomainUserSaveItAndReturnTheSavedUser() {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 "firebase-123",
                 new Email("ana@dazma.store")
         );
@@ -106,7 +106,7 @@ class PostgresqlUserRepositoryAdapterTest {
     void shouldMapDomainUserToJpaEntityBeforeSaving() {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 "firebase-123",
                 new Email("ana@dazma.store")
         );
@@ -121,7 +121,7 @@ class PostgresqlUserRepositoryAdapterTest {
         assertEquals(user.getId(), saved.getId());
         assertEquals(user.getName().value(), saved.getName());
         assertEquals(user.getPhone().number(), saved.getPhone());
-        assertEquals(user.getMunicipality().name(), saved.getMunicipality());
+        assertEquals(user.getMunicipality().code(), saved.getMunicipality());
         assertEquals(user.getExternalId(), saved.getExternalId());
         assertEquals(user.getRole(), saved.getRole());
         assertEquals(user.getState(), saved.getState());

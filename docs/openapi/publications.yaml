@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: DAZMA Publications API
   version: 1.0.0
-  description: Contrato para crear y consultar el detalle de una publicación
+  description: Contrato para listar, crear y consultar publicaciones
 
 paths:
   /publications/api/v1/photos/upload-authorizations:
@@ -48,6 +48,59 @@ paths:
           $ref: '#/components/responses/AuthenticatedUserNotFound'
 
   /publications/api/v1/publications:
+    get:
+      tags: [Publications]
+      summary: Listar publicaciones activas
+      description: |
+        Pantalla principal del marketplace. Devuelve publicaciones activas de la más nueva a la
+        más antigua, sin datos del vendedor. Es pública (no requiere sesión).
+
+        La paginación es por porciones: la respuesta indica con `hasNext` si existe otra página,
+        pero no el total (contarlo en cada petición es costoso). Para scroll infinito basta con
+        pedir `page + 1` mientras `hasNext` sea `true`.
+
+        `coverUrl` es una URL firmada de solo lectura que vence según
+        `dazma.publications.photo-download.validity`; no se debe guardar, sino volver a pedir el listado.
+        Un municipio con código válido pero sin publicaciones responde 200 con `items` vacío.
+      operationId: listPublications
+      security: []
+      parameters:
+        - name: municipality
+          in: query
+          required: false
+          description: |
+            Código DIVIPOLA del municipio (5 dígitos) tomado de `GET /shared/api/v1/municipalities`.
+            Si se omite o va vacío, se listan todos los municipios.
+          schema:
+            type: string
+            pattern: '^[0-9]{5}$'
+            example: '05615'
+        - name: page
+          in: query
+          required: false
+          description: Número de página, empezando en 0.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          required: false
+          description: Publicaciones por página.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Porción de publicaciones.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
     post:
       tags: [Publications]
       summary: Crear una publicación
@@ -56,6 +109,9 @@ paths:
         de la sesión (cookie `dazma_session`); el cliente no puede escogerlo en el cuerpo de la solicitud.
         Cada identificador de foto debe corresponder a una carga previamente autorizada,
         completada y perteneciente al mismo usuario.
+
+        Requiere correo verificado (`PUBLICATION_OWNER_EMAIL_NOT_VERIFIED`, 403) y un municipio que exista
+        en el catálogo (`MUNICIPALITY_NOT_FOUND`, 400).
       operationId: createPublication
       security:
         - sessionCookie: []
@@ -70,7 +126,7 @@ paths:
               name: Bicicleta de montaña
               type: EXCHANGE
               description: Bicicleta en buen estado para intercambiar por una consola.
-              municipality: Rionegro
+              municipality: '05615'
               price: 900000
               photoUploadIds:
                 - 5fc930d6-c24c-4e60-91ed-a82c3b7f5275
@@ -308,9 +364,7 @@ components:
           minLength: 1
           description: Información del artículo y de lo que espera el propietario.
         municipality:
-          type: string
-          minLength: 1
-          description: Ciudad asociada con la publicación.
+          $ref: '#/components/schemas/MunicipalityCode'
         price:
           type: integer
           format: int32
@@ -356,7 +410,7 @@ components:
         description:
           type: string
         municipality:
-          type: string
+          $ref: '#/components/schemas/MunicipalityCode'
         price:
           type: integer
           format: int32
@@ -370,6 +424,61 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PublicationPhoto'
+        createdAt:
+          type: string
+          format: date-time
+
+    MunicipalityCode:
+      type: string
+      pattern: '^[0-9]{5}$'
+      description: |
+        Código DIVIPOLA del DANE (2 dígitos del departamento + 3 del municipio). Los valores válidos
+        salen de `GET /shared/api/v1/municipalities`; un código con formato correcto que no esté
+        en el catálogo se rechaza con `MUNICIPALITY_NOT_FOUND`.
+      examples: ['05615']
+
+    PublicationListResponse:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, hasNext]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicationSummary'
+        page:
+          type: integer
+          minimum: 0
+          description: Página devuelta, empezando en 0.
+        size:
+          type: integer
+          description: Tamaño de página solicitado.
+        hasNext:
+          type: boolean
+          description: Indica si existe una página siguiente.
+
+    PublicationSummary:
+      type: object
+      additionalProperties: false
+      required: [id, name, type, municipality, price, coverUrl, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/PublicationType'
+        municipality:
+          $ref: '#/components/schemas/MunicipalityCode'
+        price:
+          type: integer
+          format: int32
+          minimum: 1
+        coverUrl:
+          type: string
+          format: uri
+          description: URL firmada de la foto de portada (posición 0).
         createdAt:
           type: string
           format: date-time

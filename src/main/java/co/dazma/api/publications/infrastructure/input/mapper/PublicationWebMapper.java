@@ -4,11 +4,13 @@ import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.GetPublicationResponseDto;
+import co.dazma.api.publications.infrastructure.input.dto.ListPublicationsResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.PublicationOwnerResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.PublicationStatusDto;
 import co.dazma.api.publications.infrastructure.input.dto.PublicationTypeDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
 import co.dazma.api.publications.services.input.dto.GetPublicationOutputDto;
+import co.dazma.api.publications.services.input.dto.ListPublicationsOutputDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -26,6 +28,8 @@ public interface PublicationWebMapper {
 
     @Mapping(target = "owner", source = "ownerId")
     GetPublicationResponseDto toResponse(GetPublicationOutputDto output);
+
+    ListPublicationsResponseDto toResponse(ListPublicationsOutputDto output);
 
     default PublicationOwnerResponseDto toOwner(UUID ownerId) {
         return ownerId == null ? null : new PublicationOwnerResponseDto(ownerId);

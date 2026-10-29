@@ -41,7 +41,7 @@ class GetPublicationInputAdapterTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 PublicationStatus.PUBLISHED,
                 List.of(new PublicationPhoto(photoId, "publications/photo-0.jpg", 0)),
                 CREATED_AT,
@@ -57,7 +57,7 @@ class GetPublicationInputAdapterTest {
         assertEquals(publication.getOwnerId(), output.ownerId());
         assertEquals("Bicicleta", output.name());
         assertEquals("Bicicleta de montaña en buen estado", output.description());
-        assertEquals("Rionegro", output.municipality());
+        assertEquals("05615", output.municipality());
         assertEquals(900_000, output.price());
         assertEquals(PublicationType.EXCHANGE, output.type());
         assertEquals(PublicationStatus.PUBLISHED, output.status());

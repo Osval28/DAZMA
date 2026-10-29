@@ -49,7 +49,7 @@ class CreatePublicationInputAdapterTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 new Price(900_000),
                 List.of(photoId)
         );
@@ -58,7 +58,7 @@ class CreatePublicationInputAdapterTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 List.of(new PublicationPhoto(photoId, "publications/photo-0.jpg", 0)),
                 NOW,
                 new Price(900_000)
@@ -87,7 +87,7 @@ class CreatePublicationInputAdapterTest {
                 name,
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",
-                "Rionegro",
+                "05615",
                 900_000,
                 photoIds
         );

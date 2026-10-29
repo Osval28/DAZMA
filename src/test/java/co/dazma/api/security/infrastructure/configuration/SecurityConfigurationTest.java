@@ -158,14 +158,14 @@ class SecurityConfigurationTest {
         RegisterUserInputDto expectedInput = new RegisterUserInputDto(
                 "Ana",
                 "3001234567",
-                "Rionegro",
+                "05615",
                 "firebase-user-123",
                 "ana@dazma.store"
         );
         when(authenticateIdentityInputPort.execute(new AuthenticateIdentityInputDto("valid-token", true)))
                 .thenReturn(new AuthenticateIdentityOutputDto("firebase-user-123", "ana@dazma.store", true));
         when(registerUserInputPort.execute(expectedInput)).thenReturn(new RegisterUserOutputDto(
-                java.util.UUID.randomUUID(), "Ana", "3001234567", "Rionegro", State.ACTIVE, Role.USER
+                java.util.UUID.randomUUID(), "Ana", "3001234567", "05615", State.ACTIVE, Role.USER
         ));
 
         mockMvc.perform(post("/users/api/v1/users")
@@ -183,6 +183,22 @@ class SecurityConfigurationTest {
     @Test
     void shouldAllowPublicationDetailWithoutAuthentication() throws Exception {
         mockMvc.perform(get("/publications/api/v1/publications/{publicationId}", java.util.UUID.randomUUID()))
+                .andExpect(status().isOk());
+
+        verifyNoInteractions(authenticateIdentityInputPort);
+    }
+
+    @Test
+    void shouldAllowMunicipalityCatalogWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/shared/api/v1/municipalities"))
+                .andExpect(status().isOk());
+
+        verifyNoInteractions(authenticateIdentityInputPort);
+    }
+
+    @Test
+    void shouldAllowPublicationListWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/publications/api/v1/publications"))
                 .andExpect(status().isOk());
 
         verifyNoInteractions(authenticateIdentityInputPort);
@@ -225,7 +241,7 @@ class SecurityConfigurationTest {
                 {
                   "name": "Ana",
                   "phone": "3001234567",
-                  "municipality": "Rionegro"
+                  "municipality": "05615"
                 }
                 """;
     }
@@ -245,6 +261,16 @@ class SecurityConfigurationTest {
         @GetMapping(SecurityConfiguration.PUBLIC_PUBLICATION_DETAIL_PATH)
         String detail() {
             return "{}";
+        }
+
+        @GetMapping(SecurityConfiguration.PUBLIC_PUBLICATION_LIST_PATH)
+        String list() {
+            return "{}";
+        }
+
+        @GetMapping(SecurityConfiguration.PUBLIC_MUNICIPALITY_LIST_PATH)
+        String municipalities() {
+            return "[]";
         }
     }
 
