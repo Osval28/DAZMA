@@ -61,7 +61,6 @@ public class ListPublicationsService implements ListPublicationsUseCase {
     }
 
     private PhotoAccess coverOf(Publication publication, Duration validity) {
-        // Una publicación siempre tiene al menos una foto (lo garantiza el dominio).
         PublicationPhoto cover = publication.getPhotos().stream()
                 .min(Comparator.comparingInt(PublicationPhoto::getPosition))
                 .orElseThrow();

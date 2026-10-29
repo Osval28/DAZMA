@@ -13,9 +13,5 @@ public interface PublicationRepositoryPort {
 
     Optional<Publication> findById(UUID publicationId);
 
-    /**
-     * Publicaciones activas, de la más reciente a la más antigua, opcionalmente de un solo municipio.
-     * {@code page} empieza en 0.
-     */
     PublishedPublicationsSlice findPublished(Optional<Municipality> municipality, int page, int size);
 }

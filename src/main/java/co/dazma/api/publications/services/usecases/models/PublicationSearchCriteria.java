@@ -6,9 +6,6 @@ import co.dazma.api.shared.domain.Municipality;
 
 import java.util.Optional;
 
-/**
- * Qué publicaciones se quieren ver y qué porción de ellas: municipio opcional y página (desde 0).
- */
 public record PublicationSearchCriteria(Optional<Municipality> municipality, int page, int size) {
 
     public static final int MAX_SIZE = 50;

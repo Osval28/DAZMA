@@ -46,7 +46,7 @@ public class PublicationEntityJPA {
     private Integer price;
 
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
-    @BatchSize(size = 50) // al listar, las fotos de una página se cargan en una sola consulta y no una por publicación
+    @BatchSize(size = 50)
     @OrderBy("position ASC")
     private List<PublicationPhotoEntityJPA> photos = new ArrayList<PublicationPhotoEntityJPA>();
 

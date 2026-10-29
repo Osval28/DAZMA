@@ -13,8 +13,6 @@ CREATE TABLE app_shared.municipalities (
         CHECK (BTRIM(department) <> '')
 );
 
--- Subregión Oriente de Antioquia (23 municipios). Códigos DIVIPOLA del DANE.
--- Para ampliar la cobertura se agregan filas en una migración nueva; no se edita esta.
 INSERT INTO app_shared.municipalities (code, name, department) VALUES
     ('05002', 'Abejorral', 'Antioquia'),
     ('05021', 'Alejandría', 'Antioquia'),

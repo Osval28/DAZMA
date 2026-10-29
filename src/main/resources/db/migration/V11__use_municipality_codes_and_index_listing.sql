@@ -1,6 +1,3 @@
--- Los municipios dejan de ser texto libre: se guarda el código DIVIPOLA del catálogo (app_shared.municipalities).
--- Si ya existían filas con el nombre, se convierten por coincidencia exacta (sin distinguir mayúsculas).
--- Una fila cuyo nombre no coincida hace fallar la migración a propósito: es mejor enterarse que perder el dato.
 UPDATE app_publications.publications AS p
 SET municipality = m.code
 FROM app_shared.municipalities AS m
@@ -21,7 +18,6 @@ ALTER TABLE app_users.users
     ADD CONSTRAINT chk_users_municipality_code
         CHECK (municipality ~ '^[0-9]{5}$');
 
--- Listado público: publicaciones activas, opcionalmente de un municipio, de la más nueva a la más antigua.
 CREATE INDEX idx_publications_listing_by_municipality
     ON app_publications.publications (status, municipality, created_at DESC, id DESC);
 
