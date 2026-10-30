@@ -21,7 +21,7 @@
         <sonar.organization>osval28</sonar.organization>
         <sonar.projectKey>Osval28_DAZMA</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <jacoco.version>0.8.15</jacoco.version>
+        <jacoco.version>0.8.16</jacoco.version>
         <archunit.version>1.5.1</archunit.version>
         <archunit-junit.version>1.5.1</archunit-junit.version>
         <spring-modulith.version>2.1.1</spring-modulith.version>
