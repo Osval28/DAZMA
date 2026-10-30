@@ -1,7 +1,6 @@
 package co.dazma.api.security.infrastructure.firebase;
 
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
-import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
 import co.dazma.api.security.infrastructure.output.firebase.FirebaseSessionTokenIssuer;
 import co.dazma.api.security.services.input.adapters.AuthenticateIdentityInputAdapter;
@@ -130,13 +129,9 @@ public class FirebaseConfiguration {
 
     @Bean
     public FirebaseAuthenticationFilter firebaseAuthenticationFilter(
-            AuthenticateIdentityInputPort authenticateIdentityInputPort,
-            ApiAuthenticationEntryPoint authenticationEntryPoint
+            AuthenticateIdentityInputPort authenticateIdentityInputPort
     ) {
-        return new FirebaseAuthenticationFilter(
-                authenticateIdentityInputPort,
-                authenticationEntryPoint
-        );
+        return new FirebaseAuthenticationFilter(authenticateIdentityInputPort);
     }
 
     @Bean

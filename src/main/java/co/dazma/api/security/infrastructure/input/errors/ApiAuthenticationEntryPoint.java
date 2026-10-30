@@ -1,6 +1,5 @@
 package co.dazma.api.security.infrastructure.input.errors;
 
-import co.dazma.api.security.domain.InvalidIdentityTokenException;
 import co.dazma.api.security.domain.SecurityErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +14,9 @@ import java.util.Objects;
 
 @Component
 public class ApiAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    public static final String INVALID_SESSION_ATTRIBUTE =
+            ApiAuthenticationEntryPoint.class.getName() + ".INVALID_SESSION";
 
     private final SecurityProblemWriter problemWriter;
 
@@ -34,25 +36,16 @@ public class ApiAuthenticationEntryPoint implements AuthenticationEntryPoint {
         problemWriter.write(
                 request,
                 response,
-                SecurityErrorCode.AUTHENTICATION_REQUIRED,
+                errorCodeFor(request),
                 HttpStatus.UNAUTHORIZED,
                 "error.title.unauthorized"
         );
     }
 
-    public void commenceInvalidToken(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            InvalidIdentityTokenException exception
-    ) throws IOException {
-        Objects.requireNonNull(exception, "La excepción del token es obligatoria");
-
-        problemWriter.write(
-                request,
-                response,
-                SecurityErrorCode.IDENTITY_TOKEN_INVALID,
-                HttpStatus.UNAUTHORIZED,
-                "error.title.unauthorized"
-        );
+    private static SecurityErrorCode errorCodeFor(HttpServletRequest request) {
+        if (Boolean.TRUE.equals(request.getAttribute(INVALID_SESSION_ATTRIBUTE))) {
+            return SecurityErrorCode.IDENTITY_TOKEN_INVALID;
+        }
+        return SecurityErrorCode.AUTHENTICATION_REQUIRED;
     }
 }
