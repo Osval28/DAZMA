@@ -24,7 +24,7 @@
         <jacoco.version>0.8.16</jacoco.version>
         <archunit.version>1.5.1</archunit.version>
         <archunit-junit.version>1.5.1</archunit-junit.version>
-        <spring-modulith.version>2.1.1</spring-modulith.version>
+        <spring-modulith.version>2.1.2</spring-modulith.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <aws.sdk.version>2.57.0</aws.sdk.version>
         <spring-cloud-aws.version>4.2.0</spring-cloud-aws.version>
