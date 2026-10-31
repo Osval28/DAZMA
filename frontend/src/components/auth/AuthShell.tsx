@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { IconBackdrop } from "@/components/brand/IconBackdrop";
 import { Wordmark } from "@/components/brand/Wordmark";
 
 type AuthShellProps = {
@@ -11,6 +12,7 @@ type AuthShellProps = {
 export function AuthShell({ title, subtitle, children, footer }: AuthShellProps) {
   return (
     <main className="auth-shell">
+      <IconBackdrop />
       <div className="auth-shell__card">
         <Wordmark />
         <h1 className="auth-shell__title">{title}</h1>
