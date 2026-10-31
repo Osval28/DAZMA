@@ -10,7 +10,7 @@ import {
 import { hasErrorCode } from "@/lib/api/errors";
 import { closeSession, openSession } from "@/lib/api/session";
 import { getMyProfile } from "@/lib/api/users";
-import { firebaseAuth } from "@/lib/firebase/auth-client";
+import { getFirebaseAuth } from "@/lib/firebase/auth-client";
 
 export const HOME_PATH = "/";
 export const ACCOUNT_PATH = "/cuenta";
@@ -33,13 +33,13 @@ export async function destinationAfterSignIn(): Promise<string> {
 }
 
 export async function signInWithEmail(email: string, password: string): Promise<string> {
-  const credential = await signInWithEmailAndPassword(firebaseAuth, email, password);
+  const credential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
   await openSession(await credential.user.getIdToken());
   return destinationAfterSignIn();
 }
 
 export async function signInWithGoogle(): Promise<string> {
-  const credential = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+  const credential = await signInWithPopup(getFirebaseAuth(), new GoogleAuthProvider());
   await openSession(await credential.user.getIdToken());
   return destinationAfterSignIn();
 }
@@ -49,12 +49,12 @@ export function isPopupDismissed(error: unknown): boolean {
 }
 
 export async function createAccount(email: string, password: string): Promise<void> {
-  const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+  const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   await sendEmailVerification(credential.user);
   await openSession(await credential.user.getIdToken());
 }
 
 export async function signOutCompletely(): Promise<void> {
   await closeSession();
-  await signOut(firebaseAuth);
+  await signOut(getFirebaseAuth());
 }
