@@ -7,6 +7,9 @@ import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.publications.services.usecases.contract.CreatePublicationUseCase;
+import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
+import co.dazma.api.shared.domain.errors.MunicipalityErrorCode;
+import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionOperations;
 
@@ -20,6 +23,7 @@ import java.util.UUID;
 public class CreatePublicationService implements CreatePublicationUseCase {
 
     private final OperatingOwnerResolver operatingOwners;
+    private final MunicipalityCatalogPort municipalityCatalog;
     private final PublicationRepositoryPort publicationRepository;
     private final PublicationPhotoStoragePort photoStorage;
     private final PublicationEventsPort publicationEvents;
@@ -28,6 +32,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
 
     public CreatePublicationService(
             OperatingOwnerResolver operatingOwners,
+            MunicipalityCatalogPort municipalityCatalog,
             PublicationRepositoryPort publicationRepository,
             PublicationPhotoStoragePort photoStorage,
             PublicationEventsPort publicationEvents,
@@ -37,6 +42,10 @@ public class CreatePublicationService implements CreatePublicationUseCase {
         this.operatingOwners = Objects.requireNonNull(
                 operatingOwners,
                 "El resolutor de propietarios de publicaciones es obligatorio"
+        );
+        this.municipalityCatalog = Objects.requireNonNull(
+                municipalityCatalog,
+                "El catálogo de municipios es obligatorio"
         );
         this.publicationRepository = Objects.requireNonNull(
                 publicationRepository,
@@ -58,6 +67,10 @@ public class CreatePublicationService implements CreatePublicationUseCase {
     public Publication execute(PublicationDraft draft) {
         if (!draft.ownerEmailVerified()) {
             throw new PublicationOwnerEmailNotVerifiedException();
+        }
+
+        if (!municipalityCatalog.exists(draft.municipality())) {
+            throw new InvalidMunicipalityException(MunicipalityErrorCode.MUNICIPALITY_NOT_FOUND);
         }
 
         UUID ownerId = operatingOwners.resolve(draft.ownerExternalId());

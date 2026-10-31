@@ -13,6 +13,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -29,19 +30,11 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
     private static final Set<String> READ_ONLY_METHODS = Set.of("GET", "HEAD", "OPTIONS");
 
     private final AuthenticateIdentityInputPort authenticateIdentityInputPort;
-    private final ApiAuthenticationEntryPoint authenticationEntryPoint;
 
-    public FirebaseAuthenticationFilter(
-            AuthenticateIdentityInputPort authenticateIdentityInputPort,
-            ApiAuthenticationEntryPoint authenticationEntryPoint
-    ) {
+    public FirebaseAuthenticationFilter(AuthenticateIdentityInputPort authenticateIdentityInputPort) {
         this.authenticateIdentityInputPort = Objects.requireNonNull(
                 authenticateIdentityInputPort,
                 "El puerto de entrada de autenticación es obligatorio"
-        );
-        this.authenticationEntryPoint = Objects.requireNonNull(
-                authenticationEntryPoint,
-                "El punto de entrada de autenticación es obligatorio"
         );
     }
 
@@ -57,14 +50,13 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         Cookie sessionCookie = WebUtils.getCookie(request, SessionCookies.NAME);
-
-        if (sessionCookie == null || sessionCookie.getValue().isBlank()) {
-            filterChain.doFilter(request, response);
-            return;
+        if (sessionCookie != null && !sessionCookie.getValue().isBlank()) {
+            authenticate(sessionCookie.getValue(), request, response);
         }
+        filterChain.doFilter(request, response);
+    }
 
-        String token = sessionCookie.getValue();
-
+    private void authenticate(String token, HttpServletRequest request, HttpServletResponse response) {
         try {
             AuthenticateIdentityOutputDto identity = authenticateIdentityInputPort.execute(
                     new AuthenticateIdentityInputDto(token, changesState(request))
@@ -74,18 +66,16 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                     identity.email(),
                     identity.emailVerified()
             );
-
             UsernamePasswordAuthenticationToken authentication =
                     UsernamePasswordAuthenticationToken.authenticated(principal, null, List.of());
             authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
             );
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            filterChain.doFilter(request, response);
         } catch (InvalidIdentityTokenException exception) {
             SecurityContextHolder.clearContext();
-            authenticationEntryPoint.commenceInvalidToken(request, response, exception);
+            request.setAttribute(ApiAuthenticationEntryPoint.INVALID_SESSION_ATTRIBUTE, Boolean.TRUE);
+            response.addHeader(HttpHeaders.SET_COOKIE, SessionCookies.expired().toString());
         }
     }
 

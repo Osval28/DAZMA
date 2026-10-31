@@ -130,7 +130,7 @@ class GetPublicationServiceTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 PublicationStatus.PUBLISHED,
                 List.of(
                         new PublicationPhoto(UUID.randomUUID(), "publications/photo-0.jpg", 0),

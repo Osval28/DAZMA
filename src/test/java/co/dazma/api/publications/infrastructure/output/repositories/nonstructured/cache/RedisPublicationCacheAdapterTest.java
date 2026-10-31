@@ -182,7 +182,7 @@ class RedisPublicationCacheAdapterTest {
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 PublicationStatus.PUBLISHED,
                 List.of(new PublicationPhoto(UUID.randomUUID(), "publications/owner/photo-0", 0)),
                 Instant.parse("2026-10-20T20:00:00Z"),

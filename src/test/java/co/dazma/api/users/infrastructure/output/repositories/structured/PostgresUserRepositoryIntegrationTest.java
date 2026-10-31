@@ -42,7 +42,7 @@ class PostgresUserRepositoryIntegrationTest {
     void shouldPersistAndFindAUserUsingPostgres() {
         User user = User.register(new Name("Ana"),
                 new Phone("3001234567"),
-                new Municipality("Rionegro"),
+                new Municipality("05615"),
                 "firebase-integration-123",
                 new Email("ana@dazma.store")
         );
@@ -56,7 +56,7 @@ class PostgresUserRepositoryIntegrationTest {
         assertTrue(foundUser.isPresent());
         assertEquals("Ana", foundUser.get().getName().value());
         assertEquals("3001234567", foundUser.get().getPhone().number());
-        assertEquals("Rionegro", foundUser.get().getMunicipality().name());
+        assertEquals("05615", foundUser.get().getMunicipality().code());
         assertEquals(Role.USER, foundUser.get().getRole());
         assertEquals(State.ACTIVE, foundUser.get().getState());
     }
@@ -67,7 +67,7 @@ class PostgresUserRepositoryIntegrationTest {
                 UUID.randomUUID(),
                 "Ana",
                 "3001234567",
-                "Rionegro",
+                "05615",
                 "duplicated-firebase-id",
                 State.ACTIVE,
                 Role.USER,
@@ -77,7 +77,7 @@ class PostgresUserRepositoryIntegrationTest {
                 UUID.randomUUID(),
                 "Luis",
                 "3017654321",
-                "Medellin",
+                "05001",
                 "duplicated-firebase-id",
                 State.ACTIVE,
                 Role.USER,

@@ -74,12 +74,12 @@ class UserControllerTest {
         RegisterUserInputDto expectedInput = new RegisterUserInputDto(
                 "Ana",
                 "3001234567",
-                "Rionegro",
+                "05615",
                 "firebase-123",
                 "ana@dazma.store"
         );
         when(registerUserInputPort.execute(expectedInput)).thenReturn(new RegisterUserOutputDto(
-                id, "Ana", "3001234567", "Rionegro", State.ACTIVE, Role.USER
+                id, "Ana", "3001234567", "05615", State.ACTIVE, Role.USER
         ));
 
         mockMvc.perform(post("/users/api/v1/users")
@@ -88,14 +88,14 @@ class UserControllerTest {
                                 {
                                   "name": "Ana",
                                   "phone": "3001234567",
-                                  "municipality": "Rionegro"
+                                  "municipality": "05615"
                                 }
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.name").value("Ana"))
                 .andExpect(jsonPath("$.phone").value("3001234567"))
-                .andExpect(jsonPath("$.municipality").value("Rionegro"))
+                .andExpect(jsonPath("$.municipality").value("05615"))
                 .andExpect(jsonPath("$.state").value("ACTIVE"))
                 .andExpect(jsonPath("$.role").value("USER"));
 
@@ -106,7 +106,7 @@ class UserControllerTest {
     void shouldReturnTheProfileOfTheAuthenticatedUserWithTheEmailVerificationFromTheSession() throws Exception {
         UUID id = UUID.randomUUID();
         when(getMyProfileInputPort.execute(new GetMyProfileInputDto("firebase-123")))
-                .thenReturn(new GetMyProfileOutputDto(id, "Ana", "3001234567", "Rionegro",
+                .thenReturn(new GetMyProfileOutputDto(id, "Ana", "3001234567", "05615",
                         "ana@dazma.store", State.ACTIVE, Role.USER));
 
         mockMvc.perform(get("/users/api/v1/users/me"))

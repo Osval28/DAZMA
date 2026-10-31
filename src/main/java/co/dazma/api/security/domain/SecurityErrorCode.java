@@ -23,6 +23,10 @@ public enum SecurityErrorCode implements ErrorCode {
     SESSION_REVOCATION_FAILED(
             "SESSION_REVOCATION_FAILED",
             "security.session-revocation.failed"
+    ),
+    ORIGIN_NOT_ALLOWED(
+            "ORIGIN_NOT_ALLOWED",
+            "security.origin.not-allowed"
     );
 
     private final String code;

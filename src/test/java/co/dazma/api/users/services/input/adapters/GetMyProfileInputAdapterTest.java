@@ -23,7 +23,7 @@ class GetMyProfileInputAdapterTest {
     void shouldReturnTheProfileOfTheAuthenticatedIdentity() {
         GetMyProfileUseCase useCase = mock(GetMyProfileUseCase.class);
         GetMyProfileInputAdapter adapter = new GetMyProfileInputAdapter(useCase, new MyProfileMapper());
-        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("Rionegro"),
+        User user = User.register(new Name("Ana"), new Phone("3001234567"), new Municipality("05615"),
                 "firebase-123", new Email("ana@dazma.store"));
         when(useCase.execute("firebase-123")).thenReturn(user);
 
@@ -32,7 +32,7 @@ class GetMyProfileInputAdapterTest {
         assertEquals(user.getId(), profile.id());
         assertEquals("Ana", profile.name());
         assertEquals("3001234567", profile.phone());
-        assertEquals("Rionegro", profile.municipality());
+        assertEquals("05615", profile.municipality());
         assertEquals("ana@dazma.store", profile.email());
         assertEquals(State.ACTIVE, profile.state());
         assertEquals(Role.USER, profile.role());
