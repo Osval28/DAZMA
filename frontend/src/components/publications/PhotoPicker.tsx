@@ -28,10 +28,9 @@ export function PhotoPicker({ drafts, disabled }: PhotoPickerProps) {
   return (
     <div className="photo-picker">
       <div className="photo-picker__header">
-        <span className="field__label">{messages.label}</span>
+        <p className="photo-picker__hint">{messages.hint(MAXIMUM_PHOTOS, MAXIMUM_PHOTO_MEGABYTES)}</p>
         <span className="photo-picker__counter">{messages.counter(photos.length, MAXIMUM_PHOTOS)}</span>
       </div>
-      <p className="photo-picker__hint">{messages.hint(MAXIMUM_PHOTOS, MAXIMUM_PHOTO_MEGABYTES)}</p>
       {drafts.issueMessage !== undefined && (
         <p className="photo-picker__issue" role="alert">
           {drafts.issueMessage}

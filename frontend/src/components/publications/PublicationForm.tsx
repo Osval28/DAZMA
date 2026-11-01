@@ -64,48 +64,57 @@ export function PublicationForm() {
   return (
     <form className="form" onSubmit={handleSubmit} noValidate>
       {errorMessage !== undefined && <Alert>{errorMessage}</Alert>}
-      <fieldset className="choice" disabled={submitting}>
-        <legend className="field__label">{messages.typeLabel}</legend>
-        <div className="choice__options">
-          {typeOptions.map((option) => (
-            <label key={option} className="choice__option">
-              <input type="radio" name="type" value={option} checked={type === option} onChange={() => setType(option)} />
-              <span>{messages.typeOptions[option]}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <TextField
-        id="publication-name"
-        name="name"
-        label={messages.nameLabel}
-        placeholder={messages.namePlaceholder}
-        maxLength={MAXIMUM_NAME_LENGTH}
-        disabled={submitting}
-      />
-      <TextAreaField
-        id="publication-description"
-        name="description"
-        label={messages.descriptionLabel}
-        placeholder={messages.descriptionPlaceholder}
-        maxLength={MAXIMUM_DESCRIPTION_LENGTH}
-        rows={5}
-        disabled={submitting}
-      />
-      <div className="form__row">
+      <section className="form-section">
+        <h2 className="form-section__title">{messages.sections.photos}</h2>
+        <PhotoPicker drafts={drafts} disabled={submitting} />
+      </section>
+      <section className="form-section">
+        <h2 className="form-section__title">{messages.sections.offer}</h2>
+        <fieldset className="choice" disabled={submitting}>
+          <legend className="field__label">{messages.typeLabel}</legend>
+          <div className="choice__options">
+            {typeOptions.map((option) => (
+              <label key={option} className="choice__option">
+                <input type="radio" name="type" value={option} checked={type === option} onChange={() => setType(option)} />
+                <span>{messages.typeOptions[option]}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <TextField
-          id="publication-price"
-          name="price"
-          label={type === "EXCHANGE" ? messages.referenceValueLabel : messages.priceLabel}
-          placeholder={messages.pricePlaceholder}
-          inputMode="numeric"
-          autoComplete="off"
+          id="publication-name"
+          name="name"
+          label={messages.nameLabel}
+          placeholder={messages.namePlaceholder}
+          maxLength={MAXIMUM_NAME_LENGTH}
           disabled={submitting}
         />
-        <MunicipalityField id="publication-municipality" name="municipality" />
-      </div>
-      <p className="form__hint">{messages.priceHint}</p>
-      <PhotoPicker drafts={drafts} disabled={submitting} />
+        <TextAreaField
+          id="publication-description"
+          name="description"
+          label={messages.descriptionLabel}
+          placeholder={messages.descriptionPlaceholder}
+          maxLength={MAXIMUM_DESCRIPTION_LENGTH}
+          rows={5}
+          disabled={submitting}
+        />
+      </section>
+      <section className="form-section">
+        <h2 className="form-section__title">{messages.sections.priceAndPlace}</h2>
+        <div className="form__row">
+          <TextField
+            id="publication-price"
+            name="price"
+            label={type === "EXCHANGE" ? messages.referenceValueLabel : messages.priceLabel}
+            placeholder={messages.pricePlaceholder}
+            inputMode="numeric"
+            autoComplete="off"
+            disabled={submitting}
+          />
+          <MunicipalityField id="publication-municipality" name="municipality" />
+        </div>
+        <p className="form__hint">{messages.priceHint}</p>
+      </section>
       <Button type="submit" disabled={submitting}>
         {submitting ? messages.submitting : messages.submit}
       </Button>

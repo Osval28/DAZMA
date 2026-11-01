@@ -27,7 +27,7 @@ export function NewPublicationView() {
   return (
     <>
       <SiteHeader />
-      <main className="publish">
+      <main id="contenido" className="publish">
         <Link href={HOME_PATH} className="detail__back">
           {messages.back}
         </Link>

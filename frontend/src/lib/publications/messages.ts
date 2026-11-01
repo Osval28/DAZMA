@@ -1,7 +1,7 @@
 export const publicationMessages = {
   types: {
-    PURCHASE: "Compra",
-    EXCHANGE: "Cambio",
+    PURCHASE: "En venta",
+    EXCHANGE: "Se cambia",
   },
   search: {
     label: "Buscar publicaciones",
@@ -13,6 +13,7 @@ export const publicationMessages = {
   },
   listing: {
     empty: "Aún no hay publicaciones para mostrar aquí.",
+    emptyAction: "Publica la primera",
   },
   view: {
     columnsLabel: "Columnas",
@@ -43,6 +44,11 @@ export const publicationMessages = {
   },
   create: {
     headerAction: "Publicar",
+    sections: {
+      photos: "Fotografías",
+      offer: "Qué ofreces",
+      priceAndPlace: "Cuánto y dónde",
+    },
     title: "Publica algo",
     subtitle: "Cuéntanos qué ofreces y dónde está. Tu publicación aparecerá de inmediato.",
     back: "Volver a las publicaciones",
