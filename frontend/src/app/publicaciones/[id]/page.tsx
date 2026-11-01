@@ -38,7 +38,7 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
   return (
     <>
       <SiteHeader />
-      <main className="detail">
+      <main id="contenido" className="detail">
         <Link href="/" className="detail__back">
           {messages.back}
         </Link>
@@ -61,13 +61,15 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
                 <dd>{formatDate(publication.createdAt)}</dd>
               </div>
             </dl>
-            <div className="detail__contact">
-              <Button disabled>{messages.contact}</Button>
-              <span className="detail__contact-note">{messages.contactSoon}</span>
-            </div>
             <div className="detail__description">
               <h2 className="detail__subtitle">{messages.description}</h2>
               <p>{publication.description}</p>
+            </div>
+            <div className="detail__contact">
+              <Button variant="secondary" disabled>
+                {messages.contact}
+              </Button>
+              <span className="detail__contact-note">{messages.contactSoon}</span>
             </div>
           </section>
         </div>

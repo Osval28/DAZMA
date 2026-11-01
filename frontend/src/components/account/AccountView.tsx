@@ -5,7 +5,9 @@ import { accountMessages } from "@/lib/account/messages";
 import { ACCOUNT_PATH, HOME_PATH } from "@/lib/auth/sign-in";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Alert } from "@/components/ui/Alert";
+import { AccountProfile } from "./AccountProfile";
 import { ProfileForm } from "./ProfileForm";
+import { SiteHeader } from "./SiteHeader";
 import { SignOutButton } from "./SignOutButton";
 import { useSessionProfile } from "./useSessionProfile";
 
@@ -41,27 +43,14 @@ export function AccountView() {
 
   const { profile } = state;
   return (
-    <AuthShell
-      title={messages.title}
-      subtitle={profile.name}
-      footer={
-        <Link href={HOME_PATH} className="link">
+    <>
+      <SiteHeader />
+      <main id="contenido" className="account">
+        <Link href={HOME_PATH} className="detail__back">
           {messages.backHome}
         </Link>
-      }
-    >
-      <dl className="profile">
-        <div className="profile__row">
-          <dt>{messages.emailLabel}</dt>
-          <dd>{profile.email}</dd>
-        </div>
-        <div className="profile__row">
-          <dt>{messages.phoneLabel}</dt>
-          <dd>{profile.phone}</dd>
-        </div>
-      </dl>
-      <p className="profile__notice">{profile.emailVerified ? messages.emailVerified : messages.emailNotVerified}</p>
-      <SignOutButton />
-    </AuthShell>
+        <AccountProfile profile={profile} />
+      </main>
+    </>
   );
 }

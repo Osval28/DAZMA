@@ -1,5 +1,6 @@
 export const accountMessages = {
   loading: "Cargando…",
+  skipToContent: "Saltar al contenido",
   header: {
     account: "Mi cuenta",
     unknownInitial: "?",
@@ -10,7 +11,17 @@ export const accountMessages = {
     title: "Mi cuenta",
     emailLabel: "Correo",
     phoneLabel: "Celular",
-    emailVerified: "Correo verificado",
+    tabsLabel: "Secciones de la cuenta",
+    tabs: {
+      data: "Datos",
+      publications: "Mis publicaciones",
+      security: "Seguridad",
+    },
+    comingSoon: "Próximamente",
+    publicationsSoon: "Aquí verás y gestionarás lo que publicas.",
+    securitySoon: "Aquí podrás cambiar tu contraseña y revisar tus sesiones activas.",
+    verifiedBadge: "Verificado",
+    unverifiedBadge: "Sin verificar",
     emailNotVerified: "Correo sin verificar. Revisa tu bandeja de entrada para poder publicar.",
     backHome: "Volver al inicio",
     signOut: "Cerrar sesión",

@@ -24,7 +24,7 @@ export function SiteHeader() {
       <nav className="site-header__actions">
         {session.status === "member" && (
           <>
-            <Link href={NEW_PUBLICATION_PATH} className="button button--primary site-header__cta">
+            <Link href={NEW_PUBLICATION_PATH} className="button button--accent site-header__cta">
               {publicationMessages.create.headerAction}
             </Link>
             <UserBadge name={session.name} />
