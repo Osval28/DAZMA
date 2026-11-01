@@ -38,7 +38,37 @@ export type PublicationDetail = {
   createdAt: string;
 };
 
+export type CreatePublicationInput = {
+  name: string;
+  type: PublicationType;
+  description: string;
+  municipality: string;
+  price: number;
+  photoUploadIds: string[];
+};
+
+export type CreatedPublication = {
+  id: string;
+  status: string;
+  createdAt: string;
+};
+
+export type PhotoUploadAuthorization = {
+  photoId: string;
+  uploadUrl: string;
+  expiresAt: string;
+};
+
 const PUBLICATIONS_PATH = "/publications/api/v1/publications";
+const PHOTO_AUTHORIZATIONS_PATH = "/publications/api/v1/photos/upload-authorizations";
+
+export function createPublication(input: CreatePublicationInput): Promise<CreatedPublication> {
+  return apiJson<CreatedPublication>(PUBLICATIONS_PATH, { method: "POST", body: input });
+}
+
+export function authorizePhotoUpload(contentType: string, contentLength: number): Promise<PhotoUploadAuthorization> {
+  return apiJson<PhotoUploadAuthorization>(PHOTO_AUTHORIZATIONS_PATH, { method: "POST", body: { contentType, contentLength } });
+}
 
 export function getPublication(id: string): Promise<PublicationDetail> {
   return apiJson<PublicationDetail>(`${PUBLICATIONS_PATH}/${encodeURIComponent(id)}`);

@@ -2,6 +2,7 @@ export const accountMessages = {
   loading: "Cargando…",
   header: {
     account: "Mi cuenta",
+    unknownInitial: "?",
     signIn: "Ingresar",
     signUp: "Crear cuenta",
   },
