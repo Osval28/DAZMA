@@ -59,6 +59,7 @@ public class RegisterUserService implements RegisterUserUseCase {
         userEvents.publish(new UserRegistered(
                 savedUser.getId(),
                 savedUser.getExternalId(),
+                savedUser.getName().value(),
                 savedUser.getEmail().value(),
                 savedUser.getState().name()
         ));

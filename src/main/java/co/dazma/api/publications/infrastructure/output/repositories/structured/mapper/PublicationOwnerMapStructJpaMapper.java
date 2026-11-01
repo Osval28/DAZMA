@@ -4,6 +4,7 @@ import co.dazma.api.publications.infrastructure.output.repositories.structured.e
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationOwnerEntityJPA;
 import co.dazma.api.shared.infrastructure.JpaMapper;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
@@ -15,5 +16,6 @@ public interface PublicationOwnerMapStructJpaMapper extends JpaMapper<Publicatio
     PublicationOwnerEntityJPA toJpaEntity(PublicationOwnerEntity entity);
 
     @Override
+    @Mapping(target = "userName")
     PublicationOwnerEntity toEntity(PublicationOwnerEntityJPA jpaEntity);
 }

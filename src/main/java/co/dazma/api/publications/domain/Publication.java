@@ -10,6 +10,7 @@ public class Publication {
 
     private final UUID id;
     private final UUID ownerId;
+    private final String ownerName;
     private final Name name;
     private final PublicationType type;
     private final Description description;
@@ -22,6 +23,7 @@ public class Publication {
     private Publication(
             UUID id,
             UUID ownerId,
+            String ownerName,
             Name name,
             PublicationType type,
             Description description,
@@ -35,6 +37,7 @@ public class Publication {
 
         this.id = id;
         this.ownerId = ownerId;
+        this.ownerName = ownerName;
         this.name = name;
         this.type = type;
         this.description = description;
@@ -47,6 +50,7 @@ public class Publication {
 
     public static Publication publish(
             UUID ownerId,
+            String ownerName,
             Name name,
             PublicationType type,
             Description description,
@@ -58,6 +62,7 @@ public class Publication {
         return new Publication (
                 UUID.randomUUID(),
                 ownerId,
+                ownerName,
                 name,
                 type,
                 description,
@@ -72,6 +77,7 @@ public class Publication {
     public static Publication restore(
             UUID id,
             UUID ownerId,
+            String ownerName,
             Name name,
             PublicationType type,
             Description description,
@@ -84,6 +90,7 @@ public class Publication {
         return new Publication(
                 id,
                 ownerId,
+                ownerName,
                 name,
                 type,
                 description,
@@ -153,6 +160,9 @@ public class Publication {
         return price;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

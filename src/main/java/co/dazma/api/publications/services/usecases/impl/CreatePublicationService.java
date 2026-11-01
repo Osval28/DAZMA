@@ -73,7 +73,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
             throw new InvalidMunicipalityException(MunicipalityErrorCode.MUNICIPALITY_NOT_FOUND);
         }
 
-        UUID ownerId = operatingOwners.resolve(draft.ownerExternalId());
+        UUID ownerId = operatingOwners.resolveId(draft.ownerExternalId());
 
         List<String> promotedObjectKeys = new ArrayList<>();
         Publication savedPublication;
@@ -86,6 +86,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
 
             Publication publication = Publication.publish(
                     ownerId,
+                    operatingOwners.resolveName(draft.ownerExternalId()),
                     draft.name(),
                     draft.type(),
                     draft.description(),

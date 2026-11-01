@@ -26,6 +26,7 @@ public interface PublicationMapStructDomainMapper extends DomainMapper<Publicati
         return Publication.restore(
                 entity.id(),
                 entity.ownerId(),
+                entity.ownerName(),
                 new Name(entity.name()),
                 toDomain(entity.type()),
                 new Description(entity.description()),

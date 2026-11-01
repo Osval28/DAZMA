@@ -22,6 +22,9 @@ public class PublicationEntityJPA {
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
+    @Column(name = "owner_name", nullable = false)
+    private String ownerName;
+
     @Column(nullable = false)
     private String name;
 
@@ -65,6 +68,7 @@ public class PublicationEntityJPA {
     public PublicationEntityJPA(
             UUID id,
             UUID ownerId,
+            String ownerName,
             String name,
             PublicationTypeEntity type,
             String description,
@@ -75,6 +79,7 @@ public class PublicationEntityJPA {
     ) {
         this.id = id;
         this.ownerId = ownerId;
+        this.ownerName = ownerName;
         this.name = name;
         this.type = type;
         this.description = description;
@@ -120,4 +125,7 @@ public class PublicationEntityJPA {
         return price;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
 }

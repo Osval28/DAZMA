@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Avatar } from "@/components/account/Avatar";
 import { SiteHeader } from "@/components/account/SiteHeader";
 import { Button } from "@/components/ui/Button";
 import { PublicationGallery } from "@/components/publications/PublicationGallery";
@@ -34,6 +35,7 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
   const municipalityName = municipalities.find((municipality) => municipality.code === publication.municipality)?.name ?? publication.municipality;
   const photos = [...publication.photos].sort((first, second) => first.position - second.position);
   const isExchange = publication.type === "EXCHANGE";
+  const sellerName = publication.ownerName || undefined;
 
   return (
     <>
@@ -50,6 +52,13 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
             <div className="detail__price">
               {isExchange && <span className="detail__price-label">{messages.referenceValue}</span>}
               <p className="detail__price-value">{formatPrice(publication.price)}</p>
+            </div>
+            <div className="seller">
+              <Avatar name={sellerName} size="medium" tinted />
+              <div className="seller__text">
+                <span className="seller__label">{messages.seller}</span>
+                <span className="seller__name">{sellerName ?? messages.sellerNotFound}</span>
+              </div>
             </div>
             <dl className="detail__facts">
               <div>

@@ -11,7 +11,8 @@ public record GetPublicationResponseDto(
         String description,
         String municipality,
         PublicationStatusDto status,
-        PublicationOwnerResponseDto owner,
+        UUID owner,
+        String ownerName,
         List<PublicationPhotoResponseDto> photos,
         Instant createdAt,
         Integer price

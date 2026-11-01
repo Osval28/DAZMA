@@ -16,7 +16,7 @@ class RegisterPublicationOwnerServiceTest {
     void shouldStoreTheOwnerInTheLocalCopy() {
         PublicationOwnerRepositoryPort ownerRepository = mock(PublicationOwnerRepositoryPort.class);
         RegisterPublicationOwnerService service = new RegisterPublicationOwnerService(ownerRepository);
-        PublicationOwner owner = new PublicationOwner(UUID.randomUUID(), "firebase-123", PublicationOwnerState.ACTIVE);
+        PublicationOwner owner = new PublicationOwner(UUID.randomUUID(), "Ana", "firebase-123", PublicationOwnerState.ACTIVE);
 
         service.execute(owner);
 

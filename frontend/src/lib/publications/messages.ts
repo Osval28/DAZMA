@@ -25,10 +25,6 @@ export const publicationMessages = {
     next: "Siguiente página",
     current: (page: number) => `Página ${page}`,
   },
-  error: {
-    title: "No pudimos cargar las publicaciones",
-    retry: "Reintentar",
-  },
   detail: {
     back: "Volver a las publicaciones",
     description: "Descripción",
@@ -41,6 +37,8 @@ export const publicationMessages = {
     thumbnailLabel: (position: number) => `Ver fotografía ${position}`,
     notFoundTitle: "No encontramos esta publicación",
     notFoundText: "Puede que ya no esté disponible o que el enlace sea incorrecto.",
+    seller: "Vendedor",
+    sellerNotFound: "Desconocido",
   },
   create: {
     headerAction: "Publicar",

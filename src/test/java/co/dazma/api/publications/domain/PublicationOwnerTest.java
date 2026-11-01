@@ -13,15 +13,15 @@ class PublicationOwnerTest {
 
     @Test
     void shouldOperateOnlyWhenActive() {
-        assertTrue(new PublicationOwner(UUID.randomUUID(), "firebase-123", PublicationOwnerState.ACTIVE).canOperate());
-        assertFalse(new PublicationOwner(UUID.randomUUID(), "firebase-123", PublicationOwnerState.SUSPENDED).canOperate());
+        assertTrue(new PublicationOwner(UUID.randomUUID(), "Ana", "firebase-123", PublicationOwnerState.ACTIVE).canOperate());
+        assertFalse(new PublicationOwner(UUID.randomUUID(), "Ana", "firebase-123", PublicationOwnerState.SUSPENDED).canOperate());
     }
 
     @Test
     void shouldRequireAnExternalId() {
         InvalidPublicationException exception = assertThrows(
                 InvalidPublicationException.class,
-                () -> new PublicationOwner(UUID.randomUUID(), " ", PublicationOwnerState.ACTIVE)
+                () -> new PublicationOwner(UUID.randomUUID(), "Ana", " ", PublicationOwnerState.ACTIVE)
         );
 
         assertEquals("PUBLICATION_OWNER_EXTERNAL_ID_REQUIRED", exception.code());

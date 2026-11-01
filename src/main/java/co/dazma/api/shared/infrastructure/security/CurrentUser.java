@@ -8,4 +8,5 @@ public record CurrentUser(String uid, String email, boolean emailVerified) imple
     public String getName() {
         return uid;
     }
+
 }

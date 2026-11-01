@@ -31,9 +31,9 @@ class OperatingOwnerResolverTest {
     void shouldReturnTheInternalIdOfAnActiveOwner() {
         UUID userId = UUID.randomUUID();
         when(ownerRepository.findByExternalId("firebase-123"))
-                .thenReturn(Optional.of(new PublicationOwner(userId, "firebase-123", PublicationOwnerState.ACTIVE)));
+                .thenReturn(Optional.of(new PublicationOwner(userId, "Ana", "firebase-123", PublicationOwnerState.ACTIVE)));
 
-        assertEquals(userId, resolver.resolve("firebase-123"));
+        assertEquals(userId, resolver.resolveId("firebase-123"));
     }
 
     @Test
@@ -41,7 +41,7 @@ class OperatingOwnerResolverTest {
         when(ownerRepository.findByExternalId("firebase-123")).thenReturn(Optional.empty());
 
         PublicationOwnerNotReadyException exception =
-                assertThrows(PublicationOwnerNotReadyException.class, () -> resolver.resolve("firebase-123"));
+                assertThrows(PublicationOwnerNotReadyException.class, () -> resolver.resolveId("firebase-123"));
 
         assertEquals("PUBLICATION_OWNER_NOT_READY", exception.code());
     }
@@ -49,9 +49,9 @@ class OperatingOwnerResolverTest {
     @Test
     void shouldRejectASuspendedOwner() {
         when(ownerRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new PublicationOwner(UUID.randomUUID(), "firebase-123", PublicationOwnerState.SUSPENDED)
+                new PublicationOwner(UUID.randomUUID(), "Ana", "firebase-123", PublicationOwnerState.SUSPENDED)
         ));
 
-        assertThrows(PublicationOwnerCannotOperateException.class, () -> resolver.resolve("firebase-123"));
+        assertThrows(PublicationOwnerCannotOperateException.class, () -> resolver.resolveId("firebase-123"));
     }
 }

@@ -13,6 +13,7 @@ public class PublicationOwnerMapper implements InputMapper<RegisterPublicationOw
     public PublicationOwner toDomain(RegisterPublicationOwnerInputDto input) {
         return new PublicationOwner(
                 input.userId(),
+                input.userName(),
                 input.externalId(),
                 PublicationOwnerState.valueOf(input.state())
         );

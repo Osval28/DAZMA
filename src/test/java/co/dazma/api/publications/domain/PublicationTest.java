@@ -23,6 +23,7 @@ class PublicationTest {
 
         Publication publication = Publication.publish(
                 ownerId,
+                "Ana",
                 new Name("  Bicicleta de montaña  "),
                 PublicationType.EXCHANGE,
                 new Description("  Bicicleta en buen estado  "),
@@ -34,6 +35,7 @@ class PublicationTest {
 
         assertNotNull(publication.getId());
         assertEquals(ownerId, publication.getOwnerId());
+        assertEquals("Ana", publication.getOwnerName());
         assertEquals(new Name("Bicicleta de montaña"), publication.getName());
         assertEquals(PublicationType.EXCHANGE, publication.getType());
         assertEquals(new Description("Bicicleta en buen estado"), publication.getDescription());
@@ -52,6 +54,7 @@ class PublicationTest {
                 InvalidPublicationException.class,
                 () -> Publication.publish(
                         ownerId,
+                        "Ana",
                         new Name(" "),
                         PublicationType.EXCHANGE,
                         new Description("Descripción"),
@@ -65,6 +68,7 @@ class PublicationTest {
                 InvalidPublicationException.class,
                 () -> Publication.publish(
                         ownerId,
+                        "Ana",
                         new Name("Bicicleta"),
                         PublicationType.EXCHANGE,
                         new Description(" "),
@@ -165,6 +169,7 @@ class PublicationTest {
     private Publication validPublication(List<PublicationPhoto> photos) {
         return Publication.publish(
                 UUID.randomUUID(),
+                "Ana",
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Descripción"),

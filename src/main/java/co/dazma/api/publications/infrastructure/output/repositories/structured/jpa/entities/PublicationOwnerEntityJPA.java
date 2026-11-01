@@ -18,6 +18,9 @@ public class PublicationOwnerEntityJPA {
     @Column(name = "user_id")
     private UUID userId;
 
+    @Column(name = "user_name")
+    private String userName;
+
     @Column(name = "external_id", nullable = false, unique = true)
     private String externalId;
 
@@ -27,8 +30,9 @@ public class PublicationOwnerEntityJPA {
 
     protected PublicationOwnerEntityJPA() {}
 
-    public PublicationOwnerEntityJPA(UUID userId, String externalId, PublicationOwnerStateEntity state) {
+    public PublicationOwnerEntityJPA(UUID userId,String userName, String externalId, PublicationOwnerStateEntity state) {
         this.userId = userId;
+        this.userName = userName;
         this.externalId = externalId;
         this.state = state;
     }
@@ -43,5 +47,9 @@ public class PublicationOwnerEntityJPA {
 
     public PublicationOwnerStateEntity getState() {
         return state;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

@@ -21,8 +21,8 @@ class RegisterPublicationOwnerInputAdapterTest {
                 new RegisterPublicationOwnerInputAdapter(useCase, new PublicationOwnerMapper());
         UUID userId = UUID.randomUUID();
 
-        adapter.execute(new RegisterPublicationOwnerInputDto(userId, "firebase-123", "ACTIVE"));
+        adapter.execute(new RegisterPublicationOwnerInputDto(userId, "Ana", "firebase-123", "ACTIVE"));
 
-        verify(useCase).execute(new PublicationOwner(userId, "firebase-123", PublicationOwnerState.ACTIVE));
+        verify(useCase).execute(new PublicationOwner(userId, "Ana", "firebase-123", PublicationOwnerState.ACTIVE));
     }
 }

@@ -12,6 +12,7 @@ import org.mapstruct.*;
 public interface PublicationMapStructJpaMapper extends JpaMapper<PublicationEntityJPA, PublicationEntity> {
 
     @Override
+    @Mapping(target = "ownerName")
     PublicationEntity toEntity(PublicationEntityJPA jpaEntity);
 
     @Mapping(target = "photos", ignore = true)
