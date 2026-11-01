@@ -2,14 +2,17 @@
 
 import { useTranslations } from "next-intl";
 import type { MyProfile } from "@/lib/api/users";
+import { ACCOUNT_PATH } from "@/lib/auth/sign-in";
 import { PinIcon } from "@/components/ui/icons";
 import { AccountTabs, type AccountTab } from "./AccountTabs";
 import { Avatar } from "./Avatar";
 import { SignOutButton } from "./SignOutButton";
+import { VerifyEmailButton } from "./VerifyEmailButton";
 import { useMunicipalityName } from "./useMunicipalityName";
 
 type AccountProfileProps = {
   profile: MyProfile;
+  onReload: () => Promise<void>;
 };
 
 function ComingSoon({ text }: { text: string }) {
@@ -23,7 +26,7 @@ function ComingSoon({ text }: { text: string }) {
   );
 }
 
-export function AccountProfile({ profile }: AccountProfileProps) {
+export function AccountProfile({ profile, onReload }: AccountProfileProps) {
   const t = useTranslations("Account.account");
   const municipalityName = useMunicipalityName(profile.municipality);
 
@@ -50,7 +53,12 @@ export function AccountProfile({ profile }: AccountProfileProps) {
               </dd>
             </div>
           </dl>
-          {!profile.emailVerified && <p className="profile__notice">{t("emailNotVerified")}</p>}
+          {!profile.emailVerified && (
+            <>
+              <p className="profile__notice">{t("emailNotVerified")}</p>
+              <VerifyEmailButton returnPath={ACCOUNT_PATH} onRefreshed={onReload} />
+            </>
+          )}
         </>
       ),
     },

@@ -8,13 +8,14 @@ import { ACCOUNT_PATH, HOME_PATH } from "@/lib/auth/sign-in";
 import { NEW_PUBLICATION_PATH } from "@/lib/publications/paths";
 import { SiteHeader } from "@/components/account/SiteHeader";
 import { useSessionProfile } from "@/components/account/useSessionProfile";
+import { VerifyEmailButton } from "@/components/account/VerifyEmailButton";
 import { Alert } from "@/components/ui/Alert";
 import { PublicationForm } from "./PublicationForm";
 
 export function NewPublicationView() {
   const t = useTranslations();
   const router = useRouter();
-  const state = useSessionProfile(NEW_PUBLICATION_PATH);
+  const { state, reload } = useSessionProfile(NEW_PUBLICATION_PATH);
 
   useEffect(() => {
     if (state.status === "missing") {
@@ -37,6 +38,7 @@ export function NewPublicationView() {
           {state.status === "ready" && !state.profile.emailVerified && (
             <>
               <Alert>{t("Publications.create.emailNotVerified")}</Alert>
+              <VerifyEmailButton returnPath={NEW_PUBLICATION_PATH} onRefreshed={reload} />
               <Link href={ACCOUNT_PATH} className="link">
                 {t("Publications.create.goToAccount")}
               </Link>
