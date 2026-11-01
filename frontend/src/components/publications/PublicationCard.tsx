@@ -14,7 +14,7 @@ export function PublicationCard({ publication, municipalityName }: PublicationCa
     <article className="publication-card">
       <Link href={`/publicaciones/${publication.id}`} className="publication-card__link">
         <div className="publication-card__media">
-          <Image src={publication.coverUrl} alt="" fill sizes="(max-width: 40rem) 50vw, 16rem" unoptimized />
+          <Image src={publication.coverUrl} alt={`${publication.name}`} fill sizes="(max-width: 40rem) 50vw, 16rem" unoptimized />
         </div>
         <div className="publication-card__body">
           <span className={`badge badge--${publication.type.toLowerCase()}`}>{publicationMessages.types[publication.type]}</span>

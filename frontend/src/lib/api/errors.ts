@@ -30,6 +30,13 @@ export class CsrfUnavailableError extends Error {
   }
 }
 
+export class PhotoUploadError extends Error {
+  constructor() {
+    super("El almacenamiento rechazó la fotografía");
+    this.name = "PhotoUploadError";
+  }
+}
+
 export function isUnauthenticated(error: unknown): boolean {
   return error instanceof ApiError && error.status === 401;
 }
