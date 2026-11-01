@@ -21,7 +21,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     <>
       <IconBackdrop tone="subtle" />
       <SiteHeader />
-      <main className="listing">
+      <main id="contenido" className="listing">
         <ListingView filter={<MunicipalityFilter municipalities={municipalities} selected={query.municipality} />}>
           <PublicationGrid publications={publications.items} municipalityNames={municipalityNames} />
         </ListingView>

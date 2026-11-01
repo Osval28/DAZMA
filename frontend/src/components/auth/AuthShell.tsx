@@ -11,7 +11,7 @@ type AuthShellProps = {
 
 export function AuthShell({ title, subtitle, children, footer }: AuthShellProps) {
   return (
-    <main className="auth-shell">
+    <main id="contenido" className="auth-shell">
       <IconBackdrop />
       <div className="auth-shell__card">
         <Wordmark />
