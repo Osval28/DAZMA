@@ -1,10 +1,9 @@
 "use client";
 
-import { errorMessages } from "@/lib/errors/messages";
+import { useTranslations } from "next-intl";
 import { ErrorScreen } from "@/components/errors/ErrorScreen";
 
-const messages = errorMessages.listing;
-
 export default function ListingError({ reset }: { error: Error; reset: () => void }) {
-  return <ErrorScreen title={messages.title} text={messages.text} onRetry={reset} />;
+  const t = useTranslations("Errors.listing");
+  return <ErrorScreen title={t("title")} text={t("text")} onRetry={reset} />;
 }

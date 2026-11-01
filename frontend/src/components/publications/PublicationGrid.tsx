@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { PublicationSummary } from "@/lib/api/publications";
-import { publicationMessages } from "@/lib/publications/messages";
 import { NEW_PUBLICATION_PATH } from "@/lib/publications/paths";
 import { PublicationCard } from "./PublicationCard";
 
@@ -10,12 +10,14 @@ type PublicationGridProps = {
 };
 
 export function PublicationGrid({ publications, municipalityNames }: PublicationGridProps) {
+  const t = useTranslations("Publications.listing");
+
   if (publications.length === 0) {
     return (
       <div className="listing__empty">
-        <p>{publicationMessages.listing.empty}</p>
+        <p>{t("empty")}</p>
         <Link href={NEW_PUBLICATION_PATH} className="button button--accent listing__empty-action">
-          {publicationMessages.listing.emptyAction}
+          {t("emptyAction")}
         </Link>
       </div>
     );

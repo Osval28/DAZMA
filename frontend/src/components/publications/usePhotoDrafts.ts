@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { describePhotoIssue, describePublicationError } from "@/lib/publications/errors";
+import type { ErrorMessageKey, PublicationErrorKey } from "@/i18n/message-keys";
+import { photoIssueKey, publicationErrorKey } from "@/lib/publications/errors";
 import { MAXIMUM_PHOTOS, uploadPhoto, validatePhotoFile } from "@/lib/publications/photo-upload";
 
-type UploadState = { status: "uploading" } | { status: "uploaded"; photoId: string } | { status: "failed"; message: string };
+type UploadState = { status: "uploading" } | { status: "uploaded"; photoId: string } | { status: "failed"; reason: ErrorMessageKey };
 
 export type DraftPhoto = {
   key: string;
@@ -18,7 +19,7 @@ export type PhotoDrafts = {
   uploadedIds: string[];
   uploadingCount: number;
   failedCount: number;
-  issueMessage: string | undefined;
+  issue: PublicationErrorKey | undefined;
   add: (files: File[]) => void;
   remove: (key: string) => void;
   makeCover: (key: string) => void;
@@ -27,7 +28,7 @@ export type PhotoDrafts = {
 
 export function usePhotoDrafts(): PhotoDrafts {
   const [photos, setPhotos] = useState<DraftPhoto[]>([]);
-  const [issueMessage, setIssueMessage] = useState<string>();
+  const [issue, setIssue] = useState<PublicationErrorKey>();
   const latestPhotos = useRef<DraftPhoto[]>([]);
 
   useEffect(() => {
@@ -49,23 +50,23 @@ export function usePhotoDrafts(): PhotoDrafts {
     (key: string, file: File) => {
       uploadPhoto(file)
         .then((photoId) => updateUpload(key, { status: "uploaded", photoId }))
-        .catch((error) => updateUpload(key, { status: "failed", message: describePublicationError(error) }));
+        .catch((error) => updateUpload(key, { status: "failed", reason: publicationErrorKey(error) }));
     },
     [updateUpload],
   );
 
   const add = useCallback(
     (files: File[]) => {
-      setIssueMessage(undefined);
+      setIssue(undefined);
       const accepted: DraftPhoto[] = [];
       for (const file of files) {
         if (photos.length + accepted.length >= MAXIMUM_PHOTOS) {
-          setIssueMessage(describePhotoIssue("PHOTOS_LIMIT_REACHED"));
+          setIssue(photoIssueKey("PHOTOS_LIMIT_REACHED"));
           break;
         }
-        const issue = validatePhotoFile(file);
-        if (issue !== undefined) {
-          setIssueMessage(describePhotoIssue(issue));
+        const fileIssue = validatePhotoFile(file);
+        if (fileIssue !== undefined) {
+          setIssue(photoIssueKey(fileIssue));
           continue;
         }
         accepted.push({ key: crypto.randomUUID(), file, previewUrl: URL.createObjectURL(file), upload: { status: "uploading" } });
@@ -77,7 +78,7 @@ export function usePhotoDrafts(): PhotoDrafts {
   );
 
   const remove = useCallback((key: string) => {
-    setIssueMessage(undefined);
+    setIssue(undefined);
     latestPhotos.current.filter((photo) => photo.key === key).forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
     setPhotos((current) => current.filter((photo) => photo.key !== key));
   }, []);
@@ -108,7 +109,7 @@ export function usePhotoDrafts(): PhotoDrafts {
     uploadedIds,
     uploadingCount: photos.filter((photo) => photo.upload.status === "uploading").length,
     failedCount: photos.filter((photo) => photo.upload.status === "failed").length,
-    issueMessage,
+    issue,
     add,
     remove,
     makeCover,

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { accountMessages } from "@/lib/account/messages";
+import { useTranslations } from "next-intl";
 import { ACCOUNT_PATH, HOME_PATH } from "@/lib/auth/sign-in";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Alert } from "@/components/ui/Alert";
@@ -11,16 +11,14 @@ import { SiteHeader } from "./SiteHeader";
 import { SignOutButton } from "./SignOutButton";
 import { useSessionProfile } from "./useSessionProfile";
 
-const messages = accountMessages.account;
-const completeProfileMessages = accountMessages.completeProfile;
-
 export function AccountView() {
+  const t = useTranslations();
   const state = useSessionProfile(ACCOUNT_PATH);
 
   if (state.status === "loading") {
     return (
       <main className="page">
-        <p className="page__status">{accountMessages.loading}</p>
+        <p className="page__status">{t("Account.loading")}</p>
       </main>
     );
   }
@@ -28,14 +26,14 @@ export function AccountView() {
   if (state.status === "failed") {
     return (
       <main className="page">
-        <Alert>{state.message}</Alert>
+        <Alert>{t(state.errorKey)}</Alert>
       </main>
     );
   }
 
   if (state.status === "missing") {
     return (
-      <AuthShell title={completeProfileMessages.title} subtitle={completeProfileMessages.subtitle} footer={<SignOutButton />}>
+      <AuthShell title={t("Account.completeProfile.title")} subtitle={t("Account.completeProfile.subtitle")} footer={<SignOutButton />}>
         <ProfileForm />
       </AuthShell>
     );
@@ -47,7 +45,7 @@ export function AccountView() {
       <SiteHeader />
       <main id="contenido" className="account">
         <Link href={HOME_PATH} className="detail__back">
-          {messages.backHome}
+          {t("Account.account.backHome")}
         </Link>
         <AccountProfile profile={profile} />
       </main>

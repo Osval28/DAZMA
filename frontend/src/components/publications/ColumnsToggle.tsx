@@ -1,8 +1,6 @@
 "use client";
 
-import { publicationMessages } from "@/lib/publications/messages";
-
-const messages = publicationMessages.view;
+import { useTranslations } from "next-intl";
 
 type ColumnsToggleProps = {
   options: readonly number[];
@@ -11,10 +9,12 @@ type ColumnsToggleProps = {
 };
 
 export function ColumnsToggle({ options, selected, onSelect }: ColumnsToggleProps) {
+  const t = useTranslations("Publications.view");
+
   return (
-    <div className="columns-toggle" role="group" aria-label={messages.columnsLabel}>
+    <div className="columns-toggle" role="group" aria-label={t("columnsLabel")}>
       <span className="columns-toggle__label" aria-hidden="true">
-        {messages.columnsLabel}
+        {t("columnsLabel")}
       </span>
       {options.map((columns) => (
         <button
@@ -22,7 +22,7 @@ export function ColumnsToggle({ options, selected, onSelect }: ColumnsToggleProp
           type="button"
           className="columns-toggle__option"
           aria-pressed={columns === selected}
-          aria-label={messages.columnsOption(columns)}
+          aria-label={t("columnsOption", { columns })}
           onClick={() => onSelect(columns)}
         >
           {columns}

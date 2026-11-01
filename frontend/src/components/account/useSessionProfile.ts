@@ -2,16 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import type { AuthErrorKey } from "@/i18n/message-keys";
 import { hasErrorCode, isUnauthenticated } from "@/lib/api/errors";
 import { getMyProfile, type MyProfile } from "@/lib/api/users";
-import { describeError } from "@/lib/auth/errors";
+import { errorKey } from "@/lib/auth/errors";
 import { LOGIN_PATH } from "@/lib/auth/sign-in";
 
 export type SessionProfileState =
   | { status: "loading" }
   | { status: "ready"; profile: MyProfile }
   | { status: "missing" }
-  | { status: "failed"; message: string };
+  | { status: "failed"; errorKey: AuthErrorKey };
 
 const USER_NOT_FOUND_CODE = "USER_NOT_FOUND";
 
@@ -32,7 +33,7 @@ export function useSessionProfile(returnPath: string): SessionProfileState {
         } else if (hasErrorCode(error, USER_NOT_FOUND_CODE)) {
           setState({ status: "missing" });
         } else {
-          setState({ status: "failed", message: describeError(error) });
+          setState({ status: "failed", errorKey: errorKey(error) });
         }
       });
     return () => {

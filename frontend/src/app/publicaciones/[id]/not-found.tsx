@@ -1,18 +1,18 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { SiteHeader } from "@/components/account/SiteHeader";
-import { publicationMessages } from "@/lib/publications/messages";
-
-const messages = publicationMessages.detail;
 
 export default function PublicationNotFound() {
+  const t = useTranslations("Publications.detail");
+
   return (
     <>
       <SiteHeader />
       <main className="detail detail--empty">
-        <h1 className="page__title">{messages.notFoundTitle}</h1>
-        <p className="page__status">{messages.notFoundText}</p>
+        <h1 className="page__title">{t("notFoundTitle")}</h1>
+        <p className="page__status">{t("notFoundText")}</p>
         <Link href="/" className="button button--secondary detail__back-button">
-          {messages.back}
+          {t("back")}
         </Link>
       </main>
     </>

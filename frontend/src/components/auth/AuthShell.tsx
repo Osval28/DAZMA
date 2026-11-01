@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { IconBackdrop } from "@/components/brand/IconBackdrop";
 import { Wordmark } from "@/components/brand/Wordmark";
+import { LocaleSwitcher } from "@/components/ui/LocaleSwitcher";
 
 type AuthShellProps = {
   title: string;
@@ -14,7 +15,10 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
     <main id="contenido" className="auth-shell">
       <IconBackdrop />
       <div className="auth-shell__card">
-        <Wordmark />
+        <div className="auth-shell__top">
+          <Wordmark />
+          <LocaleSwitcher />
+        </div>
         <h1 className="auth-shell__title">{title}</h1>
         <p className="auth-shell__subtitle">{subtitle}</p>
         {children}

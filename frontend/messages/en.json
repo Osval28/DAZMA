@@ -1,0 +1,251 @@
+{
+  "Metadata": {
+    "title": "DAZMA",
+    "description": "Barter and buy and sell in Eastern Antioquia.",
+    "pages": {
+      "login": "Sign in | DAZMA",
+      "passwordReset": "Reset password | DAZMA",
+      "register": "Create account | DAZMA",
+      "account": "My account | DAZMA",
+      "newPublication": "Publish | DAZMA"
+    }
+  },
+  "Locale": {
+    "switchTo": "Change language to {language}",
+    "languages": {
+      "es": "Spanish",
+      "en": "English"
+    }
+  },
+  "Auth": {
+    "login": {
+      "title": "Sign in to DAZMA",
+      "subtitle": "Buy, sell and trade what you need in Eastern Antioquia.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Your password",
+      "forgotPassword": "Forgot your password?",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "googleButton": "Continue with Google",
+      "divider": "or",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create one"
+    },
+    "passwordReset": {
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we will help you create a new password.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "submit": "Send link",
+      "submitting": "Sending…",
+      "sent": "If the email address you entered is registered in our system, you will receive a link to reset your password in a few minutes.",
+      "backToLogin": "Back to sign in"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Join the barter and buy and sell community in your municipality.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Repeat your password",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "googleButton": "Sign up with Google",
+      "divider": "or",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "profile": {
+      "nameLabel": "Full name",
+      "namePlaceholder": "Ana Gómez",
+      "phoneLabel": "Mobile phone",
+      "phonePlaceholder": "300 123 4567",
+      "municipalityLabel": "Municipality",
+      "municipalityPlaceholder": "Select your municipality",
+      "municipalitiesLoading": "Loading municipalities…",
+      "municipalitiesFailed": "We couldn't load the municipalities. Reload the page."
+    },
+    "passwordToggle": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "network": "We couldn't reach the server. Check your connection and try again.",
+      "invalidCredentials": "The email or password is incorrect.",
+      "invalidEmail": "Enter a valid email address.",
+      "userDisabled": "This account is disabled.",
+      "tooManyRequests": "Too many attempts. Wait a few minutes and try again.",
+      "emailInUse": "An account with this email already exists. Sign in to continue.",
+      "weakPassword": "The password is too weak.",
+      "popupBlocked": "Your browser blocked the Google window. Allow pop-ups and try again.",
+      "differentProvider": "An account with this email already exists with a different sign-in method. Use that method to continue.",
+      "sessionExpired": "Your session expired. Sign in again.",
+      "recentSignInRequired": "For your security, sign in again and retry.",
+      "originNotAllowed": "We couldn't verify where the request came from.",
+      "alreadyRegistered": "Your profile is already complete.",
+      "municipalityNotFound": "The selected municipality doesn't exist.",
+      "phoneInvalid": "Enter a 10-digit Colombian mobile number that starts with 3.",
+      "nameRequired": "Enter your name.",
+      "nameTooLong": "The name is too long.",
+      "passwordRequired": "Enter your password.",
+      "passwordTooShort": "The password must have at least 8 characters.",
+      "passwordMismatch": "The passwords don't match.",
+      "municipalityRequired": "Select your municipality."
+    }
+  },
+  "Account": {
+    "loading": "Loading…",
+    "skipToContent": "Skip to content",
+    "header": {
+      "account": "My account",
+      "accountOf": "My account: {name}",
+      "unknownInitial": "?",
+      "signIn": "Sign in",
+      "signUp": "Create account"
+    },
+    "account": {
+      "title": "My account",
+      "emailLabel": "Email",
+      "phoneLabel": "Mobile phone",
+      "tabsLabel": "Account sections",
+      "tabs": {
+        "data": "Details",
+        "publications": "My listings",
+        "security": "Security"
+      },
+      "comingSoon": "Coming soon",
+      "publicationsSoon": "Here you'll see and manage what you publish.",
+      "securitySoon": "Here you'll be able to change your password and review your active sessions.",
+      "verifiedBadge": "Verified",
+      "unverifiedBadge": "Not verified",
+      "emailNotVerified": "Email not verified. Check your inbox to be able to publish.",
+      "backHome": "Back to home",
+      "signOut": "Sign out"
+    },
+    "completeProfile": {
+      "title": "Complete your profile",
+      "subtitle": "We need a few details so you can buy, sell and trade.",
+      "submit": "Save profile",
+      "submitting": "Saving…"
+    }
+  },
+  "Errors": {
+    "retry": "Try again",
+    "home": "Back to home",
+    "generic": {
+      "title": "We couldn't load this page",
+      "text": "It may be a connection or server problem. Try again in a few seconds."
+    },
+    "listing": {
+      "title": "We couldn't load the listings",
+      "text": "Check your connection and try again. If the problem persists, come back in a few minutes."
+    }
+  },
+  "Publications": {
+    "types": {
+      "PURCHASE": "For sale",
+      "EXCHANGE": "For trade"
+    },
+    "search": {
+      "label": "Search listings",
+      "placeholder": "Coming soon"
+    },
+    "filter": {
+      "municipalityLabel": "Municipality",
+      "allMunicipalities": "All municipalities"
+    },
+    "listing": {
+      "empty": "There are no listings to show here yet.",
+      "emptyAction": "Publish the first one"
+    },
+    "view": {
+      "columnsLabel": "Columns",
+      "columnsOption": "{columns, plural, one {# column} other {# columns}}"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous",
+      "next": "Next page",
+      "current": "Page {page}"
+    },
+    "detail": {
+      "back": "Back to listings",
+      "description": "Description",
+      "location": "Municipality",
+      "published": "Published",
+      "referenceValue": "Reference value",
+      "contact": "Contact the seller",
+      "contactSoon": "Coming soon",
+      "galleryLabel": "Listing photos",
+      "thumbnailLabel": "View photo {position}",
+      "notFoundTitle": "We couldn't find this listing",
+      "notFoundText": "It may no longer be available or the link may be wrong.",
+      "seller": "Seller",
+      "sellerNotFound": "Unknown"
+    },
+    "create": {
+      "headerAction": "Publish",
+      "sections": {
+        "photos": "Photos",
+        "offer": "What you offer",
+        "priceAndPlace": "How much and where"
+      },
+      "title": "Publish something",
+      "subtitle": "Tell us what you offer and where it is. Your listing will appear right away.",
+      "back": "Back to listings",
+      "typeLabel": "What do you want to do?",
+      "typeOptions": {
+        "PURCHASE": "Sell",
+        "EXCHANGE": "Trade"
+      },
+      "nameLabel": "Name",
+      "namePlaceholder": "Mountain bike",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Condition, time in use and, for a trade, what you expect in return.",
+      "priceLabel": "Price",
+      "referenceValueLabel": "Reference value",
+      "pricePlaceholder": "900000",
+      "priceHint": "In Colombian pesos.",
+      "submit": "Publish",
+      "submitting": "Publishing…",
+      "emailNotVerified": "Verify your email to be able to publish. We sent you a message when you signed up.",
+      "goToAccount": "Go to my account",
+      "photos": {
+        "label": "Photos",
+        "hint": "Up to {maximum} photos of at most {megabytes} MB each. The first one is the cover.",
+        "add": "Add photos",
+        "counter": "{count} of {maximum}",
+        "cover": "Cover",
+        "makeCover": "Make cover",
+        "remove": "Remove",
+        "retry": "Try again",
+        "uploading": "Uploading…",
+        "failed": "Not uploaded",
+        "previewAlt": "Listing photo {position}"
+      },
+      "errors": {
+        "nameRequired": "Enter the listing name.",
+        "nameTooLong": "The name is too long.",
+        "descriptionRequired": "Describe what you offer.",
+        "descriptionTooLong": "The description is too long.",
+        "priceInvalid": "Enter an amount in pesos greater than zero.",
+        "municipalityRequired": "Select the municipality.",
+        "photosRequired": "Add at least one photo.",
+        "photosUploading": "Wait for the photos to finish uploading.",
+        "photosFailed": "Some photos weren't uploaded. Retry or remove them.",
+        "photoTypeInvalid": "Only JPEG, PNG or WebP photos are accepted.",
+        "photoTooLarge": "Each photo must be 5 MB or less.",
+        "photosLimitReached": "You've reached the maximum number of photos.",
+        "photoUploadFailed": "We couldn't upload the photo. Please try again.",
+        "emailNotVerified": "Verify your email to be able to publish.",
+        "ownerNotReady": "Your account is still being set up. Try again in a few seconds.",
+        "photoUploadNotAvailable": "A photo expired or didn't finish uploading. Remove it and add it again."
+      }
+    }
+  }
+}

@@ -1,8 +1,6 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { listingHref, type ListingQuery } from "@/lib/publications/listing-query";
-import { publicationMessages } from "@/lib/publications/messages";
-
-const messages = publicationMessages.pagination;
 
 type PageNavigationProps = {
   query: ListingQuery;
@@ -30,6 +28,7 @@ function PageStep({ label, href }: PageStepProps) {
 }
 
 export function PageNavigation({ query, hasNext }: PageNavigationProps) {
+  const t = useTranslations("Publications.pagination");
   const hasPrevious = query.page > 0;
 
   if (!hasPrevious && !hasNext) {
@@ -37,10 +36,10 @@ export function PageNavigation({ query, hasNext }: PageNavigationProps) {
   }
 
   return (
-    <nav className="pagination" aria-label={messages.label}>
-      <PageStep label={messages.previous} href={hasPrevious ? listingHref({ ...query, page: query.page - 1 }) : undefined} />
-      <span className="pagination__current">{messages.current(query.page + 1)}</span>
-      <PageStep label={messages.next} href={hasNext ? listingHref({ ...query, page: query.page + 1 }) : undefined} />
+    <nav className="pagination" aria-label={t("label")}>
+      <PageStep label={t("previous")} href={hasPrevious ? listingHref({ ...query, page: query.page - 1 }) : undefined} />
+      <span className="pagination__current">{t("current", { page: query.page + 1 })}</span>
+      <PageStep label={t("next")} href={hasNext ? listingHref({ ...query, page: query.page + 1 }) : undefined} />
     </nav>
   );
 }

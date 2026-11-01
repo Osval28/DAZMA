@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { accountMessages } from "@/lib/account/messages";
+import type { AuthErrorKey } from "@/i18n/message-keys";
 import { hasErrorCode } from "@/lib/api/errors";
 import { registerUser } from "@/lib/api/users";
-import { describeError, describeValidationIssue } from "@/lib/auth/errors";
+import { errorKey, validationIssueKey } from "@/lib/auth/errors";
 import { readProfileInput } from "@/lib/auth/profile-input";
 import { HOME_PATH } from "@/lib/auth/sign-in";
 import { validateProfile } from "@/lib/validation";
@@ -14,12 +15,12 @@ import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { ProfileFields } from "@/components/ui/ProfileFields";
 
-const messages = accountMessages.completeProfile;
 const ALREADY_REGISTERED_CODE = "USER_ALREADY_REGISTERED";
 
 export function ProfileForm() {
+  const t = useTranslations();
   const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState<string>();
+  const [failure, setFailure] = useState<AuthErrorKey>();
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -28,11 +29,11 @@ export function ProfileForm() {
 
     const issue = validateProfile(profile);
     if (issue !== undefined) {
-      setErrorMessage(describeValidationIssue(issue));
+      setFailure(validationIssueKey(issue));
       return;
     }
 
-    setErrorMessage(undefined);
+    setFailure(undefined);
     setSubmitting(true);
     try {
       await registerUser(profile);
@@ -42,17 +43,17 @@ export function ProfileForm() {
         router.replace(HOME_PATH);
         return;
       }
-      setErrorMessage(describeError(error));
+      setFailure(errorKey(error));
       setSubmitting(false);
     }
   }
 
   return (
     <form className="form" onSubmit={handleSubmit} noValidate>
-      {errorMessage !== undefined && <Alert>{errorMessage}</Alert>}
+      {failure !== undefined && <Alert>{t(failure)}</Alert>}
       <ProfileFields idPrefix="profile" />
       <Button type="submit" disabled={submitting}>
-        {submitting ? messages.submitting : messages.submit}
+        {submitting ? t("Account.completeProfile.submitting") : t("Account.completeProfile.submit")}
       </Button>
     </form>
   );
