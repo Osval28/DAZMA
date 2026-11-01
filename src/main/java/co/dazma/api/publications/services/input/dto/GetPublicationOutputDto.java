@@ -10,6 +10,7 @@ import java.util.UUID;
 public record GetPublicationOutputDto(
         UUID id,
         UUID ownerId,
+        String ownerName,
         String name,
         PublicationType type,
         String description,

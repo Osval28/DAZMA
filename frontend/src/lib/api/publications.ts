@@ -29,6 +29,7 @@ export type PublicationPhoto = {
 export type PublicationDetail = {
   id: string;
   name: string;
+  ownerName: string;
   type: PublicationType;
   description: string;
   municipality: string;

@@ -17,7 +17,7 @@ public class OperatingOwnerResolver {
         this.ownerRepository = ownerRepository;
     }
 
-    public UUID resolve(String externalId) {
+    public UUID resolveId(String externalId) {
         PublicationOwner owner = ownerRepository.findByExternalId(externalId)
                 .orElseThrow(PublicationOwnerNotReadyException::new);
         if (!owner.canOperate()) {
@@ -25,4 +25,15 @@ public class OperatingOwnerResolver {
         }
         return owner.userId();
     }
+
+    public String resolveName(String externalId) {
+        PublicationOwner owner = ownerRepository.findByExternalId(externalId)
+                .orElseThrow(PublicationOwnerNotReadyException::new);
+        if (!owner.canOperate()) {
+            throw new PublicationOwnerCannotOperateException();
+        }
+        return owner.userName();
+    }
+
+
 }

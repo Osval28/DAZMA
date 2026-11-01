@@ -2,7 +2,7 @@ package co.dazma.api.publications.domain;
 
 import java.util.UUID;
 
-public record PublicationOwner(UUID userId, String externalId, PublicationOwnerState state) {
+public record PublicationOwner(UUID userId, String userName, String externalId, PublicationOwnerState state) {
 
     public PublicationOwner {
         if (externalId.isBlank()) {

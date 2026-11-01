@@ -2,5 +2,5 @@ package co.dazma.api.publications.infrastructure.output.repositories.structured.
 
 import java.util.UUID;
 
-public record PublicationOwnerEntity(UUID userId, String externalId, PublicationOwnerStateEntity state) {
+public record PublicationOwnerEntity(UUID userId, String userName, String externalId, PublicationOwnerStateEntity state) {
 }

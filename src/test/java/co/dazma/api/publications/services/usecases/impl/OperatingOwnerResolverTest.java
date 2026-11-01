@@ -33,7 +33,7 @@ class OperatingOwnerResolverTest {
         when(ownerRepository.findByExternalId("firebase-123"))
                 .thenReturn(Optional.of(new PublicationOwner(userId, "firebase-123", PublicationOwnerState.ACTIVE)));
 
-        assertEquals(userId, resolver.resolve("firebase-123"));
+        assertEquals(userId, resolver.resolveId("firebase-123"));
     }
 
     @Test
@@ -41,7 +41,7 @@ class OperatingOwnerResolverTest {
         when(ownerRepository.findByExternalId("firebase-123")).thenReturn(Optional.empty());
 
         PublicationOwnerNotReadyException exception =
-                assertThrows(PublicationOwnerNotReadyException.class, () -> resolver.resolve("firebase-123"));
+                assertThrows(PublicationOwnerNotReadyException.class, () -> resolver.resolveId("firebase-123"));
 
         assertEquals("PUBLICATION_OWNER_NOT_READY", exception.code());
     }
@@ -52,6 +52,6 @@ class OperatingOwnerResolverTest {
                 new PublicationOwner(UUID.randomUUID(), "firebase-123", PublicationOwnerState.SUSPENDED)
         ));
 
-        assertThrows(PublicationOwnerCannotOperateException.class, () -> resolver.resolve("firebase-123"));
+        assertThrows(PublicationOwnerCannotOperateException.class, () -> resolver.resolveId("firebase-123"));
     }
 }

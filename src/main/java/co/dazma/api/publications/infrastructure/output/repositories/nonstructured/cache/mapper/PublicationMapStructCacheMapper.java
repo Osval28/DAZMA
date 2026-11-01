@@ -25,6 +25,7 @@ public interface PublicationMapStructCacheMapper extends DomainMapper<Publicatio
         return Publication.restore(
                 entity.id(),
                 entity.ownerId(),
+                entity.ownerName(),
                 new Name(entity.name()),
                 toDomain(entity.type()),
                 new Description(entity.description()),
