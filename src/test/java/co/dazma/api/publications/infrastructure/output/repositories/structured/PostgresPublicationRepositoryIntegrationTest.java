@@ -115,6 +115,7 @@ class PostgresPublicationRepositoryIntegrationTest {
     private Publication publication(UUID ownerId, String objectKey) {
         return Publication.publish(
                 ownerId,
+                "Ana",
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta en buen estado"),
@@ -128,6 +129,7 @@ class PostgresPublicationRepositoryIntegrationTest {
     private Publication publicationIn(String municipalityCode, UUID ownerId, String objectKey, String createdAt) {
         return Publication.publish(
                 ownerId,
+                "Ana",
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta en buen estado"),

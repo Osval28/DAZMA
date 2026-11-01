@@ -19,6 +19,7 @@ public class PublicationOwnerRegistrationListener {
     public void on(UserRegistered event) {
         registerOwnerInputPort.execute(new RegisterPublicationOwnerInputDto(
                 event.userId(),
+                event.name(),
                 event.externalId(),
                 event.state()
         ));

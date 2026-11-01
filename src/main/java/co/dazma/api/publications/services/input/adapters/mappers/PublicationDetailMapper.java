@@ -17,6 +17,7 @@ public class PublicationDetailMapper implements OutputMapper<PublicationDetail, 
         return new GetPublicationOutputDto(
                 publication.getId(),
                 publication.getOwnerId(),
+                publication.getOwnerName(),
                 publication.getName().name(),
                 publication.getType(),
                 publication.getDescription().text(),

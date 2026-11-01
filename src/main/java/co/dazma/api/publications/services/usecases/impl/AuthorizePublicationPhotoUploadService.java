@@ -43,7 +43,7 @@ public class AuthorizePublicationPhotoUploadService
 
     @Override
     public PhotoUploadGrant execute(PhotoUploadRequest request) {
-        UUID ownerId = operatingOwners.resolve(request.ownerExternalId());
+        UUID ownerId = operatingOwners.resolveId(request.ownerExternalId());
         String contentType = normalizeContentType(request.contentType());
         validateContentLength(request.contentLength());
 

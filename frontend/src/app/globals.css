@@ -11,6 +11,13 @@
   --color-border: #d9d5ee;
   --color-danger: #c62b3a;
 
+  --avatar-tone-0: #5b3df5;
+  --avatar-tone-1: #0f766e;
+  --avatar-tone-2: #b4235f;
+  --avatar-tone-3: #c2410c;
+  --avatar-tone-4: #1d4ed8;
+  --avatar-tone-5: #7e22ce;
+
   --font-family: var(--font-space-grotesk), system-ui, sans-serif;
   --font-family-brand: var(--font-bricolage-grotesque), system-ui, sans-serif;
 
@@ -1398,5 +1405,93 @@ p {
 
   .account__card {
     padding: var(--space-4);
+  }
+}
+
+.avatar--medium {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.25rem;
+}
+
+.avatar--tone-0 { background: var(--avatar-tone-0); }
+.avatar--tone-1 { background: var(--avatar-tone-1); }
+.avatar--tone-2 { background: var(--avatar-tone-2); }
+.avatar--tone-3 { background: var(--avatar-tone-3); }
+.avatar--tone-4 { background: var(--avatar-tone-4); }
+.avatar--tone-5 { background: var(--avatar-tone-5); }
+
+.seller {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.seller__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.seller__label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.seller__name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.error-state__icon {
+  display: grid;
+  place-items: center;
+  width: 5rem;
+  height: 5rem;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.error-state__title {
+  margin: 0;
+  font-size: var(--font-size-title);
+  line-height: 1.2;
+}
+
+.error-state__text {
+  color: var(--color-text-muted);
+}
+
+.error-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.error-state__actions .button {
+  width: auto;
+  text-decoration: none;
+}
+
+@media (max-width: 40rem) {
+  .error-state__actions .button {
+    width: 100%;
   }
 }

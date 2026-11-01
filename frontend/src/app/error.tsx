@@ -1,15 +1,10 @@
 "use client";
 
-import { publicationMessages } from "@/lib/publications/messages";
-import { Button } from "@/components/ui/Button";
+import { errorMessages } from "@/lib/errors/messages";
+import { ErrorScreen } from "@/components/errors/ErrorScreen";
 
-const messages = publicationMessages.error;
+const messages = errorMessages.generic;
 
-export default function ListingError({ reset }: { error: Error; reset: () => void }) {
-  return (
-    <main className="page">
-      <h1 className="page__title">{messages.title}</h1>
-      <Button onClick={reset}>{messages.retry}</Button>
-    </main>
-  );
+export default function GenericError({ reset }: { error: Error; reset: () => void }) {
+  return <ErrorScreen title={messages.title} text={messages.text} onRetry={reset} />;
 }

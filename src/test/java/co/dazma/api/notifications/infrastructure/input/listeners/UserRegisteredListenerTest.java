@@ -24,7 +24,7 @@ class UserRegisteredListenerTest {
         UserRegisteredListener listener = new UserRegisteredListener(registerRecipientInputPort, sendEmailInputPort);
         UUID userId = UUID.randomUUID();
 
-        listener.on(new UserRegistered(userId, "firebase-123", "ana@dazma.store", "ACTIVE"));
+        listener.on(new UserRegistered(userId, "firebase-123", "Ana", "ana@dazma.store", "ACTIVE"));
 
         InOrder order = inOrder(registerRecipientInputPort, sendEmailInputPort);
         order.verify(registerRecipientInputPort).execute(new RegisterRecipientInputDto(userId, "ana@dazma.store"));

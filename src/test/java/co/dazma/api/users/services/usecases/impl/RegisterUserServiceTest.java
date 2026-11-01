@@ -71,6 +71,7 @@ class RegisterUserServiceTest {
         verify(userEvents).publish(new UserRegistered(
                 registeredUser.getId(),
                 "firebase-123",
+                "Ana",
                 "ana@dazma.store",
                 "ACTIVE"
         ));

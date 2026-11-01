@@ -1,0 +1,110 @@
+openapi: 3.1.0
+info:
+  title: DAZMA Security API
+  version: 1.0.0
+  description: Sesión del usuario autenticado y token CSRF
+
+paths:
+  /security/api/v1/sessions/csrf:
+    get:
+      tags: [Sessions]
+      summary: Obtener el token CSRF
+      description: |
+        Público. Responde 204 y entrega la cookie `XSRF-TOKEN`, legible por el navegador. Su valor debe enviarse en
+        el encabezado `X-XSRF-TOKEN` de toda solicitud que no sea GET.
+      operationId: issueCsrfToken
+      responses:
+        '204':
+          description: Cookie `XSRF-TOKEN` entregada.
+          headers:
+            Set-Cookie:
+              description: Cookie `XSRF-TOKEN`.
+              schema:
+                type: string
+
+  /security/api/v1/sessions:
+    post:
+      tags: [Sessions]
+      summary: Abrir sesión
+      description: |
+        Cambia el ID token de Firebase por la cookie de sesión `dazma_session` (HttpOnly, Secure, SameSite=Strict).
+        El ID token debe tener menos de 5 minutos desde el inicio de sesión; de lo contrario responde 401
+        (`RECENT_SIGN_IN_REQUIRED`). Con un token inválido responde 401 (`IDENTITY_TOKEN_INVALID`).
+      operationId: openSession
+      security:
+        - csrfHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenSessionRequest'
+      responses:
+        '204':
+          description: Sesión abierta.
+          headers:
+            Set-Cookie:
+              description: Cookie `dazma_session`.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/ProblemResponse'
+        '401':
+          $ref: '#/components/responses/ProblemResponse'
+        '403':
+          $ref: '#/components/responses/ProblemResponse'
+    delete:
+      tags: [Sessions]
+      summary: Cerrar sesión
+      description: |
+        Revoca la sesión en Firebase y expira la cookie `dazma_session`. Responde 204 aunque la revocación falle o
+        no exista sesión.
+      operationId: closeSession
+      security:
+        - csrfHeader: []
+      responses:
+        '204':
+          description: Cookie expirada.
+          headers:
+            Set-Cookie:
+              description: Cookie `dazma_session` expirada.
+              schema:
+                type: string
+        '403':
+          $ref: '#/components/responses/ProblemResponse'
+
+components:
+  securitySchemes:
+    csrfHeader:
+      type: apiKey
+      in: header
+      name: X-XSRF-TOKEN
+      description: Valor de la cookie `XSRF-TOKEN`, obligatorio en toda solicitud que no sea GET.
+
+  responses:
+    ProblemResponse:
+      description: Error con el formato uniforme `application/problem+json` (campos `status`, `title`, `detail`, `code`).
+      content:
+        application/problem+json:
+          schema:
+            type: object
+            required: [status, title, detail]
+            properties:
+              status:
+                type: integer
+              title:
+                type: string
+              detail:
+                type: string
+              code:
+                type: string
+
+  schemas:
+    OpenSessionRequest:
+      type: object
+      additionalProperties: false
+      required: [idToken]
+      properties:
+        idToken:
+          type: string
+          description: ID token de Firebase recién emitido.

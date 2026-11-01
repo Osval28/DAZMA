@@ -55,6 +55,7 @@ class CreatePublicationInputAdapterTest {
         );
         Publication created = Publication.publish(
                 UUID.randomUUID(),
+                "Ana",
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),
