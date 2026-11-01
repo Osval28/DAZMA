@@ -70,7 +70,7 @@ class CreatePublicationServiceTest {
         ownerRepository = mock(PublicationOwnerRepositoryPort.class);
         ownerId = UUID.randomUUID();
         when(ownerRepository.findByExternalId(EXTERNAL_ID))
-                .thenReturn(Optional.of(new PublicationOwner(ownerId, EXTERNAL_ID, PublicationOwnerState.ACTIVE)));
+                .thenReturn(Optional.of(new PublicationOwner(ownerId, "Ana", EXTERNAL_ID, PublicationOwnerState.ACTIVE)));
         municipalityCatalog = mock(MunicipalityCatalogPort.class);
         when(municipalityCatalog.exists(new Municipality("05615"))).thenReturn(true);
         publicationRepository = mock(PublicationRepositoryPort.class);
@@ -281,7 +281,7 @@ class CreatePublicationServiceTest {
     @Test
     void shouldNotTouchStorageWhenTheOwnerCannotOperate() {
         when(ownerRepository.findByExternalId(EXTERNAL_ID))
-                .thenReturn(Optional.of(new PublicationOwner(ownerId, EXTERNAL_ID, PublicationOwnerState.SUSPENDED)));
+                .thenReturn(Optional.of(new PublicationOwner(ownerId, "Ana", EXTERNAL_ID, PublicationOwnerState.SUSPENDED)));
 
         assertThrows(
                 PublicationOwnerCannotOperateException.class,

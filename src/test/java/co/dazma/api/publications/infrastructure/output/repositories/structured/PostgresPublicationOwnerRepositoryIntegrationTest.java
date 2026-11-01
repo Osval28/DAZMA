@@ -30,10 +30,10 @@ class PostgresPublicationOwnerRepositoryIntegrationTest {
         UUID userId = UUID.randomUUID();
         String externalId = "firebase-" + userId;
 
-        ownerRepository.save(new PublicationOwner(userId, externalId, PublicationOwnerState.ACTIVE));
+        ownerRepository.save(new PublicationOwner(userId, "Ana", externalId, PublicationOwnerState.ACTIVE));
 
         assertEquals(
-                Optional.of(new PublicationOwner(userId, externalId, PublicationOwnerState.ACTIVE)),
+                Optional.of(new PublicationOwner(userId, "Ana", externalId, PublicationOwnerState.ACTIVE)),
                 ownerRepository.findByExternalId(externalId)
         );
     }
@@ -42,7 +42,7 @@ class PostgresPublicationOwnerRepositoryIntegrationTest {
     void shouldKeepASingleCopyWhenTheSameEventIsProcessedTwice() {
         UUID userId = UUID.randomUUID();
         String externalId = "firebase-" + userId;
-        PublicationOwner owner = new PublicationOwner(userId, externalId, PublicationOwnerState.ACTIVE);
+        PublicationOwner owner = new PublicationOwner(userId, "Ana", externalId, PublicationOwnerState.ACTIVE);
 
         ownerRepository.save(owner);
         ownerRepository.save(owner);

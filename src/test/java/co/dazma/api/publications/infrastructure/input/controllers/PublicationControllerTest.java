@@ -191,6 +191,7 @@ class PublicationControllerTest {
         when(getPublicationInputPort.execute(publicationId)).thenReturn(new GetPublicationOutputDto(
                 publicationId,
                 ownerId,
+                "Ana",
                 "Bicicleta",
                 PublicationType.EXCHANGE,
                 "Bicicleta de montaña en buen estado",
@@ -211,7 +212,8 @@ class PublicationControllerTest {
                 .andExpect(jsonPath("$.type").value("EXCHANGE"))
                 .andExpect(jsonPath("$.municipality").value("05615"))
                 .andExpect(jsonPath("$.price").value(900_000))
-                .andExpect(jsonPath("$.owner.id").value(ownerId.toString()))
+                .andExpect(jsonPath("$.owner").value(ownerId.toString()))
+                .andExpect(jsonPath("$.ownerName").value("Ana"))
                 .andExpect(jsonPath("$.ownerId").doesNotExist())
                 .andExpect(jsonPath("$.photos[0].id").value(photoId.toString()))
                 .andExpect(jsonPath("$.photos[0].url").value("https://storage.example/signed"))

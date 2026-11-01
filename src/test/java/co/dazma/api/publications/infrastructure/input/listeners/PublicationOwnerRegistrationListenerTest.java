@@ -18,8 +18,8 @@ class PublicationOwnerRegistrationListenerTest {
         PublicationOwnerRegistrationListener listener = new PublicationOwnerRegistrationListener(inputPort);
         UUID userId = UUID.randomUUID();
 
-        listener.on(new UserRegistered(userId, "firebase-123", "ana@dazma.store", "ACTIVE"));
+        listener.on(new UserRegistered(userId, "firebase-123", "Ana", "ana@dazma.store", "ACTIVE"));
 
-        verify(inputPort).execute(new RegisterPublicationOwnerInputDto(userId, "firebase-123", "ACTIVE"));
+        verify(inputPort).execute(new RegisterPublicationOwnerInputDto(userId, "Ana", "firebase-123", "ACTIVE"));
     }
 }

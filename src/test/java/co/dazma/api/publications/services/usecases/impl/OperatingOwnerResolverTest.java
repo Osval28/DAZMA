@@ -31,7 +31,7 @@ class OperatingOwnerResolverTest {
     void shouldReturnTheInternalIdOfAnActiveOwner() {
         UUID userId = UUID.randomUUID();
         when(ownerRepository.findByExternalId("firebase-123"))
-                .thenReturn(Optional.of(new PublicationOwner(userId, "firebase-123", PublicationOwnerState.ACTIVE)));
+                .thenReturn(Optional.of(new PublicationOwner(userId, "Ana", "firebase-123", PublicationOwnerState.ACTIVE)));
 
         assertEquals(userId, resolver.resolveId("firebase-123"));
     }
@@ -49,7 +49,7 @@ class OperatingOwnerResolverTest {
     @Test
     void shouldRejectASuspendedOwner() {
         when(ownerRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new PublicationOwner(UUID.randomUUID(), "firebase-123", PublicationOwnerState.SUSPENDED)
+                new PublicationOwner(UUID.randomUUID(), "Ana", "firebase-123", PublicationOwnerState.SUSPENDED)
         ));
 
         assertThrows(PublicationOwnerCannotOperateException.class, () -> resolver.resolveId("firebase-123"));

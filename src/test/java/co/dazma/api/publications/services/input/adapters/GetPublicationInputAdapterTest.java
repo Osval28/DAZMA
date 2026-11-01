@@ -38,6 +38,7 @@ class GetPublicationInputAdapterTest {
         Publication publication = Publication.restore(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
+                "Ana",
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta de montaña en buen estado"),

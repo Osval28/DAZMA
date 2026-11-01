@@ -40,11 +40,12 @@ class PostgresqlPublicationOwnerAdapterTest {
     void shouldMapTheOwnerToAJpaEntityBeforeSaving() {
         UUID userId = UUID.randomUUID();
 
-        adapter.save(new PublicationOwner(userId, "firebase-123", PublicationOwnerState.ACTIVE));
+        adapter.save(new PublicationOwner(userId, "Ana", "firebase-123", PublicationOwnerState.ACTIVE));
 
         ArgumentCaptor<PublicationOwnerEntityJPA> captor = ArgumentCaptor.forClass(PublicationOwnerEntityJPA.class);
         verify(springDataRepository).save(captor.capture());
         assertEquals(userId, captor.getValue().getUserId());
+        assertEquals("Ana", captor.getValue().getUserName());
         assertEquals("firebase-123", captor.getValue().getExternalId());
         assertEquals(PublicationOwnerStateEntity.ACTIVE, captor.getValue().getState());
     }
@@ -53,11 +54,11 @@ class PostgresqlPublicationOwnerAdapterTest {
     void shouldFindTheOwnerByExternalId() {
         UUID userId = UUID.randomUUID();
         when(springDataRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new PublicationOwnerEntityJPA(userId, "firebase-123", PublicationOwnerStateEntity.ACTIVE)
+                new PublicationOwnerEntityJPA(userId, "Ana", "firebase-123", PublicationOwnerStateEntity.ACTIVE)
         ));
 
         assertEquals(
-                Optional.of(new PublicationOwner(userId, "firebase-123", PublicationOwnerState.ACTIVE)),
+                Optional.of(new PublicationOwner(userId, "Ana", "firebase-123", PublicationOwnerState.ACTIVE)),
                 adapter.findByExternalId("firebase-123")
         );
     }

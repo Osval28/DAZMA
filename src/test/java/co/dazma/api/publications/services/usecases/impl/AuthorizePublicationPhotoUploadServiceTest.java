@@ -48,7 +48,7 @@ class AuthorizePublicationPhotoUploadServiceTest {
         ownerRepository = mock(PublicationOwnerRepositoryPort.class);
         ownerId = UUID.randomUUID();
         when(ownerRepository.findByExternalId(EXTERNAL_ID))
-                .thenReturn(Optional.of(new PublicationOwner(ownerId, EXTERNAL_ID, PublicationOwnerState.ACTIVE)));
+                .thenReturn(Optional.of(new PublicationOwner(ownerId, "Ana", EXTERNAL_ID, PublicationOwnerState.ACTIVE)));
         photoStorage = mock(PublicationPhotoStoragePort.class);
         PhotoUploadParametersPort parameters = mock(PhotoUploadParametersPort.class);
         when(parameters.allowedContentTypes()).thenReturn(Set.of("image/jpeg", "image/png", "image/webp"));

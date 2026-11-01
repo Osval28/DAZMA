@@ -102,6 +102,7 @@ class PostgresqlPublicationAdapterTest {
     private Publication publication(String municipalityCode) {
         return Publication.publish(
                 UUID.randomUUID(),
+                "Ana",
                 new Name("Bicicleta"),
                 PublicationType.EXCHANGE,
                 new Description("Bicicleta en buen estado"),
