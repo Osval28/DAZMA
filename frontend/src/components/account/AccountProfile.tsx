@@ -1,6 +1,6 @@
 "use client";
 
-import { accountMessages } from "@/lib/account/messages";
+import { useTranslations } from "next-intl";
 import type { MyProfile } from "@/lib/api/users";
 import { PinIcon } from "@/components/ui/icons";
 import { AccountTabs, type AccountTab } from "./AccountTabs";
@@ -8,53 +8,54 @@ import { Avatar } from "./Avatar";
 import { SignOutButton } from "./SignOutButton";
 import { useMunicipalityName } from "./useMunicipalityName";
 
-const messages = accountMessages.account;
-
 type AccountProfileProps = {
   profile: MyProfile;
 };
 
 function ComingSoon({ text }: { text: string }) {
+  const t = useTranslations("Account.account");
+
   return (
     <div className="coming-soon">
-      <span className="badge badge--exchange">{messages.comingSoon}</span>
+      <span className="badge badge--exchange">{t("comingSoon")}</span>
       <p>{text}</p>
     </div>
   );
 }
 
 export function AccountProfile({ profile }: AccountProfileProps) {
+  const t = useTranslations("Account.account");
   const municipalityName = useMunicipalityName(profile.municipality);
 
   const tabs: AccountTab[] = [
     {
       id: "data",
-      label: messages.tabs.data,
+      label: t("tabs.data"),
       content: (
         <>
           <dl className="profile-tiles">
             <div className="profile-tile">
-              <dt>{messages.emailLabel}</dt>
+              <dt>{t("emailLabel")}</dt>
               <dd>
                 <span className="profile-tile__value">{profile.email}</span>
                 <span className={`badge ${profile.emailVerified ? "badge--purchase" : "badge--exchange"}`}>
-                  {profile.emailVerified ? messages.verifiedBadge : messages.unverifiedBadge}
+                  {profile.emailVerified ? t("verifiedBadge") : t("unverifiedBadge")}
                 </span>
               </dd>
             </div>
             <div className="profile-tile">
-              <dt>{messages.phoneLabel}</dt>
+              <dt>{t("phoneLabel")}</dt>
               <dd>
                 <span className="profile-tile__value">{profile.phone}</span>
               </dd>
             </div>
           </dl>
-          {!profile.emailVerified && <p className="profile__notice">{messages.emailNotVerified}</p>}
+          {!profile.emailVerified && <p className="profile__notice">{t("emailNotVerified")}</p>}
         </>
       ),
     },
-    { id: "publications", label: messages.tabs.publications, content: <ComingSoon text={messages.publicationsSoon} /> },
-    { id: "security", label: messages.tabs.security, content: <ComingSoon text={messages.securitySoon} /> },
+    { id: "publications", label: t("tabs.publications"), content: <ComingSoon text={t("publicationsSoon")} /> },
+    { id: "security", label: t("tabs.security"), content: <ComingSoon text={t("securitySoon")} /> },
   ];
 
   return (
@@ -69,7 +70,7 @@ export function AccountProfile({ profile }: AccountProfileProps) {
           </p>
         </div>
       </div>
-      <AccountTabs label={messages.tabsLabel} tabs={tabs} />
+      <AccountTabs label={t("tabsLabel")} tabs={tabs} />
       <SignOutButton />
     </section>
   );

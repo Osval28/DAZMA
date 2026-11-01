@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Avatar } from "@/components/account/Avatar";
 import { SiteHeader } from "@/components/account/SiteHeader";
 import { Button } from "@/components/ui/Button";
@@ -9,9 +10,7 @@ import { listMunicipalities } from "@/lib/api/municipalities";
 import { getPublication, type PublicationDetail } from "@/lib/api/publications";
 import { formatDate } from "@/lib/publications/format-date";
 import { formatPrice } from "@/lib/publications/format-price";
-import { publicationMessages } from "@/lib/publications/messages";
 
-const messages = publicationMessages.detail;
 const NOT_FOUND_STATUSES = [400, 404];
 
 type PublicationPageProps = {
@@ -36,49 +35,51 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
   const photos = [...publication.photos].sort((first, second) => first.position - second.position);
   const isExchange = publication.type === "EXCHANGE";
   const sellerName = publication.ownerName || undefined;
+  const locale = await getLocale();
+  const t = await getTranslations("Publications");
 
   return (
     <>
       <SiteHeader />
       <main id="contenido" className="detail">
         <Link href="/" className="detail__back">
-          {messages.back}
+          {t("detail.back")}
         </Link>
         <div className="detail__layout">
           {photos.length > 0 && <PublicationGallery photos={photos} title={publication.name} />}
           <section className="detail__info">
-            <span className={`badge badge--${publication.type.toLowerCase()}`}>{publicationMessages.types[publication.type]}</span>
+            <span className={`badge badge--${publication.type.toLowerCase()}`}>{t(`types.${publication.type}`)}</span>
             <h1 className="detail__title">{publication.name}</h1>
             <div className="detail__price">
-              {isExchange && <span className="detail__price-label">{messages.referenceValue}</span>}
-              <p className="detail__price-value">{formatPrice(publication.price)}</p>
+              {isExchange && <span className="detail__price-label">{t("detail.referenceValue")}</span>}
+              <p className="detail__price-value">{formatPrice(publication.price, locale)}</p>
             </div>
             <div className="seller">
               <Avatar name={sellerName} size="medium" tinted />
               <div className="seller__text">
-                <span className="seller__label">{messages.seller}</span>
-                <span className="seller__name">{sellerName ?? messages.sellerNotFound}</span>
+                <span className="seller__label">{t("detail.seller")}</span>
+                <span className="seller__name">{sellerName ?? t("detail.sellerNotFound")}</span>
               </div>
             </div>
             <dl className="detail__facts">
               <div>
-                <dt>{messages.location}</dt>
+                <dt>{t("detail.location")}</dt>
                 <dd>{municipalityName}</dd>
               </div>
               <div>
-                <dt>{messages.published}</dt>
-                <dd>{formatDate(publication.createdAt)}</dd>
+                <dt>{t("detail.published")}</dt>
+                <dd>{formatDate(publication.createdAt, locale)}</dd>
               </div>
             </dl>
             <div className="detail__description">
-              <h2 className="detail__subtitle">{messages.description}</h2>
+              <h2 className="detail__subtitle">{t("detail.description")}</h2>
               <p>{publication.description}</p>
             </div>
             <div className="detail__contact">
               <Button variant="secondary" disabled>
-                {messages.contact}
+                {t("detail.contact")}
               </Button>
-              <span className="detail__contact-note">{messages.contactSoon}</span>
+              <span className="detail__contact-note">{t("detail.contactSoon")}</span>
             </div>
           </section>
         </div>

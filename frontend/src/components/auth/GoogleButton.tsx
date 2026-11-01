@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { describeError } from "@/lib/auth/errors";
+import type { AuthErrorKey } from "@/i18n/message-keys";
+import { errorKey } from "@/lib/auth/errors";
 import { isPopupDismissed, signInWithGoogle } from "@/lib/auth/sign-in";
 import { Button } from "@/components/ui/Button";
 import { GoogleIcon } from "@/components/ui/icons";
@@ -11,7 +12,7 @@ type GoogleButtonProps = {
   dividerLabel: string;
   disabled: boolean;
   onSignedIn: (destination: string) => void;
-  onFailure: (message: string) => void;
+  onFailure: (failure: AuthErrorKey) => void;
 };
 
 export function GoogleButton({ label, dividerLabel, disabled, onSignedIn, onFailure }: GoogleButtonProps) {
@@ -23,7 +24,7 @@ export function GoogleButton({ label, dividerLabel, disabled, onSignedIn, onFail
       onSignedIn(await signInWithGoogle());
     } catch (error) {
       if (!isPopupDismissed(error)) {
-        onFailure(describeError(error));
+        onFailure(errorKey(error));
       }
       setPending(false);
     }

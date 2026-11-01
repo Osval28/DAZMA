@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { FormEvent } from "react";
+import type { AuthErrorKey } from "@/i18n/message-keys";
 import { registerUser } from "@/lib/api/users";
-import { describeError, describeValidationIssue } from "@/lib/auth/errors";
-import { authMessages } from "@/lib/auth/messages";
+import { errorKey, validationIssueKey } from "@/lib/auth/errors";
 import { readProfileInput } from "@/lib/auth/profile-input";
 import { ACCOUNT_PATH, HOME_PATH, createAccount } from "@/lib/auth/sign-in";
 import { validateEmail, validateNewPassword, validateProfile } from "@/lib/validation";
@@ -16,11 +17,10 @@ import { PasswordField } from "@/components/ui/PasswordField";
 import { ProfileFields } from "@/components/ui/ProfileFields";
 import { TextField } from "@/components/ui/TextField";
 
-const messages = authMessages.register;
-
 export function RegisterForm() {
+  const t = useTranslations();
   const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState<string>();
+  const [failure, setFailure] = useState<AuthErrorKey>();
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -33,16 +33,16 @@ export function RegisterForm() {
 
     const issue = validateEmail(email) ?? validateNewPassword(password, confirmation) ?? validateProfile(profile);
     if (issue !== undefined) {
-      setErrorMessage(describeValidationIssue(issue));
+      setFailure(validationIssueKey(issue));
       return;
     }
 
-    setErrorMessage(undefined);
+    setFailure(undefined);
     setSubmitting(true);
     try {
       await createAccount(email, password);
     } catch (error) {
-      setErrorMessage(describeError(error));
+      setFailure(errorKey(error));
       setSubmitting(false);
       return;
     }
@@ -57,20 +57,20 @@ export function RegisterForm() {
 
   return (
     <form className="form" onSubmit={handleSubmit} noValidate>
-      {errorMessage !== undefined && <Alert>{errorMessage}</Alert>}
-      <TextField id="register-email" name="email" type="email" label={messages.emailLabel} placeholder={messages.emailPlaceholder} autoComplete="email" />
-      <PasswordField id="register-password" name="password" label={messages.passwordLabel} placeholder={messages.passwordPlaceholder} autoComplete="new-password" />
-      <PasswordField id="register-confirm-password" name="confirmPassword" label={messages.confirmPasswordLabel} placeholder={messages.confirmPasswordPlaceholder} autoComplete="new-password" />
+      {failure !== undefined && <Alert>{t(failure)}</Alert>}
+      <TextField id="register-email" name="email" type="email" label={t("Auth.register.emailLabel")} placeholder={t("Auth.register.emailPlaceholder")} autoComplete="email" />
+      <PasswordField id="register-password" name="password" label={t("Auth.register.passwordLabel")} placeholder={t("Auth.register.passwordPlaceholder")} autoComplete="new-password" />
+      <PasswordField id="register-confirm-password" name="confirmPassword" label={t("Auth.register.confirmPasswordLabel")} placeholder={t("Auth.register.confirmPasswordPlaceholder")} autoComplete="new-password" />
       <ProfileFields idPrefix="register" />
       <Button type="submit" disabled={submitting}>
-        {submitting ? messages.submitting : messages.submit}
+        {submitting ? t("Auth.register.submitting") : t("Auth.register.submit")}
       </Button>
       <GoogleButton
-        label={messages.googleButton}
-        dividerLabel={messages.divider}
+        label={t("Auth.register.googleButton")}
+        dividerLabel={t("Auth.register.divider")}
         disabled={submitting}
         onSignedIn={(destination) => router.replace(destination)}
-        onFailure={setErrorMessage}
+        onFailure={setFailure}
       />
     </form>
   );

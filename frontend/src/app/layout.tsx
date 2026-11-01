@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Space_Grotesk } from "next/font/google";
-import { accountMessages } from "@/lib/account/messages";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -16,19 +17,27 @@ const bricolageGrotesque = Bricolage_Grotesque({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "DAZMA",
-  description: "Trueque y compraventa en el Oriente Antioqueño.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
+  const t = await getTranslations("Account");
+
   return (
-    <html lang="es" className={`${spaceGrotesk.variable} ${bricolageGrotesque.variable}`}>
+    <html lang={locale} className={`${spaceGrotesk.variable} ${bricolageGrotesque.variable}`}>
       <body>
-        <a href="#contenido" className="skip-link">
-          {accountMessages.skipToContent}
-        </a>
-        {children}
+        <NextIntlClientProvider>
+          <a href="#contenido" className="skip-link">
+            {t("skipToContent")}
+          </a>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

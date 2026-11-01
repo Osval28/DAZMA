@@ -1,8 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { InputHTMLAttributes } from "react";
-import { authMessages } from "@/lib/auth/messages";
 import { EyeIcon, EyeOffIcon } from "./icons";
 
 type PasswordFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
@@ -11,8 +11,9 @@ type PasswordFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & 
 };
 
 export function PasswordField({ id, label, ...rest }: PasswordFieldProps) {
+  const t = useTranslations("Auth.passwordToggle");
   const [visible, setVisible] = useState(false);
-  const toggleLabel = visible ? authMessages.passwordToggle.hide : authMessages.passwordToggle.show;
+  const toggleLabel = visible ? t("hide") : t("show");
 
   return (
     <div className="field">
