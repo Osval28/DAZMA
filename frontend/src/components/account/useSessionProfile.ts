@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { AuthErrorKey } from "@/i18n/message-keys";
 import { hasErrorCode, isUnauthenticated } from "@/lib/api/errors";
 import { getMyProfile, type MyProfile } from "@/lib/api/users";
@@ -16,30 +16,49 @@ export type SessionProfileState =
 
 const USER_NOT_FOUND_CODE = "USER_NOT_FOUND";
 
-export function useSessionProfile(returnPath: string): SessionProfileState {
+type SessionProfile = {
+  state: SessionProfileState;
+  reload: () => Promise<void>;
+};
+
+async function fetchState(): Promise<SessionProfileState | "unauthenticated"> {
+  try {
+    return { status: "ready", profile: await getMyProfile() };
+  } catch (error) {
+    if (isUnauthenticated(error)) {
+      return "unauthenticated";
+    }
+    if (hasErrorCode(error, USER_NOT_FOUND_CODE)) {
+      return { status: "missing" };
+    }
+    return { status: "failed", errorKey: errorKey(error) };
+  }
+}
+
+export function useSessionProfile(returnPath: string): SessionProfile {
   const router = useRouter();
   const [state, setState] = useState<SessionProfileState>({ status: "loading" });
 
+  const apply = useCallback(
+    (result: SessionProfileState | "unauthenticated") => {
+      if (result === "unauthenticated") {
+        router.replace(`${LOGIN_PATH}?next=${encodeURIComponent(returnPath)}`);
+      } else {
+        setState(result);
+      }
+    },
+    [returnPath, router],
+  );
+
+  const reload = useCallback(async () => apply(await fetchState()), [apply]);
+
   useEffect(() => {
     let active = true;
-    getMyProfile()
-      .then((profile) => active && setState({ status: "ready", profile }))
-      .catch((error) => {
-        if (!active) {
-          return;
-        }
-        if (isUnauthenticated(error)) {
-          router.replace(`${LOGIN_PATH}?next=${encodeURIComponent(returnPath)}`);
-        } else if (hasErrorCode(error, USER_NOT_FOUND_CODE)) {
-          setState({ status: "missing" });
-        } else {
-          setState({ status: "failed", errorKey: errorKey(error) });
-        }
-      });
+    fetchState().then((result) => active && apply(result));
     return () => {
       active = false;
     };
-  }, [returnPath, router]);
+  }, [apply]);
 
-  return state;
+  return { state, reload };
 }

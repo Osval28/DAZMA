@@ -100,6 +100,11 @@
   },
   "Account": {
     "loading": "Cargando…",
+    "verifyEmail": {
+      "button": "Ya verifiqué mi correo",
+      "checking": "Comprobando…",
+      "stillUnverified": "Todavía no vemos tu correo verificado. Abre el enlace que te enviamos e inténtalo de nuevo."
+    },
     "skipToContent": "Saltar al contenido",
     "header": {
       "account": "Mi cuenta",

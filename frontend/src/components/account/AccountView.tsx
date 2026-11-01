@@ -13,7 +13,7 @@ import { useSessionProfile } from "./useSessionProfile";
 
 export function AccountView() {
   const t = useTranslations();
-  const state = useSessionProfile(ACCOUNT_PATH);
+  const { state, reload } = useSessionProfile(ACCOUNT_PATH);
 
   if (state.status === "loading") {
     return (
@@ -47,7 +47,7 @@ export function AccountView() {
         <Link href={HOME_PATH} className="detail__back">
           {t("Account.account.backHome")}
         </Link>
-        <AccountProfile profile={profile} />
+        <AccountProfile profile={profile} onReload={reload} />
       </main>
     </>
   );
