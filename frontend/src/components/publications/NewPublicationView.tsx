@@ -2,19 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
-import { accountMessages } from "@/lib/account/messages";
 import { ACCOUNT_PATH, HOME_PATH } from "@/lib/auth/sign-in";
-import { publicationMessages } from "@/lib/publications/messages";
 import { NEW_PUBLICATION_PATH } from "@/lib/publications/paths";
 import { SiteHeader } from "@/components/account/SiteHeader";
 import { useSessionProfile } from "@/components/account/useSessionProfile";
 import { Alert } from "@/components/ui/Alert";
 import { PublicationForm } from "./PublicationForm";
 
-const messages = publicationMessages.create;
-
 export function NewPublicationView() {
+  const t = useTranslations();
   const router = useRouter();
   const state = useSessionProfile(NEW_PUBLICATION_PATH);
 
@@ -29,18 +27,18 @@ export function NewPublicationView() {
       <SiteHeader />
       <main id="contenido" className="publish">
         <Link href={HOME_PATH} className="detail__back">
-          {messages.back}
+          {t("Publications.create.back")}
         </Link>
         <section className="publish__card">
-          <h1 className="publish__title">{messages.title}</h1>
-          <p className="publish__subtitle">{messages.subtitle}</p>
-          {(state.status === "loading" || state.status === "missing") && <p className="page__status">{accountMessages.loading}</p>}
-          {state.status === "failed" && <Alert>{state.message}</Alert>}
+          <h1 className="publish__title">{t("Publications.create.title")}</h1>
+          <p className="publish__subtitle">{t("Publications.create.subtitle")}</p>
+          {(state.status === "loading" || state.status === "missing") && <p className="page__status">{t("Account.loading")}</p>}
+          {state.status === "failed" && <Alert>{t(state.errorKey)}</Alert>}
           {state.status === "ready" && !state.profile.emailVerified && (
             <>
-              <Alert>{messages.emailNotVerified}</Alert>
+              <Alert>{t("Publications.create.emailNotVerified")}</Alert>
               <Link href={ACCOUNT_PATH} className="link">
-                {messages.goToAccount}
+                {t("Publications.create.goToAccount")}
               </Link>
             </>
           )}

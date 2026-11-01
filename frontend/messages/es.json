@@ -1,0 +1,251 @@
+{
+  "Metadata": {
+    "title": "DAZMA",
+    "description": "Trueque y compraventa en el Oriente Antioqueño.",
+    "pages": {
+      "login": "Ingresar | DAZMA",
+      "passwordReset": "Recuperar contraseña | DAZMA",
+      "register": "Crear cuenta | DAZMA",
+      "account": "Mi cuenta | DAZMA",
+      "newPublication": "Publicar | DAZMA"
+    }
+  },
+  "Locale": {
+    "switchTo": "Cambiar idioma a {language}",
+    "languages": {
+      "es": "español",
+      "en": "inglés"
+    }
+  },
+  "Auth": {
+    "login": {
+      "title": "Ingresa a DAZMA",
+      "subtitle": "Compra, vende e intercambia lo que necesites en el Oriente Antioqueño.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tucorreo@ejemplo.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "submit": "Ingresar",
+      "submitting": "Ingresando…",
+      "googleButton": "Continuar con Google",
+      "divider": "o",
+      "noAccount": "¿No tienes cuenta?",
+      "createAccount": "Crea una"
+    },
+    "passwordReset": {
+      "title": "Recupera tu contraseña",
+      "subtitle": "Escribe tu correo y te ayudamos a crear una contraseña nueva.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tucorreo@ejemplo.com",
+      "submit": "Enviar enlace",
+      "submitting": "Enviando…",
+      "sent": "Si el correo electrónico ingresado está registrado en nuestro sistema, recibirás un enlace para restablecer tu contraseña en unos minutos.",
+      "backToLogin": "Volver a ingresar"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Únete a la comunidad de trueque y compraventa de tu municipio.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tucorreo@ejemplo.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Crea una contraseña",
+      "confirmPasswordLabel": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Repite tu contraseña",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta…",
+      "googleButton": "Registrarme con Google",
+      "divider": "o",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Ingresa"
+    },
+    "profile": {
+      "nameLabel": "Nombre completo",
+      "namePlaceholder": "Ana Gómez",
+      "phoneLabel": "Celular",
+      "phonePlaceholder": "300 123 4567",
+      "municipalityLabel": "Municipio",
+      "municipalityPlaceholder": "Selecciona tu municipio",
+      "municipalitiesLoading": "Cargando municipios…",
+      "municipalitiesFailed": "No pudimos cargar los municipios. Recarga la página."
+    },
+    "passwordToggle": {
+      "show": "Mostrar contraseña",
+      "hide": "Ocultar contraseña"
+    },
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "network": "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.",
+      "invalidCredentials": "El correo o la contraseña no son correctos.",
+      "invalidEmail": "Ingresa un correo electrónico válido.",
+      "userDisabled": "Esta cuenta está deshabilitada.",
+      "tooManyRequests": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+      "emailInUse": "Ya existe una cuenta con este correo. Ingresa para continuar.",
+      "weakPassword": "La contraseña es demasiado débil.",
+      "popupBlocked": "Tu navegador bloqueó la ventana de Google. Permite las ventanas emergentes e inténtalo de nuevo.",
+      "differentProvider": "Ya existe una cuenta con este correo creada con otro método. Ingresa con ese método para continuar.",
+      "sessionExpired": "Tu sesión expiró. Ingresa de nuevo.",
+      "recentSignInRequired": "Por seguridad, vuelve a ingresar e inténtalo de nuevo.",
+      "originNotAllowed": "No pudimos validar el origen de la solicitud.",
+      "alreadyRegistered": "Tu perfil ya está completo.",
+      "municipalityNotFound": "El municipio seleccionado no existe.",
+      "phoneInvalid": "Ingresa un celular colombiano de 10 dígitos que empiece por 3.",
+      "nameRequired": "Ingresa tu nombre.",
+      "nameTooLong": "El nombre es demasiado largo.",
+      "passwordRequired": "Ingresa tu contraseña.",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "municipalityRequired": "Selecciona tu municipio."
+    }
+  },
+  "Account": {
+    "loading": "Cargando…",
+    "skipToContent": "Saltar al contenido",
+    "header": {
+      "account": "Mi cuenta",
+      "accountOf": "Mi cuenta: {name}",
+      "unknownInitial": "?",
+      "signIn": "Ingresar",
+      "signUp": "Crear cuenta"
+    },
+    "account": {
+      "title": "Mi cuenta",
+      "emailLabel": "Correo",
+      "phoneLabel": "Celular",
+      "tabsLabel": "Secciones de la cuenta",
+      "tabs": {
+        "data": "Datos",
+        "publications": "Mis publicaciones",
+        "security": "Seguridad"
+      },
+      "comingSoon": "Próximamente",
+      "publicationsSoon": "Aquí verás y gestionarás lo que publicas.",
+      "securitySoon": "Aquí podrás cambiar tu contraseña y revisar tus sesiones activas.",
+      "verifiedBadge": "Verificado",
+      "unverifiedBadge": "Sin verificar",
+      "emailNotVerified": "Correo sin verificar. Revisa tu bandeja de entrada para poder publicar.",
+      "backHome": "Volver al inicio",
+      "signOut": "Cerrar sesión"
+    },
+    "completeProfile": {
+      "title": "Completa tu perfil",
+      "subtitle": "Necesitamos unos datos para que puedas comprar, vender e intercambiar.",
+      "submit": "Guardar perfil",
+      "submitting": "Guardando…"
+    }
+  },
+  "Errors": {
+    "retry": "Reintentar",
+    "home": "Volver al inicio",
+    "generic": {
+      "title": "No pudimos cargar esta página",
+      "text": "Puede ser un problema de conexión o del servidor. Inténtalo de nuevo en unos segundos."
+    },
+    "listing": {
+      "title": "No pudimos cargar las publicaciones",
+      "text": "Revisa tu conexión e inténtalo de nuevo. Si el problema sigue, vuelve en unos minutos."
+    }
+  },
+  "Publications": {
+    "types": {
+      "PURCHASE": "En venta",
+      "EXCHANGE": "Se cambia"
+    },
+    "search": {
+      "label": "Buscar publicaciones",
+      "placeholder": "Próximamente"
+    },
+    "filter": {
+      "municipalityLabel": "Municipio",
+      "allMunicipalities": "Todos los municipios"
+    },
+    "listing": {
+      "empty": "Aún no hay publicaciones para mostrar aquí.",
+      "emptyAction": "Publica la primera"
+    },
+    "view": {
+      "columnsLabel": "Columnas",
+      "columnsOption": "{columns, plural, one {# columna} other {# columnas}}"
+    },
+    "pagination": {
+      "label": "Paginación",
+      "previous": "Anterior",
+      "next": "Siguiente página",
+      "current": "Página {page}"
+    },
+    "detail": {
+      "back": "Volver a las publicaciones",
+      "description": "Descripción",
+      "location": "Municipio",
+      "published": "Publicado",
+      "referenceValue": "Valor de referencia",
+      "contact": "Contactar al vendedor",
+      "contactSoon": "Próximamente",
+      "galleryLabel": "Fotografías de la publicación",
+      "thumbnailLabel": "Ver fotografía {position}",
+      "notFoundTitle": "No encontramos esta publicación",
+      "notFoundText": "Puede que ya no esté disponible o que el enlace sea incorrecto.",
+      "seller": "Vendedor",
+      "sellerNotFound": "Desconocido"
+    },
+    "create": {
+      "headerAction": "Publicar",
+      "sections": {
+        "photos": "Fotografías",
+        "offer": "Qué ofreces",
+        "priceAndPlace": "Cuánto y dónde"
+      },
+      "title": "Publica algo",
+      "subtitle": "Cuéntanos qué ofreces y dónde está. Tu publicación aparecerá de inmediato.",
+      "back": "Volver a las publicaciones",
+      "typeLabel": "¿Qué quieres hacer?",
+      "typeOptions": {
+        "PURCHASE": "Vender",
+        "EXCHANGE": "Cambiar"
+      },
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Bicicleta de montaña",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Estado del artículo, tiempo de uso y, si es un cambio, qué esperas a cambio.",
+      "priceLabel": "Precio",
+      "referenceValueLabel": "Valor de referencia",
+      "pricePlaceholder": "900000",
+      "priceHint": "En pesos colombianos.",
+      "submit": "Publicar",
+      "submitting": "Publicando…",
+      "emailNotVerified": "Verifica tu correo para poder publicar. Te enviamos un mensaje al registrarte.",
+      "goToAccount": "Ir a mi cuenta",
+      "photos": {
+        "label": "Fotografías",
+        "hint": "Hasta {maximum} fotos de máximo {megabytes} MB. La primera es la portada.",
+        "add": "Agregar fotos",
+        "counter": "{count} de {maximum}",
+        "cover": "Portada",
+        "makeCover": "Hacer portada",
+        "remove": "Quitar",
+        "retry": "Reintentar",
+        "uploading": "Subiendo…",
+        "failed": "No se subió",
+        "previewAlt": "Fotografía {position} de la publicación"
+      },
+      "errors": {
+        "nameRequired": "Ingresa el nombre de la publicación.",
+        "nameTooLong": "El nombre es demasiado largo.",
+        "descriptionRequired": "Describe lo que ofreces.",
+        "descriptionTooLong": "La descripción es demasiado larga.",
+        "priceInvalid": "Ingresa un valor en pesos mayor que cero.",
+        "municipalityRequired": "Selecciona el municipio.",
+        "photosRequired": "Agrega al menos una fotografía.",
+        "photosUploading": "Espera a que terminen de subirse las fotografías.",
+        "photosFailed": "Hay fotografías que no se subieron. Reinténtalas o quítalas.",
+        "photoTypeInvalid": "Solo se aceptan fotografías JPEG, PNG o WebP.",
+        "photoTooLarge": "Cada fotografía debe pesar máximo 5 MB.",
+        "photosLimitReached": "Ya alcanzaste el máximo de fotografías.",
+        "photoUploadFailed": "No pudimos subir la fotografía. Inténtalo de nuevo.",
+        "emailNotVerified": "Verifica tu correo para poder publicar.",
+        "ownerNotReady": "Tu cuenta todavía se está preparando. Inténtalo en unos segundos.",
+        "photoUploadNotAvailable": "Alguna fotografía venció o no se completó. Quítala y vuelve a agregarla."
+      }
+    }
+  }
+}

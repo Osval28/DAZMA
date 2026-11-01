@@ -1,11 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { listMunicipalities, type Municipality } from "@/lib/api/municipalities";
-import { authMessages } from "@/lib/auth/messages";
 import { SelectField } from "./SelectField";
-
-const messages = authMessages.profile;
 
 type MunicipalityFieldProps = {
   id: string;
@@ -13,6 +11,7 @@ type MunicipalityFieldProps = {
 };
 
 export function MunicipalityField({ id, name }: MunicipalityFieldProps) {
+  const t = useTranslations("Auth.profile");
   const [municipalities, setMunicipalities] = useState<Municipality[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -28,13 +27,13 @@ export function MunicipalityField({ id, name }: MunicipalityFieldProps) {
     };
   }, []);
 
-  const placeholder = loading ? messages.municipalitiesLoading : failed ? messages.municipalitiesFailed : messages.municipalityPlaceholder;
+  const placeholder = loading ? t("municipalitiesLoading") : failed ? t("municipalitiesFailed") : t("municipalityPlaceholder");
 
   return (
     <SelectField
       id={id}
       name={name}
-      label={messages.municipalityLabel}
+      label={t("municipalityLabel")}
       placeholder={placeholder}
       options={municipalities.map((municipality) => ({ value: municipality.code, label: municipality.name }))}
       disabled={loading || failed}

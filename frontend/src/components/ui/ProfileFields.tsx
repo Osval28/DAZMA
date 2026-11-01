@@ -1,14 +1,14 @@
-import { authMessages } from "@/lib/auth/messages";
+import { useTranslations } from "next-intl";
 import { MunicipalityField } from "./MunicipalityField";
 import { TextField } from "./TextField";
 
-const messages = authMessages.profile;
-
 export function ProfileFields({ idPrefix }: { idPrefix: string }) {
+  const t = useTranslations("Auth.profile");
+
   return (
     <>
-      <TextField id={`${idPrefix}-name`} name="name" label={messages.nameLabel} placeholder={messages.namePlaceholder} autoComplete="name" />
-      <TextField id={`${idPrefix}-phone`} name="phone" type="tel" inputMode="numeric" label={messages.phoneLabel} placeholder={messages.phonePlaceholder} autoComplete="tel" />
+      <TextField id={`${idPrefix}-name`} name="name" label={t("nameLabel")} placeholder={t("namePlaceholder")} autoComplete="name" />
+      <TextField id={`${idPrefix}-phone`} name="phone" type="tel" inputMode="numeric" label={t("phoneLabel")} placeholder={t("phonePlaceholder")} autoComplete="tel" />
       <MunicipalityField id={`${idPrefix}-municipality`} name="municipality" />
     </>
   );

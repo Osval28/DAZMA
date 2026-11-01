@@ -321,6 +321,15 @@ p {
   font-size: var(--font-size-small);
 }
 
+.notice {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-control);
+  font-size: var(--font-size-small);
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -1494,4 +1503,24 @@ p {
   .error-state__actions .button {
     width: 100%;
   }
+}
+
+.locale-switcher {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.locale-switcher:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.auth-shell__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }

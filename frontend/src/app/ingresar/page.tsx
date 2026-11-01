@@ -1,26 +1,28 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { authMessages } from "@/lib/auth/messages";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { LoginForm } from "@/components/auth/LoginForm";
 
-const messages = authMessages.login;
-
-export const metadata: Metadata = {
-  title: "Ingresar | DAZMA",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata.pages");
+  return { title: t("login") };
+}
 
 export default function LoginPage() {
+  const t = useTranslations("Auth.login");
+
   return (
     <AuthShell
-      title={messages.title}
-      subtitle={messages.subtitle}
+      title={t("title")}
+      subtitle={t("subtitle")}
       footer={
         <>
-          {messages.noAccount}{" "}
+          {t("noAccount")}{" "}
           <Link href="/registro" className="link">
-            {messages.createAccount}
+            {t("createAccount")}
           </Link>
         </>
       }

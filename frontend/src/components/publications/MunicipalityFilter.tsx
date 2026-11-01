@@ -1,12 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { ChangeEvent } from "react";
 import type { Municipality } from "@/lib/api/municipalities";
 import { listingHref } from "@/lib/publications/listing-query";
-import { publicationMessages } from "@/lib/publications/messages";
-
-const messages = publicationMessages.filter;
 
 type MunicipalityFilterProps = {
   municipalities: Municipality[];
@@ -14,6 +12,7 @@ type MunicipalityFilterProps = {
 };
 
 export function MunicipalityFilter({ municipalities, selected }: MunicipalityFilterProps) {
+  const t = useTranslations("Publications.filter");
   const router = useRouter();
 
   function handleChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -24,10 +23,10 @@ export function MunicipalityFilter({ municipalities, selected }: MunicipalityFil
   return (
     <div className="field listing__filter">
       <label htmlFor="listing-municipality" className="field__label">
-        {messages.municipalityLabel}
+        {t("municipalityLabel")}
       </label>
       <select key={selected ?? "all"} id="listing-municipality" className="field__input" defaultValue={selected ?? ""} onChange={handleChange}>
-        <option value="">{messages.allMunicipalities}</option>
+        <option value="">{t("allMunicipalities")}</option>
         {municipalities.map((municipality) => (
           <option key={municipality.code} value={municipality.code}>
             {municipality.name}

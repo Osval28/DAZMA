@@ -1,59 +1,60 @@
 import { FirebaseError } from "firebase/app";
+import type { AuthErrorKey } from "@/i18n/message-keys";
 import { ApiError, CsrfUnavailableError, NetworkError } from "@/lib/api/errors";
 import type { ValidationIssue } from "@/lib/validation";
-import { authMessages } from "./messages";
 
-const messages = authMessages.errors;
+const GENERIC_ERROR: AuthErrorKey = "Auth.errors.generic";
+const NETWORK_ERROR: AuthErrorKey = "Auth.errors.network";
 
-const firebaseMessages: Record<string, string> = {
-  "auth/invalid-credential": messages.invalidCredentials,
-  "auth/invalid-email": messages.invalidEmail,
-  "auth/user-disabled": messages.userDisabled,
-  "auth/too-many-requests": messages.tooManyRequests,
-  "auth/email-already-in-use": messages.emailInUse,
-  "auth/weak-password": messages.weakPassword,
-  "auth/popup-blocked": messages.popupBlocked,
-  "auth/account-exists-with-different-credential": messages.differentProvider,
-  "auth/network-request-failed": messages.network,
+const firebaseErrors: Record<string, AuthErrorKey> = {
+  "auth/invalid-credential": "Auth.errors.invalidCredentials",
+  "auth/invalid-email": "Auth.errors.invalidEmail",
+  "auth/user-disabled": "Auth.errors.userDisabled",
+  "auth/too-many-requests": "Auth.errors.tooManyRequests",
+  "auth/email-already-in-use": "Auth.errors.emailInUse",
+  "auth/weak-password": "Auth.errors.weakPassword",
+  "auth/popup-blocked": "Auth.errors.popupBlocked",
+  "auth/account-exists-with-different-credential": "Auth.errors.differentProvider",
+  "auth/network-request-failed": NETWORK_ERROR,
 };
 
-const apiMessages: Record<string, string> = {
-  AUTHENTICATION_REQUIRED: messages.sessionExpired,
-  IDENTITY_TOKEN_INVALID: messages.sessionExpired,
-  RECENT_SIGN_IN_REQUIRED: messages.recentSignInRequired,
-  ORIGIN_NOT_ALLOWED: messages.originNotAllowed,
-  USER_ALREADY_REGISTERED: messages.alreadyRegistered,
-  MUNICIPALITY_NOT_FOUND: messages.municipalityNotFound,
-  USER_PHONE_INVALID: messages.phoneInvalid,
-  USER_PHONE_REQUIRED: messages.phoneInvalid,
-  USER_NAME_REQUIRED: messages.nameRequired,
-  USER_NAME_TOO_LONG: messages.nameTooLong,
+const apiErrors: Record<string, AuthErrorKey> = {
+  AUTHENTICATION_REQUIRED: "Auth.errors.sessionExpired",
+  IDENTITY_TOKEN_INVALID: "Auth.errors.sessionExpired",
+  RECENT_SIGN_IN_REQUIRED: "Auth.errors.recentSignInRequired",
+  ORIGIN_NOT_ALLOWED: "Auth.errors.originNotAllowed",
+  USER_ALREADY_REGISTERED: "Auth.errors.alreadyRegistered",
+  MUNICIPALITY_NOT_FOUND: "Auth.errors.municipalityNotFound",
+  USER_PHONE_INVALID: "Auth.errors.phoneInvalid",
+  USER_PHONE_REQUIRED: "Auth.errors.phoneInvalid",
+  USER_NAME_REQUIRED: "Auth.errors.nameRequired",
+  USER_NAME_TOO_LONG: "Auth.errors.nameTooLong",
 };
 
-const validationMessages: Record<ValidationIssue, string> = {
-  EMAIL_INVALID: messages.invalidEmail,
-  PASSWORD_REQUIRED: messages.passwordRequired,
-  PASSWORD_TOO_SHORT: messages.passwordTooShort,
-  PASSWORD_MISMATCH: messages.passwordMismatch,
-  NAME_REQUIRED: messages.nameRequired,
-  NAME_TOO_LONG: messages.nameTooLong,
-  PHONE_INVALID: messages.phoneInvalid,
-  MUNICIPALITY_REQUIRED: messages.municipalityRequired,
+const validationErrors: Record<ValidationIssue, AuthErrorKey> = {
+  EMAIL_INVALID: "Auth.errors.invalidEmail",
+  PASSWORD_REQUIRED: "Auth.errors.passwordRequired",
+  PASSWORD_TOO_SHORT: "Auth.errors.passwordTooShort",
+  PASSWORD_MISMATCH: "Auth.errors.passwordMismatch",
+  NAME_REQUIRED: "Auth.errors.nameRequired",
+  NAME_TOO_LONG: "Auth.errors.nameTooLong",
+  PHONE_INVALID: "Auth.errors.phoneInvalid",
+  MUNICIPALITY_REQUIRED: "Auth.errors.municipalityRequired",
 };
 
-export function describeValidationIssue(issue: ValidationIssue): string {
-  return validationMessages[issue];
+export function validationIssueKey(issue: ValidationIssue): AuthErrorKey {
+  return validationErrors[issue];
 }
 
-export function describeError(error: unknown): string {
+export function errorKey(error: unknown): AuthErrorKey {
   if (error instanceof FirebaseError) {
-    return firebaseMessages[error.code] ?? messages.generic;
+    return firebaseErrors[error.code] ?? GENERIC_ERROR;
   }
   if (error instanceof ApiError) {
-    return apiMessages[error.code] ?? messages.generic;
+    return apiErrors[error.code] ?? GENERIC_ERROR;
   }
   if (error instanceof NetworkError || error instanceof CsrfUnavailableError) {
-    return messages.network;
+    return NETWORK_ERROR;
   }
-  return messages.generic;
+  return GENERIC_ERROR;
 }

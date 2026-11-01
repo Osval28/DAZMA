@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { describeError, describeValidationIssue } from "@/lib/auth/errors";
-import { authMessages } from "@/lib/auth/messages";
+import type { AuthErrorKey } from "@/i18n/message-keys";
+import { errorKey, validationIssueKey } from "@/lib/auth/errors";
+import { PASSWORD_RESET_PATH } from "@/lib/auth/password-reset";
 import { HOME_PATH, signInWithEmail } from "@/lib/auth/sign-in";
 import { safeNextPath } from "@/lib/navigation/next-path";
 import { validateCurrentPassword, validateEmail } from "@/lib/validation";
@@ -15,12 +17,11 @@ import { Button } from "@/components/ui/Button";
 import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
 
-const messages = authMessages.login;
-
 export function LoginForm() {
+  const t = useTranslations();
   const router = useRouter();
   const nextPath = safeNextPath(useSearchParams().get("next"));
-  const [errorMessage, setErrorMessage] = useState<string>();
+  const [failure, setFailure] = useState<AuthErrorKey>();
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -31,38 +32,38 @@ export function LoginForm() {
 
     const issue = validateEmail(email) ?? validateCurrentPassword(password);
     if (issue !== undefined) {
-      setErrorMessage(describeValidationIssue(issue));
+      setFailure(validationIssueKey(issue));
       return;
     }
 
-    setErrorMessage(undefined);
+    setFailure(undefined);
     setSubmitting(true);
     try {
       const destination = await signInWithEmail(email, password);
       router.replace(destination === HOME_PATH ? nextPath : destination);
     } catch (error) {
-      setErrorMessage(describeError(error));
+      setFailure(errorKey(error));
       setSubmitting(false);
     }
   }
 
   return (
     <form className="form" onSubmit={handleSubmit} noValidate>
-      {errorMessage !== undefined && <Alert>{errorMessage}</Alert>}
-      <TextField id="login-email" name="email" type="email" label={messages.emailLabel} placeholder={messages.emailPlaceholder} autoComplete="email" />
-      <PasswordField id="login-password" name="password" label={messages.passwordLabel} placeholder={messages.passwordPlaceholder} autoComplete="current-password" />
-      <Link href="/recuperar-contrasena" className="link form__aside-link">
-        {messages.forgotPassword}
+      {failure !== undefined && <Alert>{t(failure)}</Alert>}
+      <TextField id="login-email" name="email" type="email" label={t("Auth.login.emailLabel")} placeholder={t("Auth.login.emailPlaceholder")} autoComplete="email" />
+      <PasswordField id="login-password" name="password" label={t("Auth.login.passwordLabel")} placeholder={t("Auth.login.passwordPlaceholder")} autoComplete="current-password" />
+      <Link href={PASSWORD_RESET_PATH} className="link form__aside-link">
+        {t("Auth.login.forgotPassword")}
       </Link>
       <Button type="submit" disabled={submitting}>
-        {submitting ? messages.submitting : messages.submit}
+        {submitting ? t("Auth.login.submitting") : t("Auth.login.submit")}
       </Button>
       <GoogleButton
-        label={messages.googleButton}
-        dividerLabel={messages.divider}
+        label={t("Auth.login.googleButton")}
+        dividerLabel={t("Auth.login.divider")}
         disabled={submitting}
         onSignedIn={(destination) => router.replace(destination === HOME_PATH ? nextPath : destination)}
-        onFailure={setErrorMessage}
+        onFailure={setFailure}
       />
     </form>
   );

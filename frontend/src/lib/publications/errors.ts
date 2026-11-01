@@ -1,57 +1,55 @@
+import type { ErrorMessageKey, PublicationErrorKey } from "@/i18n/message-keys";
 import { ApiError, PhotoUploadError } from "@/lib/api/errors";
-import { describeError } from "@/lib/auth/errors";
+import { errorKey } from "@/lib/auth/errors";
 import type { DraftIssue } from "./draft-validation";
-import { publicationMessages } from "./messages";
 import type { PhotoIssue } from "./photo-upload";
 
-const messages = publicationMessages.create.errors;
-
-const apiMessages: Record<string, string> = {
-  PUBLICATION_OWNER_EMAIL_NOT_VERIFIED: messages.emailNotVerified,
-  PUBLICATION_OWNER_NOT_READY: messages.ownerNotReady,
-  PUBLICATION_PHOTO_UPLOAD_NOT_AVAILABLE: messages.photoUploadNotAvailable,
-  PUBLICATION_PHOTO_CONTENT_TYPE_NOT_ALLOWED: messages.photoTypeInvalid,
-  PUBLICATION_PHOTO_CONTENT_LENGTH_EXCEEDED: messages.photoTooLarge,
-  PUBLICATION_NAME_REQUIRED: messages.nameRequired,
-  PUBLICATION_NAME_TOO_LONG: messages.nameTooLong,
-  PUBLICATION_DESCRIPTION_REQUIRED: messages.descriptionRequired,
-  PUBLICATION_DESCRIPTION_TOO_LONG: messages.descriptionTooLong,
-  PUBLICATION_VALUE_NOT_POSITIVE: messages.priceInvalid,
-  PUBLICATION_PHOTOS_REQUIRED: messages.photosRequired,
+const apiErrors: Record<string, PublicationErrorKey> = {
+  PUBLICATION_OWNER_EMAIL_NOT_VERIFIED: "Publications.create.errors.emailNotVerified",
+  PUBLICATION_OWNER_NOT_READY: "Publications.create.errors.ownerNotReady",
+  PUBLICATION_PHOTO_UPLOAD_NOT_AVAILABLE: "Publications.create.errors.photoUploadNotAvailable",
+  PUBLICATION_PHOTO_CONTENT_TYPE_NOT_ALLOWED: "Publications.create.errors.photoTypeInvalid",
+  PUBLICATION_PHOTO_CONTENT_LENGTH_EXCEEDED: "Publications.create.errors.photoTooLarge",
+  PUBLICATION_NAME_REQUIRED: "Publications.create.errors.nameRequired",
+  PUBLICATION_NAME_TOO_LONG: "Publications.create.errors.nameTooLong",
+  PUBLICATION_DESCRIPTION_REQUIRED: "Publications.create.errors.descriptionRequired",
+  PUBLICATION_DESCRIPTION_TOO_LONG: "Publications.create.errors.descriptionTooLong",
+  PUBLICATION_VALUE_NOT_POSITIVE: "Publications.create.errors.priceInvalid",
+  PUBLICATION_PHOTOS_REQUIRED: "Publications.create.errors.photosRequired",
 };
 
-const draftMessages: Record<DraftIssue, string> = {
-  NAME_REQUIRED: messages.nameRequired,
-  NAME_TOO_LONG: messages.nameTooLong,
-  DESCRIPTION_REQUIRED: messages.descriptionRequired,
-  DESCRIPTION_TOO_LONG: messages.descriptionTooLong,
-  PRICE_INVALID: messages.priceInvalid,
-  MUNICIPALITY_REQUIRED: messages.municipalityRequired,
-  PHOTOS_REQUIRED: messages.photosRequired,
-  PHOTOS_UPLOADING: messages.photosUploading,
-  PHOTOS_FAILED: messages.photosFailed,
+const draftErrors: Record<DraftIssue, PublicationErrorKey> = {
+  NAME_REQUIRED: "Publications.create.errors.nameRequired",
+  NAME_TOO_LONG: "Publications.create.errors.nameTooLong",
+  DESCRIPTION_REQUIRED: "Publications.create.errors.descriptionRequired",
+  DESCRIPTION_TOO_LONG: "Publications.create.errors.descriptionTooLong",
+  PRICE_INVALID: "Publications.create.errors.priceInvalid",
+  MUNICIPALITY_REQUIRED: "Publications.create.errors.municipalityRequired",
+  PHOTOS_REQUIRED: "Publications.create.errors.photosRequired",
+  PHOTOS_UPLOADING: "Publications.create.errors.photosUploading",
+  PHOTOS_FAILED: "Publications.create.errors.photosFailed",
 };
 
-const photoMessages: Record<PhotoIssue, string> = {
-  PHOTO_TYPE_INVALID: messages.photoTypeInvalid,
-  PHOTO_TOO_LARGE: messages.photoTooLarge,
-  PHOTOS_LIMIT_REACHED: messages.photosLimitReached,
+const photoErrors: Record<PhotoIssue, PublicationErrorKey> = {
+  PHOTO_TYPE_INVALID: "Publications.create.errors.photoTypeInvalid",
+  PHOTO_TOO_LARGE: "Publications.create.errors.photoTooLarge",
+  PHOTOS_LIMIT_REACHED: "Publications.create.errors.photosLimitReached",
 };
 
-export function describeDraftIssue(issue: DraftIssue): string {
-  return draftMessages[issue];
+export function draftIssueKey(issue: DraftIssue): PublicationErrorKey {
+  return draftErrors[issue];
 }
 
-export function describePhotoIssue(issue: PhotoIssue): string {
-  return photoMessages[issue];
+export function photoIssueKey(issue: PhotoIssue): PublicationErrorKey {
+  return photoErrors[issue];
 }
 
-export function describePublicationError(error: unknown): string {
+export function publicationErrorKey(error: unknown): ErrorMessageKey {
   if (error instanceof PhotoUploadError) {
-    return messages.photoUploadFailed;
+    return "Publications.create.errors.photoUploadFailed";
   }
-  if (error instanceof ApiError && error.code in apiMessages) {
-    return apiMessages[error.code];
+  if (error instanceof ApiError && error.code in apiErrors) {
+    return apiErrors[error.code];
   }
-  return describeError(error);
+  return errorKey(error);
 }
