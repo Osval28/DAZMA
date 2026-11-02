@@ -39,6 +39,22 @@ public enum ChatErrorCode implements ErrorCode {
     PARTICIPANT_CANNOT_OPERATE(
             "CHAT_PARTICIPANT_CANNOT_OPERATE",
             "chat.participant.cannot-operate"
+    ),
+    ROOM_NOT_FOUND(
+            "CHAT_ROOM_NOT_FOUND",
+            "chat.room.not-found"
+    ),
+    OFFER_NOT_FOUND(
+            "CHAT_OFFER_NOT_FOUND",
+            "chat.offer.not-found"
+    ),
+    EMAIL_NOT_VERIFIED(
+            "CHAT_EMAIL_NOT_VERIFIED",
+            "chat.email.not-verified"
+    ),
+    TOKEN_ISSUANCE_FAILED(
+            "CHAT_TOKEN_ISSUANCE_FAILED",
+            "chat.token.issuance-failed"
     );
 
     private final String code;

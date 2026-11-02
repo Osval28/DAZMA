@@ -88,6 +88,11 @@
             <version>4.29.0</version>
         </dependency>
         <dependency>
+            <groupId>io.ably</groupId>
+            <artifactId>ably-java</artifactId>
+            <version>1.2.53</version>
+        </dependency>
+        <dependency>
             <groupId>io.awspring.cloud</groupId>
             <artifactId>spring-cloud-aws-starter-secrets-manager</artifactId>
         </dependency>

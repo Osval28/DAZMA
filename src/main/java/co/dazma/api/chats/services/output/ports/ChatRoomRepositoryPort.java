@@ -10,6 +10,8 @@ public interface ChatRoomRepositoryPort {
 
     ChatRoom save(ChatRoom chatRoom);
 
+    Optional<ChatRoom> findById(UUID roomId);
+
     Optional<ChatRoom> findByPublicationAndInterested(UUID publicationId, UUID interestedId);
 
     List<ChatRoom> findByParticipant(UUID userId);
