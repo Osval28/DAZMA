@@ -18,21 +18,21 @@ export class ApiError extends Error {
 
 export class NetworkError extends Error {
   constructor() {
-    super("No se pudo conectar con el servidor");
+    super("NETWORK_ERROR");
     this.name = "NetworkError";
   }
 }
 
 export class CsrfUnavailableError extends Error {
   constructor() {
-    super("El servidor no entregó el token CSRF");
+    super("CSRF_UNAVAILABLE");
     this.name = "CsrfUnavailableError";
   }
 }
 
 export class PhotoUploadError extends Error {
   constructor() {
-    super("El almacenamiento rechazó la fotografía");
+    super("PHOTO_UPLOAD_REJECTED");
     this.name = "PhotoUploadError";
   }
 }

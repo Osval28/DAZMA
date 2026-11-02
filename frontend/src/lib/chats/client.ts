@@ -13,7 +13,7 @@ export function createChatConnection(roomId: string): ChatConnection {
     authCallback: (_parameters, callback) => {
       requestChatToken(roomId).then(
         (tokenRequest) => callback(null, tokenRequest),
-        (error: unknown) => callback(error instanceof Error ? error.message : String(error), null),
+        () => callback("CHAT_TOKEN_UNAVAILABLE", null),
       );
     },
   });

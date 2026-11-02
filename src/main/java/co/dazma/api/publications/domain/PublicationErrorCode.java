@@ -80,6 +80,10 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_PHOTOS_REQUIRED",
             "publication.photos.required"
     ),
+    PHOTOS_LIMIT_EXCEEDED(
+            "PUBLICATION_PHOTOS_LIMIT_EXCEEDED",
+            "publication.photos.limit-exceeded"
+    ),
     PHOTO_NULL(
             "PUBLICATION_PHOTO_NULL",
             "publication.photo.null"

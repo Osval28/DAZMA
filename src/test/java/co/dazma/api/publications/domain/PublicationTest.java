@@ -104,6 +104,18 @@ class PublicationTest {
     }
 
     @Test
+    void shouldRejectMoreThanFivePhotos() {
+        List<PublicationPhoto> photos = java.util.stream.IntStream.range(0, 6)
+                .mapToObj(this::photo)
+                .toList();
+        InvalidPublicationException exception = assertThrows(
+                InvalidPublicationException.class,
+                () -> validPublication(photos)
+        );
+        assertEquals("PUBLICATION_PHOTOS_LIMIT_EXCEEDED", exception.code());
+    }
+
+    @Test
     void shouldRejectInvalidPhotoData() {
         assertThrows(
                 InvalidPublicationException.class,
