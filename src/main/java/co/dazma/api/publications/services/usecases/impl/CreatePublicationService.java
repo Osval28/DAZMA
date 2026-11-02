@@ -16,7 +16,6 @@ import org.springframework.transaction.support.TransactionOperations;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -39,28 +38,13 @@ public class CreatePublicationService implements CreatePublicationUseCase {
             TransactionOperations transaction,
             Clock clock
     ) {
-        this.operatingOwners = Objects.requireNonNull(
-                operatingOwners,
-                "El resolutor de propietarios de publicaciones es obligatorio"
-        );
-        this.municipalityCatalog = Objects.requireNonNull(
-                municipalityCatalog,
-                "El catálogo de municipios es obligatorio"
-        );
-        this.publicationRepository = Objects.requireNonNull(
-                publicationRepository,
-                "El repositorio de publicaciones es obligatorio"
-        );
-        this.photoStorage = Objects.requireNonNull(
-                photoStorage,
-                "El almacenamiento de fotografías es obligatorio"
-        );
-        this.publicationEvents = Objects.requireNonNull(
-                publicationEvents,
-                "El publicador de eventos de publicaciones es obligatorio"
-        );
-        this.transaction = Objects.requireNonNull(transaction, "La transacción es obligatoria");
-        this.clock = Objects.requireNonNull(clock, "El reloj es obligatorio");
+        this.operatingOwners = operatingOwners;
+        this.municipalityCatalog = municipalityCatalog;
+        this.publicationRepository = publicationRepository;
+        this.photoStorage = photoStorage;
+        this.publicationEvents = publicationEvents;
+        this.transaction = transaction;
+        this.clock = clock;
     }
 
     @Override

@@ -13,7 +13,6 @@ import co.dazma.api.publications.services.usecases.models.PublicationDetail;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -30,22 +29,10 @@ public class GetPublicationService implements GetPublicationUseCase {
             PublicationPhotoStoragePort photoStorage,
             PhotoDownloadParametersPort downloadParameters
     ) {
-        this.publicationCache = Objects.requireNonNull(
-                publicationCache,
-                "La caché de publicaciones es obligatoria"
-        );
-        this.publicationRepository = Objects.requireNonNull(
-                publicationRepository,
-                "El repositorio de publicaciones es obligatorio"
-        );
-        this.photoStorage = Objects.requireNonNull(
-                photoStorage,
-                "El almacenamiento de fotografías es obligatorio"
-        );
-        this.downloadParameters = Objects.requireNonNull(
-                downloadParameters,
-                "Los parámetros de descarga de fotografías son obligatorios"
-        );
+        this.publicationCache = publicationCache;
+        this.publicationRepository = publicationRepository;
+        this.photoStorage = photoStorage;
+        this.downloadParameters = downloadParameters;
     }
 
     @Override

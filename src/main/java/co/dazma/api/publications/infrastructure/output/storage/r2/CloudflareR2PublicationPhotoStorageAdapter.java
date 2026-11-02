@@ -20,7 +20,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,16 +40,10 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
             String bucketName,
             ExternalDependencyObservation observations
     ) {
-        this.s3Client = Objects.requireNonNull(s3Client, "El cliente de R2 es obligatorio");
-        this.s3Presigner = Objects.requireNonNull(
-                s3Presigner,
-                "El generador de permisos de R2 es obligatorio"
-        );
-        this.bucketName = requireText(bucketName, "El nombre del bucket es obligatorio");
-        this.observations = Objects.requireNonNull(
-                observations,
-                "El observador de dependencias es obligatorio"
-        );
+        this.s3Client = s3Client;
+        this.s3Presigner = s3Presigner;
+        this.bucketName = bucketName;
+        this.observations = observations;
     }
 
     @Override
@@ -61,24 +54,11 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
             long contentLength,
             Duration validity
     ) {
-        Objects.requireNonNull(ownerId, "El propietario de la fotografía es obligatorio");
-        Objects.requireNonNull(photoId, "El identificador de la fotografía es obligatorio");
-        String normalizedContentType = requireText(
-                contentType,
-                "El tipo de contenido es obligatorio"
-        );
-        if (contentLength <= 0) {
-            throw new IllegalArgumentException("El tamaño del contenido debe ser mayor que cero");
-        }
-        if (validity == null || validity.isZero() || validity.isNegative()) {
-            throw new IllegalArgumentException("La vigencia de carga debe ser mayor que cero");
-        }
-
         String objectKey = createPendingObjectKey(ownerId, photoId);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(objectKey)
-                .contentType(normalizedContentType)
+                .contentType(contentType)
                 .contentLength(contentLength)
                 .build();
 
@@ -102,8 +82,6 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
 
     @Override
     public Optional<StoredPublicationPhoto> promoteUploadedPhoto(UUID ownerId, UUID photoId) {
-        Objects.requireNonNull(ownerId, "El propietario de la fotografía es obligatorio");
-        Objects.requireNonNull(photoId, "El identificador de la fotografía es obligatorio");
         String pendingKey = createPendingObjectKey(ownerId, photoId);
         HeadObjectRequest headRequest = HeadObjectRequest.builder()
                 .bucket(bucketName)
@@ -146,7 +124,6 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
 
     @Override
     public void discardPhotos(List<String> objectKeys) {
-        Objects.requireNonNull(objectKeys, "Las claves de las fotografías son obligatorias");
         for (String objectKey : objectKeys) {
             observations.observe(
                     "cloudflare_r2",
@@ -161,19 +138,11 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
 
     @Override
     public URI authorizeDownload(String objectKey, Duration validity) {
-        String normalizedObjectKey = requireText(
-                objectKey,
-                "La clave de la fotografía es obligatoria"
-        );
-        if (validity == null || validity.isZero() || validity.isNegative()) {
-            throw new IllegalArgumentException("La vigencia de descarga debe ser mayor que cero");
-        }
-
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
                 .signatureDuration(validity)
                 .getObjectRequest(GetObjectRequest.builder()
                         .bucket(bucketName)
-                        .key(normalizedObjectKey)
+                        .key(objectKey)
                         .build())
                 .build();
 
@@ -190,12 +159,5 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
 
     private static String createPublishedObjectKey(UUID ownerId) {
         return PUBLICATIONS_PREFIX + "/" + ownerId + "/" + UUID.randomUUID();
-    }
-
-    private static String requireText(String value, String message) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(message);
-        }
-        return value.trim();
     }
 }

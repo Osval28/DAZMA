@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ListPublicationsService implements ListPublicationsUseCase {
@@ -30,18 +29,9 @@ public class ListPublicationsService implements ListPublicationsUseCase {
             PublicationPhotoStoragePort photoStorage,
             PhotoDownloadParametersPort downloadParameters
     ) {
-        this.publicationRepository = Objects.requireNonNull(
-                publicationRepository,
-                "El repositorio de publicaciones es obligatorio"
-        );
-        this.photoStorage = Objects.requireNonNull(
-                photoStorage,
-                "El almacenamiento de fotografías es obligatorio"
-        );
-        this.downloadParameters = Objects.requireNonNull(
-                downloadParameters,
-                "Los parámetros de descarga de fotografías son obligatorios"
-        );
+        this.publicationRepository = publicationRepository;
+        this.photoStorage = photoStorage;
+        this.downloadParameters = downloadParameters;
     }
 
     @Override

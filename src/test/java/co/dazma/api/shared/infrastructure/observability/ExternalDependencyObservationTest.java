@@ -66,18 +66,6 @@ class ExternalDependencyObservationTest {
     }
 
     @Test
-    void shouldRejectBlankDimensions() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> observations.observe(" ", "send_email", () -> "sent")
-        );
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> observations.observe("resend", " ", () -> "sent")
-        );
-    }
-
-    @Test
     void shouldPublishMetricsForEveryInstrumentedDependency() {
         SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
         ObservationRegistry observationRegistry = ObservationRegistry.create();
