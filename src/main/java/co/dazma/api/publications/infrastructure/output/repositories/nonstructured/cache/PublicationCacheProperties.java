@@ -1,25 +1,20 @@
 package co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.time.DurationMin;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.Duration;
-import java.util.Objects;
 import java.util.UUID;
 
+@Validated
 @ConfigurationProperties(prefix = "dazma.cache.publications")
-public record PublicationCacheProperties(String keyPrefix, Duration ttl) {
-
-    public PublicationCacheProperties {
-        Objects.requireNonNull(keyPrefix, "El prefijo de llaves de la caché de publicaciones es obligatorio");
-        Objects.requireNonNull(ttl, "El TTL de la caché de publicaciones es obligatorio");
-
-        if (keyPrefix.isBlank()) {
-            throw new IllegalArgumentException("El prefijo de llaves de la caché de publicaciones no puede estar vacío");
-        }
-        if (ttl.isZero() || ttl.isNegative()) {
-            throw new IllegalArgumentException("El TTL de la caché de publicaciones debe ser positivo");
-        }
-    }
+public record PublicationCacheProperties(
+        @NotBlank String keyPrefix,
+        @NotNull @DurationMin(seconds = 1) Duration ttl
+) {
 
     public String keyFor(UUID publicationId) {
         return keyPrefix + publicationId;

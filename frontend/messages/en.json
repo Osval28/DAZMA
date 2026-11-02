@@ -253,7 +253,7 @@
       "goToAccount": "Go to my account",
       "photos": {
         "label": "Photos",
-        "hint": "Up to {maximum} photos of at most {megabytes} MB each. The first one is the cover.",
+        "hint": "The first photo is the cover.",
         "add": "Add photos",
         "counter": "{count} of {maximum}",
         "cover": "Cover",
@@ -275,7 +275,7 @@
         "photosUploading": "Wait for the photos to finish uploading.",
         "photosFailed": "Some photos weren't uploaded. Retry or remove them.",
         "photoTypeInvalid": "Only JPEG, PNG or WebP photos are accepted.",
-        "photoTooLarge": "Each photo must be 5 MB or less.",
+        "photoTooLarge": "The photo exceeds the maximum allowed size.",
         "photosLimitReached": "You've reached the maximum number of photos.",
         "photoUploadFailed": "We couldn't upload the photo. Please try again.",
         "emailNotVerified": "Verify your email to be able to publish.",

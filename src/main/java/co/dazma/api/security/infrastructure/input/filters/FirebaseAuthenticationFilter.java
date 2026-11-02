@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
@@ -36,10 +35,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticateIdentityInputPort authenticateIdentityInputPort;
 
     public FirebaseAuthenticationFilter(AuthenticateIdentityInputPort authenticateIdentityInputPort) {
-        this.authenticateIdentityInputPort = Objects.requireNonNull(
-                authenticateIdentityInputPort,
-                "El puerto de entrada de autenticación es obligatorio"
-        );
+        this.authenticateIdentityInputPort = authenticateIdentityInputPort;
     }
 
     @Override

@@ -1,11 +1,13 @@
 package co.dazma.api.shared.infrastructure.input.errors;
 
 import co.dazma.api.shared.domain.errors.DomainConflictException;
+import co.dazma.api.shared.domain.errors.DomainException;
 import co.dazma.api.shared.domain.errors.DomainInvalidException;
 import co.dazma.api.shared.domain.errors.DomainNotAllowedException;
 import co.dazma.api.shared.domain.errors.DomainNotFoundException;
 import co.dazma.api.shared.domain.errors.DomainUnauthenticatedException;
 import co.dazma.api.shared.domain.errors.ErrorCode;
+import co.dazma.api.shared.domain.errors.TechnicalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticMessageSource;
@@ -33,6 +35,8 @@ class GlobalExceptionHandlerTest {
         messageSource.addMessage("error.title.unauthorized", LOCALE, "Autenticación requerida");
         messageSource.addMessage("error.title.not-found", LOCALE, "Recurso no encontrado");
         messageSource.addMessage("error.title.conflict", LOCALE, "Conflicto con el estado actual");
+        messageSource.addMessage("error.title.internal", LOCALE, "Error interno del servidor");
+        messageSource.addMessage("error.detail.internal", LOCALE, "Ocurrió un error inesperado.");
         messageSource.addMessage("test.error", LOCALE, "Detalle de prueba {0}.");
         handler = new GlobalExceptionHandler(
                 new ApiProblemFactory(new ErrorMessageResolver(messageSource))
@@ -93,6 +97,31 @@ class GlobalExceptionHandlerTest {
         assertProblem(response, 409, "Conflicto con el estado actual");
     }
 
+    @Test
+    void shouldMapAnUnexpectedDomainExceptionToInternalServerError() {
+        ResponseEntity<ProblemDetail> response = handler.handleException(
+                new TestUnexpectedException(),
+                request
+        );
+
+        assertProblem(response, 500, "Error interno del servidor");
+    }
+
+    @Test
+    void shouldHideTheDetailOfATechnicalException() {
+        ResponseEntity<ProblemDetail> response = handler.handleTechnicalException(
+                new TestTechnicalException(),
+                request
+        );
+        ProblemDetail problem = response.getBody();
+
+        assertEquals(500, response.getStatusCode().value());
+        assertNotNull(problem);
+        assertEquals("Error interno del servidor", problem.getTitle());
+        assertEquals("Ocurrió un error inesperado.", problem.getDetail());
+        assertEquals("TEST_ERROR", problem.getProperties().get("code"));
+    }
+
     private void assertProblem(ResponseEntity<ProblemDetail> response, int status, String title) {
         ProblemDetail problem = response.getBody();
 
@@ -140,6 +169,18 @@ class GlobalExceptionHandlerTest {
     private static final class TestNotFoundException extends DomainNotFoundException {
         TestNotFoundException() {
             super(TestErrorCode.TEST_ERROR, 7);
+        }
+    }
+
+    private static final class TestUnexpectedException extends DomainException {
+        TestUnexpectedException() {
+            super(TestErrorCode.TEST_ERROR, 7);
+        }
+    }
+
+    private static final class TestTechnicalException extends TechnicalException {
+        TestTechnicalException() {
+            super(TestErrorCode.TEST_ERROR, null, 7);
         }
     }
 

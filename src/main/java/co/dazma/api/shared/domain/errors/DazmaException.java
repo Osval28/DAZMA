@@ -1,6 +1,5 @@
 package co.dazma.api.shared.domain.errors;
 
-import java.util.Objects;
 
 public abstract class DazmaException extends RuntimeException {
 
@@ -9,7 +8,7 @@ public abstract class DazmaException extends RuntimeException {
 
     protected DazmaException(ErrorCode errorCode, Throwable cause, Object... arguments) {
         super(
-                Objects.requireNonNull(errorCode, "El código del error es obligatorio").messageKey(),
+                errorCode.messageKey(),
                 cause
         );
 

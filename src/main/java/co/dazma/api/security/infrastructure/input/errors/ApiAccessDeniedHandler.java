@@ -10,7 +10,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Component
 public class ApiAccessDeniedHandler implements AccessDeniedHandler {
@@ -18,10 +17,7 @@ public class ApiAccessDeniedHandler implements AccessDeniedHandler {
     private final SecurityProblemWriter problemWriter;
 
     public ApiAccessDeniedHandler(SecurityProblemWriter problemWriter) {
-        this.problemWriter = Objects.requireNonNull(
-                problemWriter,
-                "El escritor de errores de seguridad es obligatorio"
-        );
+        this.problemWriter = problemWriter;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package co.dazma.api.publications.infrastructure.output.parameters;
 
 import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort;
+import co.dazma.api.shared.infrastructure.parameters.InvalidParameterException;
+import co.dazma.api.shared.infrastructure.parameters.ParameterErrorCode;
 import co.dazma.api.shared.services.output.ports.ParameterCatalog;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,10 @@ public final class CatalogPhotoUploadParametersAdapter implements PhotoUploadPar
     public Set<String> allowedContentTypes() {
         Set<String> contentTypes = catalog.getTextSet(PublicationParameter.PHOTO_ALLOWED_CONTENT_TYPES);
         if (contentTypes.isEmpty() || contentTypes.stream().anyMatch(String::isBlank)) {
-            throw new IllegalStateException("Debe configurarse al menos un tipo de imagen");
+            throw new InvalidParameterException(
+                    ParameterErrorCode.VALUES_REQUIRED,
+                    PublicationParameter.PHOTO_ALLOWED_CONTENT_TYPES
+            );
         }
         return contentTypes.stream()
                 .map(type -> type.toLowerCase(Locale.ROOT))
@@ -36,7 +41,10 @@ public final class CatalogPhotoUploadParametersAdapter implements PhotoUploadPar
     public long maximumContentLength() {
         long maximumContentLength = catalog.getBytes(PublicationParameter.PHOTO_MAXIMUM_SIZE);
         if (maximumContentLength <= 0) {
-            throw new IllegalStateException("El tamaño máximo de las fotografías debe ser mayor que cero");
+            throw new InvalidParameterException(
+                    ParameterErrorCode.VALUE_NOT_POSITIVE,
+                    PublicationParameter.PHOTO_MAXIMUM_SIZE
+            );
         }
         return maximumContentLength;
     }
@@ -45,7 +53,10 @@ public final class CatalogPhotoUploadParametersAdapter implements PhotoUploadPar
     public Duration uploadValidity() {
         Duration validity = catalog.getDuration(PublicationParameter.PHOTO_UPLOAD_VALIDITY);
         if (validity.isZero() || validity.isNegative()) {
-            throw new IllegalStateException("La vigencia de carga debe ser mayor que cero");
+            throw new InvalidParameterException(
+                    ParameterErrorCode.VALUE_NOT_POSITIVE,
+                    PublicationParameter.PHOTO_UPLOAD_VALIDITY
+            );
         }
         return validity;
     }

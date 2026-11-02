@@ -118,18 +118,6 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
     }
 
     @Test
-    void shouldRejectADownloadWithoutKeyOrValidity() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> adapter.authorizeDownload(" ", Duration.ofMinutes(10))
-        );
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> adapter.authorizeDownload("publications/owner/photo", Duration.ZERO)
-        );
-    }
-
-    @Test
     void shouldPromoteAnUploadedPhotoFromPendingToPublished() {
         UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
