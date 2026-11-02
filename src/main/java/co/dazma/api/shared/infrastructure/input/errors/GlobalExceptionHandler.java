@@ -11,6 +11,7 @@ import co.dazma.api.shared.domain.errors.TechnicalException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LoggingEventBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,7 @@ import java.util.Arrays;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-    private static final String INTERNAL_ERROR_TITLE = "error.title.internal";
-    private static final String INTERNAL_ERROR_DETAIL = "error.detail.internal";
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private final ApiProblemFactory problemFactory;
 
@@ -78,8 +77,7 @@ public class GlobalExceptionHandler {
             DomainException exception,
             HttpServletRequest request
     ) {
-        logInternalError(exception);
-        return createResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_ERROR_TITLE, request);
+        return createResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, "error.title.internal", request);
     }
 
     @ExceptionHandler(TechnicalException.class)
@@ -87,12 +85,19 @@ public class GlobalExceptionHandler {
             TechnicalException exception,
             HttpServletRequest request
     ) {
-        logInternalError(exception);
+        log.atError()
+                .setCause(exception)
+                .addKeyValue("event.name", "technical.operation.failed")
+                .addKeyValue("error.code", exception.code())
+                .addKeyValue("error.arguments", Arrays.toString(exception.arguments()))
+                .addKeyValue("http.route", request.getRequestURI())
+                .addKeyValue("http.response.status_code", HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .log("Falla técnica");
         ProblemDetail problem = problemFactory.createWithGenericDetail(
                 exception,
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                INTERNAL_ERROR_TITLE,
-                INTERNAL_ERROR_DETAIL,
+                "error.title.internal",
+                "error.detail.internal",
                 URI.create(request.getRequestURI()),
                 request.getLocale()
         );
@@ -105,6 +110,14 @@ public class GlobalExceptionHandler {
             String titleMessageKey,
             HttpServletRequest request
     ) {
+        LoggingEventBuilder event = status.is5xxServerError() ? log.atError() : log.atWarn();
+        event
+                .setCause(status.is5xxServerError() ? exception : null)
+                .addKeyValue("event.name", "domain.operation.rejected")
+                .addKeyValue("error.code", exception.code())
+                .addKeyValue("http.route", request.getRequestURI())
+                .addKeyValue("http.response.status_code", status.value())
+                .log("Operación de dominio rechazada");
         ProblemDetail problem = problemFactory.create(
                 exception,
                 status,
@@ -113,14 +126,5 @@ public class GlobalExceptionHandler {
                 request.getLocale()
         );
         return ResponseEntity.status(status).body(problem);
-    }
-
-    private static void logInternalError(DazmaException exception) {
-        LOGGER.error(
-                "Error interno {} con argumentos {}",
-                exception.code(),
-                Arrays.toString(exception.arguments()),
-                exception
-        );
     }
 }
