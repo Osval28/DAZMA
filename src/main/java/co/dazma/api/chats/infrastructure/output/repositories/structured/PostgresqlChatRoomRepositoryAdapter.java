@@ -39,6 +39,11 @@ public class PostgresqlChatRoomRepositoryAdapter implements ChatRoomRepositoryPo
     }
 
     @Override
+    public Optional<ChatRoom> findById(UUID roomId) {
+        return springDataChatRoomRepository.findById(roomId).map(this::toDomain);
+    }
+
+    @Override
     public Optional<ChatRoom> findByPublicationAndInterested(UUID publicationId, UUID interestedId) {
         return springDataChatRoomRepository
                 .findByPublicationIdAndInterestedId(publicationId, interestedId)

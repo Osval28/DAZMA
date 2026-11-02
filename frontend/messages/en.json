@@ -5,6 +5,7 @@
     "pages": {
       "login": "Sign in | DAZMA",
       "passwordReset": "Reset password | DAZMA",
+      "chat": "Chat | DAZMA",
       "register": "Create account | DAZMA",
       "account": "My account | DAZMA",
       "newPublication": "Publish | DAZMA"
@@ -98,6 +99,31 @@
       "municipalityRequired": "Select your municipality."
     }
   },
+  "Chats": {
+    "contact": {
+      "button": "Contact the seller",
+      "opening": "Opening chat…"
+    },
+    "room": {
+      "back": "Back to publications",
+      "title": "Conversation",
+      "threadLabel": "Conversation messages",
+      "empty": "No messages yet. Write the first one.",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Write a message",
+      "send": "Send",
+      "sending": "Sending…",
+      "failed": "We could not send or load the messages. Try again."
+    },
+    "errors": {
+      "generic": "We could not open the chat. Try again.",
+      "emailNotVerified": "Verify your email to be able to chat.",
+      "selfNotAllowed": "You cannot start a chat about your own publication.",
+      "cannotOperate": "Your account is suspended and cannot use the chat.",
+      "notReady": "The chat is still getting ready. Try again in a few seconds.",
+      "roomNotFound": "We could not find this conversation."
+    }
+  },
   "Account": {
     "loading": "Loading…",
     "verifyEmail": {
@@ -184,8 +210,6 @@
       "location": "Municipality",
       "published": "Published",
       "referenceValue": "Reference value",
-      "contact": "Contact the seller",
-      "contactSoon": "Coming soon",
       "galleryLabel": "Listing photos",
       "thumbnailLabel": "View photo {position}",
       "notFoundTitle": "We couldn't find this listing",

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Avatar } from "@/components/account/Avatar";
 import { SiteHeader } from "@/components/account/SiteHeader";
-import { Button } from "@/components/ui/Button";
+import { ContactSellerButton } from "@/components/chats/ContactSellerButton";
 import { PublicationGallery } from "@/components/publications/PublicationGallery";
 import { ApiError } from "@/lib/api/errors";
 import { listMunicipalities } from "@/lib/api/municipalities";
@@ -75,12 +75,7 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
               <h2 className="detail__subtitle">{t("detail.description")}</h2>
               <p>{publication.description}</p>
             </div>
-            <div className="detail__contact">
-              <Button variant="secondary" disabled>
-                {t("detail.contact")}
-              </Button>
-              <span className="detail__contact-note">{t("detail.contactSoon")}</span>
-            </div>
+            <ContactSellerButton publicationId={publication.id} />
           </section>
         </div>
       </main>
