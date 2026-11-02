@@ -1,5 +1,6 @@
 package co.dazma.api.publications.infrastructure.output.parameters;
 
+import co.dazma.api.shared.infrastructure.parameters.InvalidParameterException;
 import co.dazma.api.shared.services.output.ports.ParameterCatalog;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class CatalogPhotoDownloadParametersAdapterTest {
     @Test
     void shouldFailAtStartupWhenValidityIsNotPositive() {
         assertThrows(
-                IllegalStateException.class,
+                InvalidParameterException.class,
                 () -> new CatalogPhotoDownloadParametersAdapter(catalog(Duration.ZERO))
         );
     }

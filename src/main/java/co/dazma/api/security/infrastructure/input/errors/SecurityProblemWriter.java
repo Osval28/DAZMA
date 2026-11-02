@@ -13,7 +13,6 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 @Component
 public class SecurityProblemWriter {
@@ -25,14 +24,8 @@ public class SecurityProblemWriter {
             ApiProblemFactory problemFactory,
             ObjectMapper objectMapper
     ) {
-        this.problemFactory = Objects.requireNonNull(
-                problemFactory,
-                "La fábrica de respuestas de error es obligatoria"
-        );
-        this.objectMapper = Objects.requireNonNull(
-                objectMapper,
-                "El serializador JSON es obligatorio"
-        );
+        this.problemFactory = problemFactory;
+        this.objectMapper = objectMapper;
     }
 
     public void write(

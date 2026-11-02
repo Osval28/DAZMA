@@ -33,12 +33,6 @@ public class User {
         return new User(id, name, phone, municipality, externalId, state, role, email);
     }
 
-    private static void requireText(String value, String fieldName) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new MissingRequiredFieldException(fieldName);
-        }
-    }
-
     public void suspend() {
         if (state == State.SUSPENDED) throw new UserAlreadySuspendedException();
         state = State.SUSPENDED;

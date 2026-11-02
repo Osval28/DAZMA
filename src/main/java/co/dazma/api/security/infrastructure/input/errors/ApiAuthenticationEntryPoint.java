@@ -10,7 +10,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Component
 public class ApiAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -21,10 +20,7 @@ public class ApiAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final SecurityProblemWriter problemWriter;
 
     public ApiAuthenticationEntryPoint(SecurityProblemWriter problemWriter) {
-        this.problemWriter = Objects.requireNonNull(
-                problemWriter,
-                "El escritor de errores de seguridad es obligatorio"
-        );
+        this.problemWriter = problemWriter;
     }
 
     @Override

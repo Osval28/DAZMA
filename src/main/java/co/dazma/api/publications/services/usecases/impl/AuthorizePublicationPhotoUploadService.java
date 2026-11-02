@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -31,18 +30,9 @@ public class AuthorizePublicationPhotoUploadService
             PublicationPhotoStoragePort photoStorage,
             PhotoUploadParametersPort parameters
     ) {
-        this.operatingOwners = Objects.requireNonNull(
-                operatingOwners,
-                "El resolutor de propietarios de publicaciones es obligatorio"
-        );
-        this.photoStorage = Objects.requireNonNull(
-                photoStorage,
-                "El almacenamiento de fotografías es obligatorio"
-        );
-        this.parameters = Objects.requireNonNull(
-                parameters,
-                "Los parámetros de carga de fotografías son obligatorios"
-        );
+        this.operatingOwners = operatingOwners;
+        this.photoStorage = photoStorage;
+        this.parameters = parameters;
     }
 
     @Override

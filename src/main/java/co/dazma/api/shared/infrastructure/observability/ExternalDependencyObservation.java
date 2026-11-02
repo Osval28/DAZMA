@@ -4,7 +4,6 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 @Component
@@ -15,7 +14,7 @@ public class ExternalDependencyObservation {
     private final ObservationRegistry registry;
 
     public ExternalDependencyObservation(ObservationRegistry registry) {
-        this.registry = Objects.requireNonNull(registry, "El registro de observaciones es obligatorio");
+        this.registry = registry;
     }
 
     public <T> T observe(String dependency, String operation, Supplier<T> action) {
@@ -43,18 +42,9 @@ public class ExternalDependencyObservation {
     }
 
     private Observation observation(String dependency, String operation) {
-        String normalizedDependency = requireText(dependency, "La dependencia es obligatoria");
-        String normalizedOperation = requireText(operation, "La operación es obligatoria");
         return Observation.createNotStarted(OBSERVATION_NAME, registry)
-                .contextualName(normalizedDependency + " " + normalizedOperation)
-                .lowCardinalityKeyValue("dependency", normalizedDependency)
-                .lowCardinalityKeyValue("operation", normalizedOperation);
-    }
-
-    private static String requireText(String value, String message) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(message);
-        }
-        return value.trim();
+                .contextualName(dependency + " " + operation)
+                .lowCardinalityKeyValue("dependency", dependency)
+                .lowCardinalityKeyValue("operation", operation);
     }
 }

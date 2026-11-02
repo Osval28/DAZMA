@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ErrorMessageKey, PublicationErrorKey } from "@/i18n/message-keys";
+import type { ErrorMessageKey } from "@/i18n/message-keys";
 import { photoIssueKey, publicationErrorKey } from "@/lib/publications/errors";
 import { MAXIMUM_PHOTOS, uploadPhoto, validatePhotoFile } from "@/lib/publications/photo-upload";
 
@@ -19,7 +19,7 @@ export type PhotoDrafts = {
   uploadedIds: string[];
   uploadingCount: number;
   failedCount: number;
-  issue: PublicationErrorKey | undefined;
+  issue: ErrorMessageKey | undefined;
   add: (files: File[]) => void;
   remove: (key: string) => void;
   makeCover: (key: string) => void;
@@ -28,7 +28,7 @@ export type PhotoDrafts = {
 
 export function usePhotoDrafts(): PhotoDrafts {
   const [photos, setPhotos] = useState<DraftPhoto[]>([]);
-  const [issue, setIssue] = useState<PublicationErrorKey>();
+  const [issue, setIssue] = useState<ErrorMessageKey>();
   const latestPhotos = useRef<DraftPhoto[]>([]);
 
   useEffect(() => {
@@ -50,7 +50,11 @@ export function usePhotoDrafts(): PhotoDrafts {
     (key: string, file: File) => {
       uploadPhoto(file)
         .then((photoId) => updateUpload(key, { status: "uploaded", photoId }))
-        .catch((error) => updateUpload(key, { status: "failed", reason: publicationErrorKey(error) }));
+        .catch((error) => {
+          const reason = publicationErrorKey(error);
+          updateUpload(key, { status: "failed", reason });
+          setIssue(reason);
+        });
     },
     [updateUpload],
   );
@@ -96,6 +100,7 @@ export function usePhotoDrafts(): PhotoDrafts {
       if (photo === undefined) {
         return;
       }
+      setIssue(undefined);
       updateUpload(key, { status: "uploading" });
       startUpload(key, photo.file);
     },

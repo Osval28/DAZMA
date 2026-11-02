@@ -1,6 +1,8 @@
 package co.dazma.api.publications.infrastructure.output.parameters;
 
 import co.dazma.api.publications.services.output.ports.PhotoDownloadParametersPort;
+import co.dazma.api.shared.infrastructure.parameters.InvalidParameterException;
+import co.dazma.api.shared.infrastructure.parameters.ParameterErrorCode;
 import co.dazma.api.shared.services.output.ports.ParameterCatalog;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +22,10 @@ public final class CatalogPhotoDownloadParametersAdapter implements PhotoDownloa
     public Duration downloadValidity() {
         Duration validity = catalog.getDuration(PublicationParameter.PHOTO_DOWNLOAD_VALIDITY);
         if (validity.isZero() || validity.isNegative()) {
-            throw new IllegalStateException("La vigencia de descarga debe ser mayor que cero");
+            throw new InvalidParameterException(
+                    ParameterErrorCode.VALUE_NOT_POSITIVE,
+                    PublicationParameter.PHOTO_DOWNLOAD_VALIDITY
+            );
         }
         return validity;
     }
