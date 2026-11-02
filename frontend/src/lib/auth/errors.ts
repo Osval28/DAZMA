@@ -26,7 +26,7 @@ const apiErrors: Record<string, AuthErrorKey> = {
   USER_ALREADY_REGISTERED: "Auth.errors.alreadyRegistered",
   MUNICIPALITY_NOT_FOUND: "Auth.errors.municipalityNotFound",
   USER_PHONE_INVALID: "Auth.errors.phoneInvalid",
-  USER_PHONE_REQUIRED: "Auth.errors.phoneInvalid",
+  USER_PHONE_REQUIRED: "Auth.errors.phoneRequired",
   USER_NAME_REQUIRED: "Auth.errors.nameRequired",
   USER_NAME_TOO_LONG: "Auth.errors.nameTooLong",
 };

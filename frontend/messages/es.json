@@ -92,6 +92,7 @@
       "alreadyRegistered": "Tu perfil ya está completo.",
       "municipalityNotFound": "El municipio seleccionado no existe.",
       "phoneInvalid": "Ingresa un celular colombiano de 10 dígitos que empiece por 3.",
+      "phoneRequired": "Ingresa tu celular.",
       "nameRequired": "Ingresa tu nombre.",
       "nameTooLong": "El nombre es demasiado largo.",
       "passwordRequired": "Ingresa tu contraseña.",
@@ -128,7 +129,8 @@
       "selfNotAllowed": "No puedes iniciar un chat sobre tu propia publicación.",
       "cannotOperate": "Tu cuenta está suspendida y no puede usar el chat.",
       "notReady": "El chat todavía se está preparando. Inténtalo de nuevo en unos segundos.",
-      "roomNotFound": "No encontramos esta conversación."
+      "roomNotFound": "No encontramos esta conversación.",
+      "offerNotFound": "No encontramos la publicación para iniciar el chat."
     }
   },
   "Account": {

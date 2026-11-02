@@ -92,6 +92,7 @@
       "alreadyRegistered": "Your profile is already complete.",
       "municipalityNotFound": "The selected municipality doesn't exist.",
       "phoneInvalid": "Enter a 10-digit Colombian mobile number that starts with 3.",
+      "phoneRequired": "Enter your mobile number.",
       "nameRequired": "Enter your name.",
       "nameTooLong": "The name is too long.",
       "passwordRequired": "Enter your password.",
@@ -128,7 +129,8 @@
       "selfNotAllowed": "You cannot start a chat about your own publication.",
       "cannotOperate": "Your account is suspended and cannot use the chat.",
       "notReady": "The chat is still getting ready. Try again in a few seconds.",
-      "roomNotFound": "We could not find this conversation."
+      "roomNotFound": "We could not find this conversation.",
+      "offerNotFound": "We could not find the listing to start the chat."
     }
   },
   "Account": {

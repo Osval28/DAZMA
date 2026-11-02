@@ -29,7 +29,7 @@ describe("PhotoPicker", () => {
     renderWithIntl(<PhotoPicker drafts={draftsWith([photo("a", { status: "uploaded", photoId: "p1" })])} disabled={false} />);
 
     expect(screen.getByText(t("Publications.create.photos.hint"))).toBeInTheDocument();
-    expect(screen.getByText(t("Publications.create.photos.counter", { count: 1, maximum: 5 }))).toBeInTheDocument();
+    expect(screen.getByText("1")).toBeInTheDocument();
   });
 
   it("marks the first photo as the cover", () => {
@@ -108,11 +108,11 @@ describe("PhotoPicker", () => {
     expect(click).toHaveBeenCalled();
   });
 
-  it("cannot add more photos once the limit is reached", () => {
+  it("leaves photo count validation to the backend", () => {
     const photos = Array.from({ length: 5 }, (_, index) => photo(`p${index}`, { status: "uploaded", photoId: `id${index}` }));
     renderWithIntl(<PhotoPicker drafts={draftsWith(photos)} disabled={false} />);
 
-    expect(screen.getByRole("button", { name: t("Publications.create.photos.add") })).toBeDisabled();
+    expect(screen.getByRole("button", { name: t("Publications.create.photos.add") })).toBeEnabled();
   });
 
   it("disables every action while the form is submitting", () => {

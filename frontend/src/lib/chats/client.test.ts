@@ -51,21 +51,21 @@ describe("createChatConnection", () => {
     expect(requestChatToken).toHaveBeenCalledWith("room-1");
   });
 
-  it("reports the message of a failed token request to Ably", async () => {
+  it("reports a stable error code for a failed token request", async () => {
     requestChatToken.mockRejectedValue(new Error("no token"));
     const callback = vi.fn();
 
     authCallbackOf("room-1")({}, callback);
 
-    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith("no token", null));
+    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith("CHAT_TOKEN_UNAVAILABLE", null));
   });
 
-  it("reports a non-error failure as text", async () => {
+  it("does not expose an arbitrary failure as text", async () => {
     requestChatToken.mockRejectedValue("denied");
     const callback = vi.fn();
 
     authCallbackOf("room-1")({}, callback);
 
-    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith("denied", null));
+    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith("CHAT_TOKEN_UNAVAILABLE", null));
   });
 });

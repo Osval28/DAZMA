@@ -48,42 +48,42 @@ describe("usePhotoDrafts", () => {
     expect(result.current.uploadingCount).toBe(0);
   });
 
-  it("rejects a file of an unsupported type", () => {
+  it("lets the backend decide which photo types are supported", async () => {
+    uploadPhoto.mockRejectedValue(new ApiError(400, "PUBLICATION_PHOTO_CONTENT_TYPE_NOT_ALLOWED"));
     const { result } = renderHook(() => usePhotoDrafts());
 
     act(() => result.current.add([image("nota.pdf", "application/pdf")]));
 
-    expect(result.current.photos).toEqual([]);
-    expect(result.current.issue).toBe("Publications.create.errors.photoTypeInvalid");
-    expect(uploadPhoto).not.toHaveBeenCalled();
+    await waitFor(() => expect(result.current.issue).toBe("Publications.create.errors.photoTypeInvalid"));
+    expect(result.current.photos).toHaveLength(1);
+    expect(uploadPhoto).toHaveBeenCalled();
   });
 
-  it("keeps the valid files when others are rejected", async () => {
+  it("submits each selected file for backend validation", async () => {
     uploadPhoto.mockResolvedValue("photo-1");
     const { result } = renderHook(() => usePhotoDrafts());
 
     act(() => result.current.add([image("nota.pdf", "application/pdf"), image()]));
 
-    expect(result.current.photos).toHaveLength(1);
-    expect(result.current.issue).toBe("Publications.create.errors.photoTypeInvalid");
-    await waitFor(() => expect(result.current.uploadedIds).toHaveLength(1));
+    expect(result.current.photos).toHaveLength(2);
+    await waitFor(() => expect(result.current.uploadedIds).toHaveLength(2));
   });
 
-  it("accepts at most five photos", async () => {
+  it("leaves the photo count decision to the backend", async () => {
     uploadPhoto.mockResolvedValue("photo");
     const { result } = renderHook(() => usePhotoDrafts());
 
     act(() => result.current.add(Array.from({ length: 6 }, (_, index) => image(`${index}.png`))));
 
-    expect(result.current.photos).toHaveLength(5);
-    expect(result.current.issue).toBe("Publications.create.errors.photosLimitReached");
+    expect(result.current.photos).toHaveLength(6);
     await waitFor(() => expect(result.current.uploadingCount).toBe(0));
   });
 
   it("clears the previous issue when new files are added", async () => {
-    uploadPhoto.mockResolvedValue("photo-1");
+    uploadPhoto.mockRejectedValueOnce(new ApiError(400, "PUBLICATION_PHOTO_CONTENT_TYPE_NOT_ALLOWED")).mockResolvedValueOnce("photo-1");
     const { result } = renderHook(() => usePhotoDrafts());
     act(() => result.current.add([image("nota.pdf", "application/pdf")]));
+    await waitFor(() => expect(result.current.issue).toBe("Publications.create.errors.photoTypeInvalid"));
 
     act(() => result.current.add([image()]));
 
