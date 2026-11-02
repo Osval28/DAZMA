@@ -19,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +28,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(FirebaseAuthenticationFilter.class);
 
     private static final Set<String> READ_ONLY_METHODS = Set.of("GET", "HEAD", "OPTIONS");
 
@@ -74,6 +78,12 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (InvalidIdentityTokenException exception) {
             SecurityContextHolder.clearContext();
+            log.atWarn()
+                    .setCause(exception)
+                    .addKeyValue("event.name", "security.identity_token.rejected")
+                    .addKeyValue("http.request.method", request.getMethod())
+                    .addKeyValue("http.route", request.getRequestURI())
+                    .log("Token de identidad rechazado");
             request.setAttribute(ApiAuthenticationEntryPoint.INVALID_SESSION_ATTRIBUTE, Boolean.TRUE);
             response.addHeader(HttpHeaders.SET_COOKIE, SessionCookies.expired().toString());
         }

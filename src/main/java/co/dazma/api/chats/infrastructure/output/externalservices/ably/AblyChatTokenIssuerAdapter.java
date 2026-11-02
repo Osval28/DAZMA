@@ -8,8 +8,12 @@ import co.dazma.api.chats.services.output.ports.ChatTokenIssuerPort;
 import io.ably.lib.rest.AblyRest;
 import io.ably.lib.rest.Auth;
 import io.ably.lib.types.AblyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AblyChatTokenIssuerAdapter implements ChatTokenIssuerPort {
+
+    private static final Logger log = LoggerFactory.getLogger(AblyChatTokenIssuerAdapter.class);
 
     private static final String ALLOWED_OPERATIONS = "[\"publish\",\"subscribe\",\"history\"]";
     private static final String CHANNEL_NAME_FORMAT = "%s:%s";
@@ -43,6 +47,12 @@ public class AblyChatTokenIssuerAdapter implements ChatTokenIssuerPort {
                     tokenRequest.mac
             );
         } catch (AblyException failure) {
+            log.atError()
+                    .setCause(failure)
+                    .addKeyValue("event.name", "chat.token.issuance.failed")
+                    .addKeyValue("chat.provider", "ably")
+                    .addKeyValue("chat.room.id", room.getId())
+                    .log("No se pudo emitir el token de chat");
             throw new ChatTokenIssuanceException(failure);
         }
     }

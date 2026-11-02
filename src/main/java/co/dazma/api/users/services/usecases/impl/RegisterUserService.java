@@ -10,11 +10,15 @@ import co.dazma.api.users.events.UserRegistered;
 import co.dazma.api.users.services.output.ports.UserEventsPort;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
 import co.dazma.api.users.services.usecases.contract.RegisterUserUseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionOperations;
 
 @Service
 public class RegisterUserService implements RegisterUserUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(RegisterUserService.class);
 
     private final UserRepositoryPort userRepository;
     private final MunicipalityCatalogPort municipalityCatalog;
@@ -51,7 +55,13 @@ public class RegisterUserService implements RegisterUserUseCase {
                 registration.email()
         );
 
-        return transaction.execute(status -> saveAndAnnounce(user));
+        User savedUser = transaction.execute(status -> saveAndAnnounce(user));
+        log.atInfo()
+                .addKeyValue("event.name", "user.registered")
+                .addKeyValue("user.id", savedUser.getId())
+                .addKeyValue("user.state", savedUser.getState().name())
+                .log("Usuario registrado");
+        return savedUser;
     }
 
     private User saveAndAnnounce(User user) {
