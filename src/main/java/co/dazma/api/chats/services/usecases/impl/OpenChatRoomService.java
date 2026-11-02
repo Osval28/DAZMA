@@ -10,11 +10,16 @@ import co.dazma.api.chats.services.output.ports.ChatOfferRepositoryPort;
 import co.dazma.api.chats.services.output.ports.ChatRoomRepositoryPort;
 import co.dazma.api.chats.services.usecases.contract.OpenChatRoomUseCase;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Clock;
+import java.util.Optional;
 
 @Service
 public class OpenChatRoomService implements OpenChatRoomUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(OpenChatRoomService.class);
 
     private final OperatingParticipantResolver participants;
     private final ChatOfferRepositoryPort offerRepository;
@@ -43,12 +48,31 @@ public class OpenChatRoomService implements OpenChatRoomUseCase {
         ChatOffer offer = offerRepository.findByPublicationId(opening.publicationId())
                 .orElseThrow(() -> new ChatOfferNotFoundException(opening.publicationId()));
 
-        return roomRepository.findByPublicationAndInterested(offer.publicationId(), interested.userId())
-                .orElseGet(() -> roomRepository.save(ChatRoom.open(
-                        offer.publicationId(),
-                        offer.ownerId(),
-                        interested.userId(),
-                        clock.instant()
-                )));
+        Optional<ChatRoom> existingRoom = roomRepository.findByPublicationAndInterested(
+                offer.publicationId(),
+                interested.userId()
+        );
+        if (existingRoom.isPresent()) {
+            ChatRoom room = existingRoom.get();
+            log.atInfo()
+                    .addKeyValue("event.name", "chat.room.reused")
+                    .addKeyValue("chat.room.id", room.getId())
+                    .addKeyValue("publication.id", offer.publicationId())
+                    .log("Sala de chat existente reutilizada");
+            return room;
+        }
+
+        ChatRoom room = roomRepository.save(ChatRoom.open(
+                offer.publicationId(),
+                offer.ownerId(),
+                interested.userId(),
+                clock.instant()
+        ));
+        log.atInfo()
+                .addKeyValue("event.name", "chat.room.created")
+                .addKeyValue("chat.room.id", room.getId())
+                .addKeyValue("publication.id", offer.publicationId())
+                .log("Sala de chat creada");
+        return room;
     }
 }

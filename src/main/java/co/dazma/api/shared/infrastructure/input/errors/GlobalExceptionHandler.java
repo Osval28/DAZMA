@@ -5,6 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LoggingEventBuilder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -12,6 +15,8 @@ import java.net.URI;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private final ApiProblemFactory problemFactory;
 
@@ -74,6 +79,14 @@ public class GlobalExceptionHandler {
             String titleMessageKey,
             HttpServletRequest request
     ) {
+        LoggingEventBuilder event = status.is5xxServerError() ? log.atError() : log.atWarn();
+        event
+                .setCause(status.is5xxServerError() ? exception : null)
+                .addKeyValue("event.name", "domain.operation.rejected")
+                .addKeyValue("error.code", exception.code())
+                .addKeyValue("http.route", request.getRequestURI())
+                .addKeyValue("http.response.status_code", status.value())
+                .log("Operación de dominio rechazada");
         ProblemDetail problem = problemFactory.create(
                 exception,
                 status,

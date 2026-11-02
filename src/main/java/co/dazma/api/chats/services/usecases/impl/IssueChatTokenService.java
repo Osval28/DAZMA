@@ -8,10 +8,14 @@ import co.dazma.api.chats.services.output.models.ChatTokenRequest;
 import co.dazma.api.chats.services.output.ports.ChatRoomRepositoryPort;
 import co.dazma.api.chats.services.output.ports.ChatTokenIssuerPort;
 import co.dazma.api.chats.services.usecases.contract.IssueChatTokenUseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IssueChatTokenService implements IssueChatTokenUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(IssueChatTokenService.class);
 
     private final OperatingParticipantResolver participants;
     private final ChatRoomRepositoryPort roomRepository;
@@ -31,9 +35,20 @@ public class IssueChatTokenService implements IssueChatTokenUseCase {
     public ChatTokenRequest execute(ChatAccessRequest request) {
         ChatParticipant participant = participants.resolve(request.externalId());
         ChatRoom room = roomRepository.findById(request.roomId())
-                .filter(candidate -> candidate.hasParticipant(participant.userId()))
                 .orElseThrow(() -> new ChatRoomNotFoundException(request.roomId()));
+        if (!room.hasParticipant(participant.userId())) {
+            log.atWarn()
+                    .addKeyValue("event.name", "chat.room.access.denied")
+                    .addKeyValue("chat.room.id", request.roomId())
+                    .log("Acceso a la sala de chat rechazado");
+            throw new ChatRoomNotFoundException(request.roomId());
+        }
 
-        return tokenIssuer.issue(room, participant);
+        ChatTokenRequest token = tokenIssuer.issue(room, participant);
+        log.atInfo()
+                .addKeyValue("event.name", "chat.token.issued")
+                .addKeyValue("chat.room.id", request.roomId())
+                .log("Token efímero de chat emitido");
+        return token;
     }
 }

@@ -9,10 +9,14 @@ import co.dazma.api.notifications.services.output.ports.NotificationGateway;
 import co.dazma.api.notifications.services.output.ports.NotificationTemplateCatalog;
 import co.dazma.api.notifications.services.output.ports.RecipientRepositoryPort;
 import co.dazma.api.notifications.services.usecases.contract.SendEmailUseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SendEmailService implements SendEmailUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(SendEmailService.class);
 
     private final RecipientRepositoryPort recipientRepository;
     private final NotificationTemplateCatalog templateCatalog;
@@ -40,5 +44,10 @@ public class SendEmailService implements SendEmailUseCase {
                 content.body(),
                 notification.idempotencyKey()
         ));
+
+        log.atInfo()
+                .addKeyValue("event.name", "notification.email.sent")
+                .addKeyValue("notification.type", notification.type().name())
+                .log("Notificación por correo enviada");
     }
 }
