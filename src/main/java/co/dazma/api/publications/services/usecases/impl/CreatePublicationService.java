@@ -53,6 +53,9 @@ public class CreatePublicationService implements CreatePublicationUseCase {
 
     @Override
     public Publication execute(PublicationDraft draft) {
+        if (draft.photoIds().size() > Publication.MAX_PHOTOS) {
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_LIMIT_EXCEEDED, Publication.MAX_PHOTOS);
+        }
         if (!draft.ownerEmailVerified()) {
             throw new PublicationOwnerEmailNotVerifiedException();
         }

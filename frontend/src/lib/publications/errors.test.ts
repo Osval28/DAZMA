@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ApiError, NetworkError, PhotoUploadError } from "@/lib/api/errors";
 import type { DraftIssue } from "./draft-validation";
-import { draftIssueKey, photoIssueKey, publicationErrorKey } from "./errors";
-import type { PhotoIssue } from "./photo-upload";
+import { draftIssueKey, publicationErrorKey } from "./errors";
 
 describe("publicationErrorKey", () => {
   it.each([
@@ -17,6 +16,7 @@ describe("publicationErrorKey", () => {
     ["PUBLICATION_DESCRIPTION_TOO_LONG", "Publications.create.errors.descriptionTooLong"],
     ["PUBLICATION_VALUE_NOT_POSITIVE", "Publications.create.errors.priceInvalid"],
     ["PUBLICATION_PHOTOS_REQUIRED", "Publications.create.errors.photosRequired"],
+    ["PUBLICATION_PHOTOS_LIMIT_EXCEEDED", "Publications.create.errors.photosLimitReached"],
   ])("maps the API code %s", (code, expected) => {
     expect(publicationErrorKey(new ApiError(400, code))).toBe(expected);
   });
@@ -31,7 +31,6 @@ describe("publicationErrorKey", () => {
     expect(publicationErrorKey(new Error("boom"))).toBe("Auth.errors.generic");
   });
 });
-
 describe("draftIssueKey", () => {
   const expectations: Record<DraftIssue, string> = {
     NAME_REQUIRED: "Publications.create.errors.nameRequired",
@@ -47,16 +46,5 @@ describe("draftIssueKey", () => {
 
   it.each(Object.entries(expectations))("maps %s", (issue, expected) => {
     expect(draftIssueKey(issue as DraftIssue)).toBe(expected);
-  });
-});
-
-describe("photoIssueKey", () => {
-  const expectations: Record<PhotoIssue, string> = {
-    PHOTO_TYPE_INVALID: "Publications.create.errors.photoTypeInvalid",
-    PHOTOS_LIMIT_REACHED: "Publications.create.errors.photosLimitReached",
-  };
-
-  it.each(Object.entries(expectations))("maps %s", (issue, expected) => {
-    expect(photoIssueKey(issue as PhotoIssue)).toBe(expected);
   });
 });

@@ -5,7 +5,7 @@ const { authorizePhotoUpload } = vi.hoisted(() => ({ authorizePhotoUpload: vi.fn
 
 vi.mock("@/lib/api/publications", () => ({ authorizePhotoUpload }));
 
-import { ALLOWED_PHOTO_TYPES, MAXIMUM_PHOTOS, uploadPhoto, validatePhotoFile } from "./photo-upload";
+import { uploadPhoto } from "./photo-upload";
 
 const fetchMock = vi.fn<typeof fetch>();
 
@@ -14,25 +14,6 @@ function fileOf(type: string, size = 1024): File {
   Object.defineProperty(file, "size", { value: size });
   return file;
 }
-
-describe("validatePhotoFile", () => {
-  it.each(ALLOWED_PHOTO_TYPES)("accepts %s", (type) => {
-    expect(validatePhotoFile(fileOf(type))).toBeUndefined();
-  });
-
-  it("rejects other file types", () => {
-    expect(validatePhotoFile(fileOf("image/gif"))).toBe("PHOTO_TYPE_INVALID");
-    expect(validatePhotoFile(fileOf("application/pdf"))).toBe("PHOTO_TYPE_INVALID");
-  });
-
-  it("leaves the size decision to the backend", () => {
-    expect(validatePhotoFile(fileOf("image/png", 50 * 1024 * 1024))).toBeUndefined();
-  });
-
-  it("limits the number of photos", () => {
-    expect(MAXIMUM_PHOTOS).toBe(5);
-  });
-});
 
 describe("uploadPhoto", () => {
   afterEach(() => {

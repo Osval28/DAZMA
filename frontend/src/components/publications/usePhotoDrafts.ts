@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ErrorMessageKey } from "@/i18n/message-keys";
-import { photoIssueKey, publicationErrorKey } from "@/lib/publications/errors";
-import { MAXIMUM_PHOTOS, uploadPhoto, validatePhotoFile } from "@/lib/publications/photo-upload";
+import { publicationErrorKey } from "@/lib/publications/errors";
+import { uploadPhoto } from "@/lib/publications/photo-upload";
 
 type UploadState = { status: "uploading" } | { status: "uploaded"; photoId: string } | { status: "failed"; reason: ErrorMessageKey };
 
@@ -64,21 +64,12 @@ export function usePhotoDrafts(): PhotoDrafts {
       setIssue(undefined);
       const accepted: DraftPhoto[] = [];
       for (const file of files) {
-        if (photos.length + accepted.length >= MAXIMUM_PHOTOS) {
-          setIssue(photoIssueKey("PHOTOS_LIMIT_REACHED"));
-          break;
-        }
-        const fileIssue = validatePhotoFile(file);
-        if (fileIssue !== undefined) {
-          setIssue(photoIssueKey(fileIssue));
-          continue;
-        }
         accepted.push({ key: crypto.randomUUID(), file, previewUrl: URL.createObjectURL(file), upload: { status: "uploading" } });
       }
       setPhotos((current) => [...current, ...accepted]);
       accepted.forEach((photo) => startUpload(photo.key, photo.file));
     },
-    [photos.length, startUpload],
+    [startUpload],
   );
 
   const remove = useCallback((key: string) => {
