@@ -20,6 +20,6 @@ class ChatParticipantRegistrationListenerTest {
         new ChatParticipantRegistrationListener(inputPort)
                 .on(new UserRegistered(userId, "firebase-123", "Ana", "ana@dazma.store", "ACTIVE"));
 
-        verify(inputPort).execute(new RegisterChatParticipantInputDto(userId, "firebase-123", "ACTIVE"));
+        verify(inputPort).execute(new RegisterChatParticipantInputDto(userId, "firebase-123", "Ana", "ACTIVE"));
     }
 }

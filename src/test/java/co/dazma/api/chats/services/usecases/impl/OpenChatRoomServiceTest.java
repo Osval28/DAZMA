@@ -56,7 +56,7 @@ class OpenChatRoomServiceTest {
         ownerId = UUID.randomUUID();
         interestedId = UUID.randomUUID();
         when(participantRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new ChatParticipant(interestedId, "firebase-123", ChatParticipantState.ACTIVE)
+                new ChatParticipant(interestedId, "firebase-123", "Ana", ChatParticipantState.ACTIVE)
         ));
         when(offerRepository.findByPublicationId(publicationId))
                 .thenReturn(Optional.of(new ChatOffer(publicationId, ownerId)));
@@ -111,7 +111,7 @@ class OpenChatRoomServiceTest {
     @Test
     void shouldRejectASuspendedUser() {
         when(participantRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new ChatParticipant(interestedId, "firebase-123", ChatParticipantState.SUSPENDED)
+                new ChatParticipant(interestedId, "firebase-123", "Ana", ChatParticipantState.SUSPENDED)
         ));
 
         assertThrows(

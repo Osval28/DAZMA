@@ -32,6 +32,14 @@ class ChatRoomTest {
     }
 
     @Test
+    void shouldTellWhoTheOtherParticipantIs() {
+        ChatRoom chatRoom = ChatRoom.open(publicationId, ownerId, interestedId, CREATED_AT);
+
+        assertEquals(interestedId, chatRoom.otherParticipantOf(ownerId));
+        assertEquals(ownerId, chatRoom.otherParticipantOf(interestedId));
+    }
+
+    @Test
     void shouldGiveADifferentIdToEachNewChatRoom() {
         ChatRoom first = ChatRoom.open(publicationId, ownerId, interestedId, CREATED_AT);
         ChatRoom second = ChatRoom.open(publicationId, ownerId, interestedId, CREATED_AT);

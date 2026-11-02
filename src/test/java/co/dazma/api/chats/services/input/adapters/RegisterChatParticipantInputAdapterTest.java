@@ -20,8 +20,8 @@ class RegisterChatParticipantInputAdapterTest {
         UUID userId = UUID.randomUUID();
 
         new RegisterChatParticipantInputAdapter(useCase, new ChatParticipantMapper())
-                .execute(new RegisterChatParticipantInputDto(userId, "firebase-123", "SUSPENDED"));
+                .execute(new RegisterChatParticipantInputDto(userId, "firebase-123", "Ana", "SUSPENDED"));
 
-        verify(useCase).execute(new ChatParticipant(userId, "firebase-123", ChatParticipantState.SUSPENDED));
+        verify(useCase).execute(new ChatParticipant(userId, "firebase-123", "Ana", ChatParticipantState.SUSPENDED));
     }
 }

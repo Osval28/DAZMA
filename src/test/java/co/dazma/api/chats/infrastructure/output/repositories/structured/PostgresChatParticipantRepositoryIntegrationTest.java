@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ class PostgresChatParticipantRepositoryIntegrationTest {
     void shouldPersistAndFindAParticipantByExternalIdUsingPostgres() {
         UUID userId = UUID.randomUUID();
         String externalId = "firebase-" + userId;
-        ChatParticipant participant = new ChatParticipant(userId, externalId, ChatParticipantState.ACTIVE);
+        ChatParticipant participant = new ChatParticipant(userId, externalId, "Ana", ChatParticipantState.ACTIVE);
 
         participantRepository.save(participant);
 
@@ -41,12 +42,25 @@ class PostgresChatParticipantRepositoryIntegrationTest {
     void shouldKeepASingleCopyWhenTheSameEventIsProcessedTwice() {
         UUID userId = UUID.randomUUID();
         String externalId = "firebase-" + userId;
-        ChatParticipant participant = new ChatParticipant(userId, externalId, ChatParticipantState.ACTIVE);
+        ChatParticipant participant = new ChatParticipant(userId, externalId, "Ana", ChatParticipantState.ACTIVE);
 
         participantRepository.save(participant);
         participantRepository.save(participant);
 
         assertEquals(Optional.of(participant), participantRepository.findByExternalId(externalId));
+    }
+
+    @Test
+    void shouldFindSeveralParticipantsByTheirUserIdsUsingPostgres() {
+        ChatParticipant first = new ChatParticipant(UUID.randomUUID(), "firebase-" + UUID.randomUUID(), "Ana", ChatParticipantState.ACTIVE);
+        ChatParticipant second = new ChatParticipant(UUID.randomUUID(), "firebase-" + UUID.randomUUID(), "Luis", ChatParticipantState.ACTIVE);
+        participantRepository.save(first);
+        participantRepository.save(second);
+
+        List<ChatParticipant> found = participantRepository.findAllByUserIds(List.of(first.userId(), second.userId()));
+
+        assertEquals(2, found.size());
+        assertTrue(found.containsAll(List.of(first, second)));
     }
 
     @Test

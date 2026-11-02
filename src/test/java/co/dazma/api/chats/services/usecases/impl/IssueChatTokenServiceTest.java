@@ -44,7 +44,7 @@ class IssueChatTokenServiceTest {
                 roomRepository,
                 tokenIssuer
         );
-        participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", ChatParticipantState.ACTIVE);
+        participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", "Ana", ChatParticipantState.ACTIVE);
         room = ChatRoom.open(UUID.randomUUID(), UUID.randomUUID(), participant.userId(), Instant.parse("2026-11-01T12:00:00Z"));
         when(participantRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(participant));
         when(roomRepository.findById(room.getId())).thenReturn(Optional.of(room));
@@ -84,7 +84,7 @@ class IssueChatTokenServiceTest {
     @Test
     void shouldNotIssueTokensToASuspendedUser() {
         when(participantRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new ChatParticipant(participant.userId(), "firebase-123", ChatParticipantState.SUSPENDED)
+                new ChatParticipant(participant.userId(), "firebase-123", "Ana", ChatParticipantState.SUSPENDED)
         ));
 
         assertThrows(
