@@ -4,6 +4,7 @@ import co.dazma.api.publications.domain.Description;
 import co.dazma.api.publications.domain.InvalidPublicationException;
 import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.domain.PublicationErrorCode;
 import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
 import co.dazma.api.publications.domain.PublicationOwner;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -276,6 +278,28 @@ class CreatePublicationServiceTest {
         );
 
         verifyNoInteractions(publicationRepository, photoStorage, publicationEvents);
+    }
+
+    @Test
+    void shouldRejectTooManyPhotosBeforeAnySideEffect() {
+        List<UUID> photoIds = IntStream.range(0, Publication.MAX_PHOTOS + 1)
+                .mapToObj(index -> UUID.randomUUID())
+                .toList();
+
+        InvalidPublicationException exception = assertThrows(
+                InvalidPublicationException.class,
+                () -> service.execute(draft(photoIds))
+        );
+
+        assertEquals(PublicationErrorCode.PHOTOS_LIMIT_EXCEEDED.code(), exception.code());
+        verifyNoInteractions(
+                municipalityCatalog,
+                ownerRepository,
+                photoStorage,
+                publicationRepository,
+                publicationEvents
+        );
+        assertFalse(transaction.active);
     }
 
     @Test
