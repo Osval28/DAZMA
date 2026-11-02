@@ -8,6 +8,8 @@ import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.usecases.contract.AuthorizePublicationPhotoUploadUseCase;
 import co.dazma.api.publications.services.usecases.models.PhotoUploadGrant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Service
 public class AuthorizePublicationPhotoUploadService
         implements AuthorizePublicationPhotoUploadUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthorizePublicationPhotoUploadService.class);
 
     private final OperatingOwnerResolver operatingOwners;
     private final PublicationPhotoStoragePort photoStorage;
@@ -47,11 +51,18 @@ public class AuthorizePublicationPhotoUploadService
                 parameters.uploadValidity()
         );
 
-        return new PhotoUploadGrant(
+        PhotoUploadGrant grant = new PhotoUploadGrant(
                 photoId,
                 storageAuthorization.uploadUrl(),
                 storageAuthorization.expiresAt()
         );
+        log.atInfo()
+                .addKeyValue("event.name", "publication.photo_upload.authorized")
+                .addKeyValue("photo.id", grant.photoId())
+                .addKeyValue("photo.content_type", contentType)
+                .addKeyValue("photo.authorization.expires_at", grant.expiresAt())
+                .log("Carga de fotografía autorizada");
+        return grant;
     }
 
     private String normalizeContentType(String contentType) {

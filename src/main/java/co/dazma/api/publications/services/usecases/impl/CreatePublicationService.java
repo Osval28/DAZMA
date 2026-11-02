@@ -10,6 +10,8 @@ import co.dazma.api.publications.services.usecases.contract.CreatePublicationUse
 import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
 import co.dazma.api.shared.domain.errors.MunicipalityErrorCode;
 import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionOperations;
 
@@ -20,6 +22,8 @@ import java.util.UUID;
 
 @Service
 public class CreatePublicationService implements CreatePublicationUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(CreatePublicationService.class);
 
     private final OperatingOwnerResolver operatingOwners;
     private final MunicipalityCatalogPort municipalityCatalog;
@@ -85,6 +89,12 @@ public class CreatePublicationService implements CreatePublicationUseCase {
             discardPromotedPhotos(promotedObjectKeys, failure);
             throw failure;
         }
+
+        log.atInfo()
+                .addKeyValue("event.name", "publication.created")
+                .addKeyValue("publication.id", savedPublication.getId())
+                .addKeyValue("publication.status", savedPublication.getStatus().name())
+                .log("Publicación creada");
 
         return savedPublication;
     }

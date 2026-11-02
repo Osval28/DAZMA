@@ -10,12 +10,16 @@ import com.resend.core.net.RequestOptions;
 import com.resend.services.emails.model.CreateEmailOptions;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
 public class ResendNotificationGateway implements NotificationGateway {
+
+    private static final Logger log = LoggerFactory.getLogger(ResendNotificationGateway.class);
 
     private static final int TOO_MANY_REQUESTS = 429;
     private static final int FIRST_SERVER_ERROR = 500;
@@ -59,7 +63,18 @@ public class ResendNotificationGateway implements NotificationGateway {
                     "send_email",
                     () -> resend.emails().send(email, options)
             );
+            log.atInfo()
+                    .addKeyValue("event.name", "notification.provider.accepted")
+                    .addKeyValue("notification.provider", "resend")
+                    .log("Proveedor de correo aceptó la notificación");
         } catch (ResendException exception) {
+            log.atWarn()
+                    .setCause(exception)
+                    .addKeyValue("event.name", "notification.provider.failed")
+                    .addKeyValue("notification.provider", "resend")
+                    .addKeyValue("notification.provider.status_code", exception.getStatusCode())
+                    .addKeyValue("notification.retryable", isRetryable(exception.getStatusCode()))
+                    .log("El proveedor de correo rechazó la notificación");
             throw new NotificationDeliveryException(
                     exception.getStatusCode(),
                     isRetryable(exception.getStatusCode()),

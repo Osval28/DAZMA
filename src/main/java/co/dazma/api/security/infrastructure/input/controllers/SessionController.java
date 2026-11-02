@@ -54,6 +54,10 @@ public class SessionController {
     public ResponseEntity<Void> open(@RequestBody @Valid OpenSessionRequestDto request) {
         OpenSessionOutputDto session = openSessionInputPort.execute(new OpenSessionInputDto(request.idToken()));
 
+        LOGGER.atInfo()
+                .addKeyValue("event.name", "security.session.opened")
+                .log("Sesión de seguridad abierta");
+
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE,
                         SessionCookies.open(session.sessionToken(), session.validity()).toString())
@@ -68,6 +72,10 @@ public class SessionController {
             revokeQuietly(sessionToken);
         }
 
+        LOGGER.atInfo()
+                .addKeyValue("event.name", "security.session.close_requested")
+                .log("Solicitud de cierre de sesión recibida");
+
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, SessionCookies.expired().toString())
                 .build();
@@ -77,7 +85,11 @@ public class SessionController {
         try {
             closeSessionInputPort.execute(new CloseSessionInputDto(sessionToken));
         } catch (SessionRevocationException exception) {
-            LOGGER.warn("No se pudo revocar la sesión en Firebase; la cookie se elimina de todas formas.", exception);
+            LOGGER.atWarn()
+                    .setCause(exception)
+                    .addKeyValue("event.name", "security.session.revocation_failed")
+                    .addKeyValue("security.provider", "firebase")
+                    .log("No se pudo revocar la sesión en Firebase; la cookie se elimina de todas formas");
         }
     }
 
