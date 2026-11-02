@@ -67,6 +67,8 @@ public class GlobalExceptionHandler {
         return createResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, "error.title.internal-server-error", request);
     }
 
+    @
+
 
     private ResponseEntity<ProblemDetail> createResponse(
             DomainException exception,
