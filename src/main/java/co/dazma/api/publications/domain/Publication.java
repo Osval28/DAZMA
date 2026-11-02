@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public class Publication {
 
+    public static final int MAX_PHOTOS = 5;
+
     private final UUID id;
     private final UUID ownerId;
     private final String ownerName;
@@ -105,6 +107,9 @@ public class Publication {
     private static void validatePhotos(List<PublicationPhoto> photos) {
         if (photos.isEmpty()) {
             throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_REQUIRED);
+        }
+        if (photos.size() > MAX_PHOTOS) {
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_LIMIT_EXCEEDED, MAX_PHOTOS);
         }
 
 

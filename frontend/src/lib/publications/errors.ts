@@ -2,7 +2,6 @@ import type { ErrorMessageKey, PublicationErrorKey } from "@/i18n/message-keys";
 import { ApiError, PhotoUploadError } from "@/lib/api/errors";
 import { errorKey } from "@/lib/auth/errors";
 import type { DraftIssue } from "./draft-validation";
-import type { PhotoIssue } from "./photo-upload";
 
 const apiErrors: Record<string, PublicationErrorKey> = {
   PUBLICATION_OWNER_EMAIL_NOT_VERIFIED: "Publications.create.errors.emailNotVerified",
@@ -16,6 +15,7 @@ const apiErrors: Record<string, PublicationErrorKey> = {
   PUBLICATION_DESCRIPTION_TOO_LONG: "Publications.create.errors.descriptionTooLong",
   PUBLICATION_VALUE_NOT_POSITIVE: "Publications.create.errors.priceInvalid",
   PUBLICATION_PHOTOS_REQUIRED: "Publications.create.errors.photosRequired",
+  PUBLICATION_PHOTOS_LIMIT_EXCEEDED: "Publications.create.errors.photosLimitReached",
 };
 
 const draftErrors: Record<DraftIssue, PublicationErrorKey> = {
@@ -30,17 +30,8 @@ const draftErrors: Record<DraftIssue, PublicationErrorKey> = {
   PHOTOS_FAILED: "Publications.create.errors.photosFailed",
 };
 
-const photoErrors: Record<PhotoIssue, PublicationErrorKey> = {
-  PHOTO_TYPE_INVALID: "Publications.create.errors.photoTypeInvalid",
-  PHOTOS_LIMIT_REACHED: "Publications.create.errors.photosLimitReached",
-};
-
 export function draftIssueKey(issue: DraftIssue): PublicationErrorKey {
   return draftErrors[issue];
-}
-
-export function photoIssueKey(issue: PhotoIssue): PublicationErrorKey {
-  return photoErrors[issue];
 }
 
 export function publicationErrorKey(error: unknown): ErrorMessageKey {
