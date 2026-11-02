@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import type { ChangeEvent } from "react";
-import { ALLOWED_PHOTO_TYPES, MAXIMUM_PHOTOS, MAXIMUM_PHOTO_MEGABYTES } from "@/lib/publications/photo-upload";
+import { ALLOWED_PHOTO_TYPES, MAXIMUM_PHOTOS } from "@/lib/publications/photo-upload";
 import { Button } from "@/components/ui/Button";
 import type { PhotoDrafts } from "./usePhotoDrafts";
 
@@ -27,7 +27,7 @@ export function PhotoPicker({ drafts, disabled }: PhotoPickerProps) {
   return (
     <div className="photo-picker">
       <div className="photo-picker__header">
-        <p className="photo-picker__hint">{t("Publications.create.photos.hint", { maximum: MAXIMUM_PHOTOS, megabytes: MAXIMUM_PHOTO_MEGABYTES })}</p>
+        <p className="photo-picker__hint">{t("Publications.create.photos.hint")}</p>
         <span className="photo-picker__counter">{t("Publications.create.photos.counter", { count: photos.length, maximum: MAXIMUM_PHOTOS })}</span>
       </div>
       {drafts.issue !== undefined && (

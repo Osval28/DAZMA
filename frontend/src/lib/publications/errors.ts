@@ -32,7 +32,6 @@ const draftErrors: Record<DraftIssue, PublicationErrorKey> = {
 
 const photoErrors: Record<PhotoIssue, PublicationErrorKey> = {
   PHOTO_TYPE_INVALID: "Publications.create.errors.photoTypeInvalid",
-  PHOTO_TOO_LARGE: "Publications.create.errors.photoTooLarge",
   PHOTOS_LIMIT_REACHED: "Publications.create.errors.photosLimitReached",
 };
 
