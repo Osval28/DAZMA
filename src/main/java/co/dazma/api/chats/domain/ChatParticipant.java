@@ -2,7 +2,7 @@ package co.dazma.api.chats.domain;
 
 import java.util.UUID;
 
-public record ChatParticipant(UUID userId, String externalId, ChatParticipantState state) {
+public record ChatParticipant(UUID userId, String externalId, String name, ChatParticipantState state) {
 
     public ChatParticipant {
         if (externalId.isBlank()) {

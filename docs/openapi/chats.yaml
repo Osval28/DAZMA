@@ -4,6 +4,34 @@ info:
   version: 1.0.0
 paths:
   /chats/api/v1/rooms:
+    get:
+      summary: Lista las salas de chat del usuario autenticado
+      description: >
+        Devuelve las salas donde el usuario es dueño de la publicación o interesado, de la más reciente a la más
+        antigua. Cada sala se identifica por el nombre de la otra persona. Un usuario suspendido no puede listar.
+      responses:
+        '200':
+          description: Salas del usuario, vacío si no tiene ninguna
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatRoomSummary'
+        '401':
+          $ref: '#/components/responses/ProblemResponse'
+        '403':
+          description: Cuenta suspendida (`CHAT_PARTICIPANT_CANNOT_OPERATE`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+        '409':
+          description: La cuenta, o la de la otra persona, todavía se está preparando para el chat (`CHAT_PARTICIPANT_NOT_READY`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
     post:
       summary: Abre la sala de chat entre el usuario autenticado y el dueño de una publicación
       description: >
@@ -120,6 +148,16 @@ components:
         title: { type: string }
         detail: { type: string }
         code: { type: string }
+    ChatRoomSummary:
+      type: object
+      required: [id, participantName]
+      properties:
+        id:
+          type: string
+          format: uuid
+        participantName:
+          type: string
+          description: Nombre de la otra persona de la sala.
     OpenChatRoomRequest:
       type: object
       additionalProperties: false

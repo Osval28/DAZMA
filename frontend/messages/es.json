@@ -6,6 +6,7 @@
       "login": "Ingresar | DAZMA",
       "passwordReset": "Recuperar contraseña | DAZMA",
       "chat": "Chat | DAZMA",
+      "chats": "Mis chats | DAZMA",
       "register": "Crear cuenta | DAZMA",
       "account": "Mi cuenta | DAZMA",
       "newPublication": "Publicar | DAZMA"
@@ -103,6 +104,12 @@
     "contact": {
       "button": "Contactar al vendedor",
       "opening": "Abriendo chat…"
+    },
+    "list": {
+      "headerLink": "Mis chats",
+      "title": "Mis chats",
+      "loading": "Cargando tus chats…",
+      "empty": "Todavía no tienes conversaciones. Cuando alguien te escriba o tú contactes a un vendedor, aparecerán aquí."
     },
     "room": {
       "back": "Volver a las publicaciones",

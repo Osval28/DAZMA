@@ -465,10 +465,16 @@ p {
   gap: var(--space-3);
 }
 
+.chat__composer .button {
+  flex: 0 0 auto;
+  width: auto;
+}
+
 .chat__input {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
-  padding: var(--space-3) var(--space-4);
+  height: var(--control-height);
+  padding: 0 var(--space-4);
   font: inherit;
   color: var(--color-text);
   background: var(--color-surface);
@@ -1621,4 +1627,38 @@ p {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+}
+
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chat-list__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+}
+
+.chat-list__item:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.chat-list__item:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.chat-list__name {
+  font-weight: 600;
 }

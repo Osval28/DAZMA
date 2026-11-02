@@ -9,7 +9,10 @@ import co.dazma.api.shared.infrastructure.DomainMapper;
 import co.dazma.api.shared.infrastructure.JpaMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class PostgresqlChatParticipantAdapter implements ChatParticipantRepositoryPort {
@@ -38,5 +41,14 @@ public class PostgresqlChatParticipantAdapter implements ChatParticipantReposito
         return springDataParticipantRepository.findByExternalId(externalId)
                 .map(jpaMapper::toEntity)
                 .map(domainMapper::toDomain);
+    }
+
+    @Override
+    public List<ChatParticipant> findAllByUserIds(Collection<UUID> userIds) {
+        return springDataParticipantRepository.findAllById(userIds)
+                .stream()
+                .map(jpaMapper::toEntity)
+                .map(domainMapper::toDomain)
+                .toList();
     }
 }

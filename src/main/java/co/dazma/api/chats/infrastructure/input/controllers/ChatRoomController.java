@@ -1,21 +1,26 @@
 package co.dazma.api.chats.infrastructure.input.controllers;
 
+import co.dazma.api.chats.infrastructure.input.dto.ChatRoomSummaryResponseDto;
 import co.dazma.api.chats.infrastructure.input.dto.ChatTokenResponseDto;
 import co.dazma.api.chats.infrastructure.input.dto.OpenChatRoomRequestDto;
 import co.dazma.api.chats.infrastructure.input.dto.OpenChatRoomResponseDto;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenInputDto;
+import co.dazma.api.chats.services.input.dto.ListChatRoomsInputDto;
 import co.dazma.api.chats.services.input.dto.OpenChatRoomInputDto;
 import co.dazma.api.chats.services.input.ports.IssueChatTokenInputPort;
+import co.dazma.api.chats.services.input.ports.ListChatRoomsInputPort;
 import co.dazma.api.chats.services.input.ports.OpenChatRoomInputPort;
 import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,13 +31,24 @@ public class ChatRoomController {
 
     private final OpenChatRoomInputPort openChatRoomInputPort;
     private final IssueChatTokenInputPort issueChatTokenInputPort;
+    private final ListChatRoomsInputPort listChatRoomsInputPort;
 
     public ChatRoomController(
             OpenChatRoomInputPort openChatRoomInputPort,
-            IssueChatTokenInputPort issueChatTokenInputPort
+            IssueChatTokenInputPort issueChatTokenInputPort,
+            ListChatRoomsInputPort listChatRoomsInputPort
     ) {
         this.openChatRoomInputPort = openChatRoomInputPort;
         this.issueChatTokenInputPort = issueChatTokenInputPort;
+        this.listChatRoomsInputPort = listChatRoomsInputPort;
+    }
+
+    @GetMapping
+    public List<ChatRoomSummaryResponseDto> list(@AuthenticationPrincipal CurrentUser currentUser) {
+        return listChatRoomsInputPort.execute(new ListChatRoomsInputDto(currentUser.uid()))
+                .stream()
+                .map(ChatRoomSummaryResponseDto::from)
+                .toList();
     }
 
     @PostMapping

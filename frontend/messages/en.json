@@ -6,6 +6,7 @@
       "login": "Sign in | DAZMA",
       "passwordReset": "Reset password | DAZMA",
       "chat": "Chat | DAZMA",
+      "chats": "My chats | DAZMA",
       "register": "Create account | DAZMA",
       "account": "My account | DAZMA",
       "newPublication": "Publish | DAZMA"
@@ -103,6 +104,12 @@
     "contact": {
       "button": "Contact the seller",
       "opening": "Opening chat…"
+    },
+    "list": {
+      "headerLink": "My chats",
+      "title": "My chats",
+      "loading": "Loading your chats…",
+      "empty": "You have no conversations yet. When someone writes to you or you contact a seller, they will show up here."
     },
     "room": {
       "back": "Back to publications",
