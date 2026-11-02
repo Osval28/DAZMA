@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ class PostgresqlChatParticipantAdapterTest {
     void shouldMapTheParticipantToAJpaEntityBeforeSaving() {
         UUID userId = UUID.randomUUID();
 
-        adapter.save(new ChatParticipant(userId, "firebase-123", ChatParticipantState.ACTIVE));
+        adapter.save(new ChatParticipant(userId, "firebase-123", "Ana", ChatParticipantState.ACTIVE));
 
         ArgumentCaptor<ChatParticipantEntityJPA> captor = ArgumentCaptor.forClass(ChatParticipantEntityJPA.class);
         verify(springDataRepository).save(captor.capture());
@@ -53,12 +54,25 @@ class PostgresqlChatParticipantAdapterTest {
     void shouldFindTheParticipantByExternalId() {
         UUID userId = UUID.randomUUID();
         when(springDataRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new ChatParticipantEntityJPA(userId, "firebase-123", ChatParticipantStateEntity.SUSPENDED)
+                new ChatParticipantEntityJPA(userId, "firebase-123", "Ana", ChatParticipantStateEntity.SUSPENDED)
         ));
 
         assertEquals(
-                Optional.of(new ChatParticipant(userId, "firebase-123", ChatParticipantState.SUSPENDED)),
+                Optional.of(new ChatParticipant(userId, "firebase-123", "Ana", ChatParticipantState.SUSPENDED)),
                 adapter.findByExternalId("firebase-123")
+        );
+    }
+
+    @Test
+    void shouldFindSeveralParticipantsByTheirUserIds() {
+        UUID userId = UUID.randomUUID();
+        when(springDataRepository.findAllById(List.of(userId))).thenReturn(List.of(
+                new ChatParticipantEntityJPA(userId, "firebase-123", "Ana", ChatParticipantStateEntity.ACTIVE)
+        ));
+
+        assertEquals(
+                List.of(new ChatParticipant(userId, "firebase-123", "Ana", ChatParticipantState.ACTIVE)),
+                adapter.findAllByUserIds(List.of(userId))
         );
     }
 

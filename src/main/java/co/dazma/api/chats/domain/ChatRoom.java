@@ -52,6 +52,10 @@ public class ChatRoom {
         return ownerId.equals(userId) || interestedId.equals(userId);
     }
 
+    public UUID otherParticipantOf(UUID userId) {
+        return ownerId.equals(userId) ? interestedId : ownerId;
+    }
+
     private static <T> T required(T value, ChatErrorCode errorCode) {
         if (value == null) {
             throw new InvalidChatRoomException(errorCode);

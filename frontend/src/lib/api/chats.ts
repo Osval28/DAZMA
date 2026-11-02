@@ -4,6 +4,11 @@ export type ChatRoom = {
   id: string;
 };
 
+export type ChatRoomSummary = {
+  id: string;
+  participantName: string;
+};
+
 export type ChatTokenRequest = {
   keyName: string;
   ttl: number;
@@ -15,6 +20,10 @@ export type ChatTokenRequest = {
 };
 
 const ROOMS_PATH = "/chats/api/v1/rooms";
+
+export function listChatRooms(): Promise<ChatRoomSummary[]> {
+  return apiJson<ChatRoomSummary[]>(ROOMS_PATH);
+}
 
 export function openChatRoom(publicationId: string): Promise<ChatRoom> {
   return apiJson<ChatRoom>(ROOMS_PATH, { method: "POST", body: { publicationId } });

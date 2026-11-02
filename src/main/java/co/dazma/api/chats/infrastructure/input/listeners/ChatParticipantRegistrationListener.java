@@ -20,6 +20,7 @@ public class ChatParticipantRegistrationListener {
         registerParticipantInputPort.execute(new RegisterChatParticipantInputDto(
                 event.userId(),
                 event.externalId(),
+                event.name(),
                 event.state()
         ));
     }

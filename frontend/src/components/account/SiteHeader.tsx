@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { LOGIN_PATH, REGISTER_PATH } from "@/lib/auth/sign-in";
+import { CHATS_PATH } from "@/lib/chats/paths";
 import { NEW_PUBLICATION_PATH } from "@/lib/publications/paths";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { SearchBox } from "@/components/publications/SearchBox";
@@ -24,6 +25,9 @@ export function SiteHeader() {
         <LocaleSwitcher />
         {session.status === "member" && (
           <>
+            <Link href={CHATS_PATH} className="link">
+              {t("Chats.list.headerLink")}
+            </Link>
             <Link href={NEW_PUBLICATION_PATH} className="button button--accent site-header__cta">
               {t("Publications.create.headerAction")}
             </Link>

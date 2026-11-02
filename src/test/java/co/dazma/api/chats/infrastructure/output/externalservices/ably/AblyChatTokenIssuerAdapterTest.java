@@ -22,7 +22,7 @@ class AblyChatTokenIssuerAdapterTest {
     void shouldSignATokenRequestLimitedToTheRoomOfTheParticipant() throws Exception {
         AblyProperties properties = new AblyProperties("test-app.test-key:test-secret", Duration.ofMinutes(30), "dazma-chat");
         AblyChatTokenIssuerAdapter adapter = new AblyChatTokenIssuerAdapter(new AblyRest(properties.apiKey()), properties);
-        ChatParticipant participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", ChatParticipantState.ACTIVE);
+        ChatParticipant participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", "Ana", ChatParticipantState.ACTIVE);
         ChatRoom room = ChatRoom.open(UUID.randomUUID(), UUID.randomUUID(), participant.userId(), Instant.parse("2026-11-01T12:00:00Z"));
 
         ChatTokenRequest tokenRequest = adapter.issue(room, participant);

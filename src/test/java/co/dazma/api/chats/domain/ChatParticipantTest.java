@@ -13,15 +13,15 @@ class ChatParticipantTest {
 
     @Test
     void shouldOperateOnlyWhenActive() {
-        assertTrue(new ChatParticipant(UUID.randomUUID(), "firebase-123", ChatParticipantState.ACTIVE).canOperate());
-        assertFalse(new ChatParticipant(UUID.randomUUID(), "firebase-123", ChatParticipantState.SUSPENDED).canOperate());
+        assertTrue(new ChatParticipant(UUID.randomUUID(), "firebase-123", "Ana", ChatParticipantState.ACTIVE).canOperate());
+        assertFalse(new ChatParticipant(UUID.randomUUID(), "firebase-123", "Ana", ChatParticipantState.SUSPENDED).canOperate());
     }
 
     @Test
     void shouldRequireAnExternalId() {
         InvalidChatParticipantException exception = assertThrows(
                 InvalidChatParticipantException.class,
-                () -> new ChatParticipant(UUID.randomUUID(), " ", ChatParticipantState.ACTIVE)
+                () -> new ChatParticipant(UUID.randomUUID(), " ", "Ana", ChatParticipantState.ACTIVE)
         );
 
         assertEquals("CHAT_PARTICIPANT_EXTERNAL_ID_REQUIRED", exception.code());

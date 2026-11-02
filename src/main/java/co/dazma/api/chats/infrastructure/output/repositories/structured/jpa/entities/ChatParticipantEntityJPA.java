@@ -21,6 +21,9 @@ public class ChatParticipantEntityJPA {
     @Column(name = "external_id", nullable = false, unique = true)
     private String externalId;
 
+    @Column(nullable = false)
+    private String name;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ChatParticipantStateEntity state;
@@ -28,9 +31,10 @@ public class ChatParticipantEntityJPA {
     protected ChatParticipantEntityJPA() {
     }
 
-    public ChatParticipantEntityJPA(UUID userId, String externalId, ChatParticipantStateEntity state) {
+    public ChatParticipantEntityJPA(UUID userId, String externalId, String name, ChatParticipantStateEntity state) {
         this.userId = userId;
         this.externalId = externalId;
+        this.name = name;
         this.state = state;
     }
 
@@ -40,6 +44,10 @@ public class ChatParticipantEntityJPA {
 
     public String getExternalId() {
         return externalId;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public ChatParticipantStateEntity getState() {

@@ -14,6 +14,7 @@ public class ChatParticipantMapper implements InputMapper<RegisterChatParticipan
         return new ChatParticipant(
                 input.userId(),
                 input.externalId(),
+                input.name(),
                 ChatParticipantState.valueOf(input.state())
         );
     }

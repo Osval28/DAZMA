@@ -1,11 +1,14 @@
 package co.dazma.api.chats.infrastructure.input.controllers;
 
 import co.dazma.api.chats.domain.ChatRoomNotFoundException;
+import co.dazma.api.chats.services.input.dto.ChatRoomSummaryOutputDto;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenInputDto;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenOutputDto;
+import co.dazma.api.chats.services.input.dto.ListChatRoomsInputDto;
 import co.dazma.api.chats.services.input.dto.OpenChatRoomInputDto;
 import co.dazma.api.chats.services.input.dto.OpenChatRoomOutputDto;
 import co.dazma.api.chats.services.input.ports.IssueChatTokenInputPort;
+import co.dazma.api.chats.services.input.ports.ListChatRoomsInputPort;
 import co.dazma.api.chats.services.input.ports.OpenChatRoomInputPort;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
@@ -31,6 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,12 +43,14 @@ class ChatRoomControllerTest {
 
     private OpenChatRoomInputPort openChatRoomInputPort;
     private IssueChatTokenInputPort issueChatTokenInputPort;
+    private ListChatRoomsInputPort listChatRoomsInputPort;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         openChatRoomInputPort = mock(OpenChatRoomInputPort.class);
         issueChatTokenInputPort = mock(IssueChatTokenInputPort.class);
+        listChatRoomsInputPort = mock(ListChatRoomsInputPort.class);
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
@@ -52,7 +58,7 @@ class ChatRoomControllerTest {
                 new ApiProblemFactory(new ErrorMessageResolver(messageSource))
         );
 
-        mockMvc = MockMvcBuilders.standaloneSetup(new ChatRoomController(openChatRoomInputPort, issueChatTokenInputPort))
+        mockMvc = MockMvcBuilders.standaloneSetup(new ChatRoomController(openChatRoomInputPort, issueChatTokenInputPort, listChatRoomsInputPort))
                 .setControllerAdvice(exceptionHandler)
                 .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
@@ -83,6 +89,18 @@ class ChatRoomControllerTest {
                         .content("{\"publicationId\": \"%s\"}".formatted(publicationId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(roomId.toString()));
+    }
+
+    @Test
+    void shouldListTheRoomsOfTheAuthenticatedUser() throws Exception {
+        UUID roomId = UUID.randomUUID();
+        when(listChatRoomsInputPort.execute(new ListChatRoomsInputDto("firebase-123")))
+                .thenReturn(List.of(new ChatRoomSummaryOutputDto(roomId, "Luis")));
+
+        mockMvc.perform(get("/chats/api/v1/rooms").principal(() -> "firebase-123"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(roomId.toString()))
+                .andExpect(jsonPath("$[0].participantName").value("Luis"));
     }
 
     @Test

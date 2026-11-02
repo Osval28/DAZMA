@@ -29,7 +29,7 @@ class OperatingParticipantResolverTest {
 
     @Test
     void shouldResolveAnActiveParticipant() {
-        ChatParticipant participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", ChatParticipantState.ACTIVE);
+        ChatParticipant participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", "Ana", ChatParticipantState.ACTIVE);
         when(participantRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(participant));
 
         assertEquals(participant, resolver.resolve("firebase-123"));
@@ -45,7 +45,7 @@ class OperatingParticipantResolverTest {
     @Test
     void shouldRejectASuspendedParticipant() {
         when(participantRepository.findByExternalId("firebase-123")).thenReturn(Optional.of(
-                new ChatParticipant(UUID.randomUUID(), "firebase-123", ChatParticipantState.SUSPENDED)
+                new ChatParticipant(UUID.randomUUID(), "firebase-123", "Ana", ChatParticipantState.SUSPENDED)
         ));
 
         assertThrows(ChatParticipantCannotOperateException.class, () -> resolver.resolve("firebase-123"));

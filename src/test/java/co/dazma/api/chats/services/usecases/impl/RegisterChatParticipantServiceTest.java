@@ -15,7 +15,7 @@ class RegisterChatParticipantServiceTest {
     @Test
     void shouldSaveTheParticipantInTheLocalCopy() {
         ChatParticipantRepositoryPort participantRepository = mock(ChatParticipantRepositoryPort.class);
-        ChatParticipant participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", ChatParticipantState.ACTIVE);
+        ChatParticipant participant = new ChatParticipant(UUID.randomUUID(), "firebase-123", "Ana", ChatParticipantState.ACTIVE);
 
         new RegisterChatParticipantService(participantRepository).execute(participant);
 
