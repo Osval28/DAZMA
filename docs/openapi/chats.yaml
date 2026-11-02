@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: DAZMA - Chats
+  version: 1.0.0
+paths:
+  /chats/api/v1/rooms:
+    post:
+      summary: Abre la sala de chat entre el usuario autenticado y el dueño de una publicación
+      description: >
+        Requiere sesión y correo verificado. Es idempotente: si ya existe una sala entre el usuario y la publicación,
+        devuelve la misma. El dueño de la publicación no puede abrir una sala sobre ella. La publicación llega a
+        la copia local de Chats por evento, así que una publicación recién creada puede responder 404 unos segundos.
+      security:
+        - csrfHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenChatRoomRequest'
+      responses:
+        '200':
+          description: Sala abierta o ya existente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenChatRoomResponse'
+        '400':
+          $ref: '#/components/responses/ProblemResponse'
+        '401':
+          $ref: '#/components/responses/ProblemResponse'
+        '403':
+          description: Correo sin verificar (`CHAT_EMAIL_NOT_VERIFIED`), cuenta suspendida (`CHAT_PARTICIPANT_CANNOT_OPERATE`) o chat sobre la propia publicación (`CHAT_SELF_NOT_ALLOWED`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+        '404':
+          description: La publicación no existe en la copia de Chats (`CHAT_OFFER_NOT_FOUND`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+        '409':
+          description: La cuenta todavía se está preparando para el chat (`CHAT_PARTICIPANT_NOT_READY`). Reintentar en unos segundos.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+  /chats/api/v1/rooms/{roomId}/token:
+    post:
+      summary: Emite una solicitud de token de Ably limitada a una sala
+      description: >
+        Solo los dos miembros de la sala. Quien no es miembro recibe el mismo 404 que si la sala no existiera.
+        El cliente la entrega al SDK de Ably desde `authCallback` y Ably la canjea por un token. El permiso se
+        limita a los canales de esa sala y el identificador de cliente es el id interno del usuario.
+        Un usuario suspendido no recibe tokens nuevos.
+      security:
+        - csrfHeader: []
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Solicitud de token firmada, lista para el SDK de Ably
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatTokenResponse'
+        '401':
+          $ref: '#/components/responses/ProblemResponse'
+        '403':
+          description: Cuenta suspendida (`CHAT_PARTICIPANT_CANNOT_OPERATE`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+        '404':
+          description: La sala no existe o el usuario no es miembro (`CHAT_ROOM_NOT_FOUND`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+        '409':
+          description: La cuenta todavía se está preparando para el chat (`CHAT_PARTICIPANT_NOT_READY`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+        '500':
+          description: No se pudo firmar la solicitud (`CHAT_TOKEN_ISSUANCE_FAILED`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemResponse'
+components:
+  securitySchemes:
+    csrfHeader:
+      type: apiKey
+      in: header
+      name: X-XSRF-TOKEN
+      description: Valor de la cookie `XSRF-TOKEN`, obligatorio en toda solicitud que no sea GET.
+  responses:
+    ProblemResponse:
+      description: Error con el formato uniforme `application/problem+json`.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemResponse'
+  schemas:
+    ProblemResponse:
+      type: object
+      required: [status, title, detail]
+      properties:
+        status: { type: integer }
+        title: { type: string }
+        detail: { type: string }
+        code: { type: string }
+    OpenChatRoomRequest:
+      type: object
+      additionalProperties: false
+      required: [publicationId]
+      properties:
+        publicationId:
+          type: string
+          format: uuid
+    OpenChatRoomResponse:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: string
+          format: uuid
+    ChatTokenResponse:
+      type: object
+      required: [keyName, ttl, timestamp, capability, clientId, nonce, mac]
+      properties:
+        keyName: { type: string }
+        ttl: { type: integer, format: int64, description: Vigencia en milisegundos. }
+        timestamp: { type: integer, format: int64, description: Milisegundos desde la época Unix. }
+        capability: { type: string, description: JSON con los canales y operaciones permitidos. }
+        clientId: { type: string, description: Id interno del usuario. }
+        nonce: { type: string }
+        mac: { type: string }

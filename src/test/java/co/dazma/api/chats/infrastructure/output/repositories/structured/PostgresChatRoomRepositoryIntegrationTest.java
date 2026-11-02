@@ -54,6 +54,15 @@ class PostgresChatRoomRepositoryIntegrationTest {
     }
 
     @Test
+    void shouldFindAChatRoomById() {
+        ChatRoom chatRoom = ChatRoom.open(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), OLDER);
+        chatRoomRepository.save(chatRoom);
+
+        assertEquals(Optional.of(chatRoom), chatRoomRepository.findById(chatRoom.getId()));
+        assertTrue(chatRoomRepository.findById(UUID.randomUUID()).isEmpty());
+    }
+
+    @Test
     void shouldReturnEmptyWhenTheChatRoomDoesNotExist() {
         assertTrue(chatRoomRepository
                 .findByPublicationAndInterested(UUID.randomUUID(), UUID.randomUUID())
