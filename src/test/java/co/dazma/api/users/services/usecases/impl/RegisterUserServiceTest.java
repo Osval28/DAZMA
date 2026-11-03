@@ -1,14 +1,14 @@
 package co.dazma.api.users.services.usecases.impl;
 
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
 import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Name;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.User;
-import co.dazma.api.users.domain.UserAlreadyRegisteredException;
-import co.dazma.api.users.domain.UserRegistration;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.models.Name;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.models.User;
+import co.dazma.api.users.domain.exceptions.UserAlreadyRegisteredException;
+import co.dazma.api.users.domain.models.UserRegistration;
 import co.dazma.api.users.events.UserRegistered;
 import co.dazma.api.users.services.output.ports.UserEventsPort;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;

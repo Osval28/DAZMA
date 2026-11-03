@@ -1,5 +1,6 @@
 package co.dazma.api.chats.domain;
 
+import co.dazma.api.chats.domain.enums.ChatErrorCode;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;

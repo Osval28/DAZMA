@@ -1,8 +1,8 @@
 package co.dazma.api.publications.services.usecases.impl;
 
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.PublicationNotFoundException;
-import co.dazma.api.publications.domain.PublicationPhoto;
+import co.dazma.api.publications.domain.models.Publication;
+import co.dazma.api.publications.domain.exceptions.PublicationNotFoundException;
+import co.dazma.api.publications.domain.models.PublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PhotoDownloadParametersPort;
 import co.dazma.api.publications.services.output.ports.PublicationCachePort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;

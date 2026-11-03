@@ -1,6 +1,6 @@
 package co.dazma.api.chats.services.output.ports;
 
-import co.dazma.api.chats.domain.ChatOffer;
+import co.dazma.api.chats.domain.models.ChatOffer;
 
 import java.util.Optional;
 import java.util.UUID;

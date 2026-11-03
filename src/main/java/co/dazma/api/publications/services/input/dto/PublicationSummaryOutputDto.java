@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.input.dto;
 
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.enums.PublicationType;
 
 import java.net.URI;
 import java.time.Instant;

@@ -1,6 +1,6 @@
 package co.dazma.api.users.services.input.adapters;
 
-import co.dazma.api.users.domain.PhoneRules;
+import co.dazma.api.users.domain.models.PhoneRules;
 import co.dazma.api.users.services.input.dto.PhoneRulesOutputDto;
 import co.dazma.api.users.services.output.ports.PhoneRulesPort;
 import org.junit.jupiter.api.Test;

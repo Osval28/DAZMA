@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.infrastructure.input.listeners;
 
-import co.dazma.api.notifications.domain.NotificationType;
+import co.dazma.api.notifications.domain.enums.NotificationType;
 import co.dazma.api.notifications.services.input.dto.RegisterRecipientInputDto;
 import co.dazma.api.notifications.services.input.dto.SendEmailInputDto;
 import co.dazma.api.notifications.services.input.ports.RegisterRecipientInputPort;

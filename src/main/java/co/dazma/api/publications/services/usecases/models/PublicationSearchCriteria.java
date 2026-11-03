@@ -1,8 +1,8 @@
 package co.dazma.api.publications.services.usecases.models;
 
-import co.dazma.api.publications.domain.InvalidPublicationException;
-import co.dazma.api.publications.domain.PublicationErrorCode;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.publications.domain.exceptions.InvalidPublicationException;
+import co.dazma.api.publications.domain.enums.PublicationErrorCode;
+import co.dazma.api.shared.domain.models.Municipality;
 
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.services.output.ports;
 
-import co.dazma.api.notifications.domain.Recipient;
+import co.dazma.api.notifications.domain.models.Recipient;
 
 import java.util.Optional;
 import java.util.UUID;

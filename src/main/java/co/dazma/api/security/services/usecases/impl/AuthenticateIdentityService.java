@@ -1,7 +1,7 @@
 package co.dazma.api.security.services.usecases.impl;
 
-import co.dazma.api.security.domain.AuthenticatedIdentity;
-import co.dazma.api.security.domain.TokenVerification;
+import co.dazma.api.security.domain.models.AuthenticatedIdentity;
+import co.dazma.api.security.domain.models.TokenVerification;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
 import co.dazma.api.security.services.usecases.contract.AuthenticateIdentityUseCase;
 

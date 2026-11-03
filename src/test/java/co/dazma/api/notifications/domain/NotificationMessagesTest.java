@@ -1,5 +1,6 @@
 package co.dazma.api.notifications.domain;
 
+import co.dazma.api.notifications.domain.enums.NotificationErrorCode;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;

@@ -1,6 +1,15 @@
 package co.dazma.api.users.domain;
 
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
+import co.dazma.api.users.domain.enums.Role;
+import co.dazma.api.users.domain.enums.State;
+import co.dazma.api.users.domain.exceptions.InvalidUserException;
+import co.dazma.api.users.domain.exceptions.UserAlreadySuspendedException;
+import co.dazma.api.users.domain.exceptions.UserNotSuspendedException;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.models.Name;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.models.User;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

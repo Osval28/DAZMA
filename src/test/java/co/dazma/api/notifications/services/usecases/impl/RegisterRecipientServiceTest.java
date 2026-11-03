@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.services.usecases.impl;
 
-import co.dazma.api.notifications.domain.Recipient;
+import co.dazma.api.notifications.domain.models.Recipient;
 import co.dazma.api.notifications.services.output.ports.RecipientRepositoryPort;
 import org.junit.jupiter.api.Test;
 

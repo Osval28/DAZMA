@@ -1,9 +1,9 @@
 package co.dazma.api.publications.services.usecases.impl;
 
-import co.dazma.api.publications.domain.InvalidPublicationException;
-import co.dazma.api.publications.domain.PhotoUploadRequest;
-import co.dazma.api.publications.domain.PublicationOwner;
-import co.dazma.api.publications.domain.PublicationOwnerState;
+import co.dazma.api.publications.domain.exceptions.InvalidPublicationException;
+import co.dazma.api.publications.domain.models.PhotoUploadRequest;
+import co.dazma.api.publications.domain.models.PublicationOwner;
+import co.dazma.api.publications.domain.enums.PublicationOwnerState;
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
 import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort;
 import co.dazma.api.publications.services.output.ports.PublicationOwnerRepositoryPort;

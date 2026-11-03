@@ -1,10 +1,10 @@
 package co.dazma.api.notifications.services.usecases.impl;
 
-import co.dazma.api.notifications.domain.EmailMessage;
-import co.dazma.api.notifications.domain.EmailNotification;
-import co.dazma.api.notifications.domain.NotificationType;
-import co.dazma.api.notifications.domain.Recipient;
-import co.dazma.api.notifications.domain.RecipientNotFoundException;
+import co.dazma.api.notifications.domain.models.EmailMessage;
+import co.dazma.api.notifications.domain.models.EmailNotification;
+import co.dazma.api.notifications.domain.enums.NotificationType;
+import co.dazma.api.notifications.domain.models.Recipient;
+import co.dazma.api.notifications.domain.exceptions.RecipientNotFoundException;
 import co.dazma.api.notifications.services.output.models.NotificationContent;
 import co.dazma.api.notifications.services.output.ports.NotificationGateway;
 import co.dazma.api.notifications.services.output.ports.NotificationTemplateCatalog;

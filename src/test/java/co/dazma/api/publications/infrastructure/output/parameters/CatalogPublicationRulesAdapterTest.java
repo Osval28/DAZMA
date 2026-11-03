@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.output.parameters;
 
-import co.dazma.api.publications.domain.PublicationRules;
+import co.dazma.api.publications.domain.models.PublicationRules;
 import co.dazma.api.shared.services.output.ports.ParameterCatalog;
 import org.junit.jupiter.api.Test;
 

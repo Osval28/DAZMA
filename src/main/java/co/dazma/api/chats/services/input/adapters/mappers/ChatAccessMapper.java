@@ -1,6 +1,6 @@
 package co.dazma.api.chats.services.input.adapters.mappers;
 
-import co.dazma.api.chats.domain.ChatAccessRequest;
+import co.dazma.api.chats.infrastructure.input.dto.ChatAccessRequest;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenInputDto;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenOutputDto;
 import co.dazma.api.chats.services.output.models.ChatTokenRequest;

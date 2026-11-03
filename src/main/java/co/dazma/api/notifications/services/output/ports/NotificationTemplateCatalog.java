@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.services.output.ports;
 
-import co.dazma.api.notifications.domain.NotificationType;
+import co.dazma.api.notifications.domain.enums.NotificationType;
 import co.dazma.api.notifications.services.output.models.NotificationContent;
 
 import java.util.Map;

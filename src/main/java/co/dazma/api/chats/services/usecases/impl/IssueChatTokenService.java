@@ -1,9 +1,9 @@
 package co.dazma.api.chats.services.usecases.impl;
 
-import co.dazma.api.chats.domain.ChatAccessRequest;
-import co.dazma.api.chats.domain.ChatParticipant;
-import co.dazma.api.chats.domain.ChatRoom;
-import co.dazma.api.chats.domain.ChatRoomNotFoundException;
+import co.dazma.api.chats.infrastructure.input.dto.ChatAccessRequest;
+import co.dazma.api.chats.domain.models.ChatParticipant;
+import co.dazma.api.chats.domain.models.ChatRoom;
+import co.dazma.api.chats.domain.exceptions.ChatRoomNotFoundException;
 import co.dazma.api.chats.services.output.models.ChatTokenRequest;
 import co.dazma.api.chats.services.output.ports.ChatRoomRepositoryPort;
 import co.dazma.api.chats.services.output.ports.ChatTokenIssuerPort;

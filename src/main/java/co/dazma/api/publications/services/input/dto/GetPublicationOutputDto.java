@@ -1,7 +1,7 @@
 package co.dazma.api.publications.services.input.dto;
 
-import co.dazma.api.publications.domain.PublicationStatus;
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationType;
 
 import java.time.Instant;
 import java.util.List;

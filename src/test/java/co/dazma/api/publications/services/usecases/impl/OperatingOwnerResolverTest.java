@@ -1,9 +1,9 @@
 package co.dazma.api.publications.services.usecases.impl;
 
-import co.dazma.api.publications.domain.PublicationOwner;
-import co.dazma.api.publications.domain.PublicationOwnerCannotOperateException;
-import co.dazma.api.publications.domain.PublicationOwnerNotReadyException;
-import co.dazma.api.publications.domain.PublicationOwnerState;
+import co.dazma.api.publications.domain.models.PublicationOwner;
+import co.dazma.api.publications.domain.exceptions.PublicationOwnerCannotOperateException;
+import co.dazma.api.publications.domain.exceptions.PublicationOwnerNotReadyException;
+import co.dazma.api.publications.domain.enums.PublicationOwnerState;
 import co.dazma.api.publications.services.output.ports.PublicationOwnerRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

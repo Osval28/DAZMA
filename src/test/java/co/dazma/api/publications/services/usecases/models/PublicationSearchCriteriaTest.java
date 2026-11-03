@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.usecases.models;
 
-import co.dazma.api.publications.domain.InvalidPublicationException;
+import co.dazma.api.publications.domain.exceptions.InvalidPublicationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

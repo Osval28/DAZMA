@@ -1,10 +1,12 @@
 package co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.mapper;
 
-import co.dazma.api.publications.domain.*;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationType;
+import co.dazma.api.publications.domain.models.*;
 import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.entities.PublicationCacheEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.entities.PublicationStatusCacheEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.entities.PublicationTypeCacheEntity;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

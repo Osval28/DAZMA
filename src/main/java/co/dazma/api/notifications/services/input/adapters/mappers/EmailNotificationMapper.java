@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.services.input.adapters.mappers;
 
-import co.dazma.api.notifications.domain.EmailNotification;
+import co.dazma.api.notifications.domain.models.EmailNotification;
 import co.dazma.api.notifications.services.input.dto.SendEmailInputDto;
 import co.dazma.api.shared.services.input.mappers.InputMapper;
 import org.springframework.stereotype.Component;

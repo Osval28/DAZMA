@@ -1,6 +1,6 @@
 package co.dazma.api.chats.infrastructure.input.controllers;
 
-import co.dazma.api.chats.domain.ChatRoomNotFoundException;
+import co.dazma.api.chats.domain.exceptions.ChatRoomNotFoundException;
 import co.dazma.api.chats.services.input.dto.ChatRoomSummaryOutputDto;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenInputDto;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenOutputDto;

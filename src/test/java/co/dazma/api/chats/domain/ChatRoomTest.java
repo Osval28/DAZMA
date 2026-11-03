@@ -1,5 +1,9 @@
 package co.dazma.api.chats.domain;
 
+import co.dazma.api.chats.domain.enums.ChatErrorCode;
+import co.dazma.api.chats.domain.exceptions.InvalidChatRoomException;
+import co.dazma.api.chats.domain.exceptions.SelfChatNotAllowedException;
+import co.dazma.api.chats.domain.models.ChatRoom;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
