@@ -119,10 +119,6 @@ class PublicationTest {
     void shouldRejectInvalidPhotoData() {
         assertThrows(
                 InvalidPublicationException.class,
-                () -> new PublicationPhoto(null, "one.jpg", 0)
-        );
-        assertThrows(
-                InvalidPublicationException.class,
                 () -> new PublicationPhoto(UUID.randomUUID(), " ", 0)
         );
         assertThrows(

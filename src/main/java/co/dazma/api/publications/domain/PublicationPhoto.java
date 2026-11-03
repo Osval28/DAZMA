@@ -9,10 +9,7 @@ public class PublicationPhoto {
     private final int position;
 
     public PublicationPhoto(UUID id, String objectKey, int position) {
-        if (id == null) {
-            throw new InvalidPublicationException(PublicationErrorCode.PHOTO_ID_REQUIRED);
-        }
-        if (objectKey == null || objectKey.isBlank()) {
+        if (objectKey.isBlank()) {
             throw new InvalidPublicationException(PublicationErrorCode.PHOTO_STORAGE_REFERENCE_REQUIRED);
         }
         if (position < 0) {

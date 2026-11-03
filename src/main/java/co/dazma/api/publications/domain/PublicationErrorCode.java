@@ -96,10 +96,6 @@ public enum PublicationErrorCode implements ErrorCode {
             "PUBLICATION_PHOTO_POSITION_DUPLICATED",
             "publication.photo.position-duplicated"
     ),
-    PHOTO_ID_REQUIRED(
-            "PUBLICATION_PHOTO_ID_REQUIRED",
-            "publication.photo.id.required"
-    ),
     PHOTO_STORAGE_REFERENCE_REQUIRED(
             "PUBLICATION_PHOTO_STORAGE_REFERENCE_REQUIRED",
             "publication.photo.storage-reference.required"
