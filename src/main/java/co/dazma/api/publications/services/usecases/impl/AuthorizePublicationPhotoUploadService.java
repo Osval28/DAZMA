@@ -66,7 +66,7 @@ public class AuthorizePublicationPhotoUploadService
     }
 
     private String normalizeContentType(String contentType) {
-        if (contentType == null || contentType.isBlank()) {
+        if (contentType.isBlank()) {
             throw new InvalidPublicationException(
                     PublicationErrorCode.PHOTO_CONTENT_TYPE_REQUIRED
             );

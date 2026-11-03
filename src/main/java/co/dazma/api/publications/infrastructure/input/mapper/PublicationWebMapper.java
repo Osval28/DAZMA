@@ -32,7 +32,7 @@ public interface PublicationWebMapper {
     ListPublicationsResponseDto toResponse(ListPublicationsOutputDto output);
 
     default PublicationOwnerResponseDto toOwner(UUID ownerId, String name) {
-        return ownerId == null ? null : new PublicationOwnerResponseDto(ownerId, name);
+        return new PublicationOwnerResponseDto(ownerId, name);
     }
 
 }
