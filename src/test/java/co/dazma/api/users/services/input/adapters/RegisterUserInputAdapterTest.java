@@ -5,6 +5,7 @@ import co.dazma.api.users.domain.Email;
 import co.dazma.api.users.domain.InvalidUserException;
 import co.dazma.api.users.domain.Name;
 import co.dazma.api.users.domain.Phone;
+import co.dazma.api.users.domain.PhoneRules;
 import co.dazma.api.users.domain.Role;
 import co.dazma.api.users.domain.State;
 import co.dazma.api.users.domain.User;
@@ -33,7 +34,7 @@ class RegisterUserInputAdapterTest {
     @BeforeEach
     void setUp() {
         useCase = mock(RegisterUserUseCase.class);
-        adapter = new RegisterUserInputAdapter(useCase, new RegisterUserMapper());
+        adapter = new RegisterUserInputAdapter(useCase, new RegisterUserMapper(() -> new PhoneRules("57", 10, "3")));
     }
 
     @Test

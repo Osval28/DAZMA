@@ -12,6 +12,8 @@ import co.dazma.api.users.services.input.dto.GetMyProfileOutputDto;
 import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
 import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
 import co.dazma.api.users.services.input.ports.GetMyProfileInputPort;
+import co.dazma.api.users.services.input.ports.GetPhoneRulesInputPort;
+import co.dazma.api.users.services.input.dto.PhoneRulesOutputDto;
 import co.dazma.api.users.services.input.ports.RegisterUserInputPort;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,13 +42,15 @@ class UserControllerTest {
 
     private RegisterUserInputPort registerUserInputPort;
     private GetMyProfileInputPort getMyProfileInputPort;
+    private GetPhoneRulesInputPort getPhoneRulesInputPort;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         registerUserInputPort = mock(RegisterUserInputPort.class);
         getMyProfileInputPort = mock(GetMyProfileInputPort.class);
-        UserController controller = new UserController(registerUserInputPort, getMyProfileInputPort);
+        getPhoneRulesInputPort = mock(GetPhoneRulesInputPort.class);
+        UserController controller = new UserController(registerUserInputPort, getMyProfileInputPort, getPhoneRulesInputPort);
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
@@ -66,6 +70,19 @@ class UserControllerTest {
     @AfterEach
     void clearSecurityContext() {
         SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void shouldExposeCurrentPhoneRulesWithoutCachingThem() throws Exception {
+        when(getPhoneRulesInputPort.execute()).thenReturn(new PhoneRulesOutputDto("57", 10, "3"));
+
+        mockMvc.perform(get("/users/api/v1/users/rules"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countryCode").value("57"))
+                .andExpect(jsonPath("$.nationalLength").value(10))
+                .andExpect(jsonPath("$.mobilePrefix").value("3"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header()
+                        .string(org.springframework.http.HttpHeaders.CACHE_CONTROL, "no-store"));
     }
 
     @Test

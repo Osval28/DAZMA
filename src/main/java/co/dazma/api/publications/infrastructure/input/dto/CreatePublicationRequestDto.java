@@ -1,6 +1,5 @@
 package co.dazma.api.publications.infrastructure.input.dto;
 
-import co.dazma.api.publications.domain.PublicationType;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;

@@ -11,5 +11,7 @@ public interface ParameterCatalog {
 
     long getBytes(ParameterKey key);
 
+    int getInt(ParameterKey key);
+
     Duration getDuration(ParameterKey key);
 }

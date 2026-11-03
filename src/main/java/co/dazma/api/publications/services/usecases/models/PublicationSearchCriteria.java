@@ -6,16 +6,14 @@ import co.dazma.api.shared.domain.Municipality;
 
 import java.util.Optional;
 
-public record PublicationSearchCriteria(Optional<Municipality> municipality, int page, int size) {
-
-    public static final int MAX_SIZE = 50;
+public record PublicationSearchCriteria(Optional<Municipality> municipality, int page, int size, int maximumSize) {
 
     public PublicationSearchCriteria {
         if (page < 0) {
             throw new InvalidPublicationException(PublicationErrorCode.PAGE_INVALID);
         }
-        if (size < 1 || size > MAX_SIZE) {
-            throw new InvalidPublicationException(PublicationErrorCode.PAGE_SIZE_INVALID, MAX_SIZE);
+        if (size < 1 || size > maximumSize) {
+            throw new InvalidPublicationException(PublicationErrorCode.PAGE_SIZE_INVALID, maximumSize);
         }
     }
 }

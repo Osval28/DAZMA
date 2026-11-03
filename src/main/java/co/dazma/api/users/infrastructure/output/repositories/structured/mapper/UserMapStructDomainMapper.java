@@ -25,15 +25,15 @@ public interface UserMapStructDomainMapper extends DomainMapper<UserEntity, User
     UserEntity toEntity(User domain);
 
     default String map(Name name) {
-        return name == null ? null : name.value();
+        return name.value();
     }
 
     default String map(Phone phone) {
-        return phone == null ? null : phone.number();
+        return phone.number();
     }
 
     default String map(Municipality municipality) {
-        return municipality == null ? null : municipality.code();
+        return municipality.code();
     }
 
     default String map(Email email) {

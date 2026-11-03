@@ -1,4 +1,4 @@
-import { PAGE_SIZE, type ListingQuery } from "@/lib/publications/listing-query";
+import type { ListingQuery } from "@/lib/publications/listing-query";
 import { apiJson } from "./http";
 
 export type PublicationType = "PURCHASE" | "EXCHANGE";
@@ -60,11 +60,23 @@ export type PhotoUploadAuthorization = {
   expiresAt: string;
 };
 
+export type PublicationRules = {
+  maximumPhotos: number;
+  maximumPageSize: number;
+  defaultPageSize: number;
+  allowedPhotoContentTypes: string[];
+  maximumPhotoBytes: number;
+};
+
 const PUBLICATIONS_PATH = "/publications/api/v1/publications";
 const PHOTO_AUTHORIZATIONS_PATH = "/publications/api/v1/photos/upload-authorizations";
 
 export function createPublication(input: CreatePublicationInput): Promise<CreatedPublication> {
   return apiJson<CreatedPublication>(PUBLICATIONS_PATH, { method: "POST", body: input });
+}
+
+export function getPublicationRules(): Promise<PublicationRules> {
+  return apiJson<PublicationRules>(`${PUBLICATIONS_PATH}/rules`);
 }
 
 export function authorizePhotoUpload(contentType: string, contentLength: number): Promise<PhotoUploadAuthorization> {
@@ -76,7 +88,7 @@ export function getPublication(id: string): Promise<PublicationDetail> {
 }
 
 export function listPublications({ municipality, page }: ListingQuery): Promise<PublicationPage> {
-  const parameters = new URLSearchParams({ page: String(page), size: String(PAGE_SIZE) });
+  const parameters = new URLSearchParams({ page: String(page) });
   if (municipality !== undefined) {
     parameters.set("municipality", municipality);
   }

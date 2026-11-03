@@ -1,5 +1,3 @@
-export const PAGE_SIZE = 20;
-
 export type ListingQuery = {
   municipality?: string;
   page: number;

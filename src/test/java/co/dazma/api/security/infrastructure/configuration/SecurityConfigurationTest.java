@@ -14,6 +14,7 @@ import co.dazma.api.users.infrastructure.input.controllers.UserController;
 import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
 import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
 import co.dazma.api.users.services.input.ports.GetMyProfileInputPort;
+import co.dazma.api.users.services.input.ports.GetPhoneRulesInputPort;
 import co.dazma.api.users.services.input.ports.RegisterUserInputPort;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
@@ -75,6 +76,9 @@ class SecurityConfigurationTest {
 
     @MockitoBean
     private GetMyProfileInputPort getMyProfileInputPort;
+
+    @MockitoBean
+    private GetPhoneRulesInputPort getPhoneRulesInputPort;
 
     @MockitoBean
     private AuthenticateIdentityInputPort authenticateIdentityInputPort;
@@ -218,6 +222,24 @@ class SecurityConfigurationTest {
     }
 
     @Test
+    void shouldAllowPublicationRulesWithoutAuthentication() throws Exception {
+        mockMvc.perform(get(SecurityConfiguration.PUBLIC_PUBLICATION_RULES_PATH))
+                .andExpect(status().isOk());
+
+        verifyNoInteractions(authenticateIdentityInputPort);
+    }
+
+    @Test
+    void shouldAllowPhoneRulesWithoutAuthentication() throws Exception {
+        when(getPhoneRulesInputPort.execute())
+                .thenReturn(new co.dazma.api.users.services.input.dto.PhoneRulesOutputDto("57", 10, "3"));
+        mockMvc.perform(get(SecurityConfiguration.PUBLIC_USER_RULES_PATH))
+                .andExpect(status().isOk());
+
+        verifyNoInteractions(authenticateIdentityInputPort);
+    }
+
+    @Test
     void shouldNotHideErrorDispatchesBehindAuthentication() throws Exception {
         mockMvc.perform(get("/error").with(request -> {
                     request.setDispatcherType(jakarta.servlet.DispatcherType.ERROR);
@@ -278,6 +300,11 @@ class SecurityConfigurationTest {
 
         @GetMapping(SecurityConfiguration.PUBLIC_PUBLICATION_LIST_PATH)
         String list() {
+            return "{}";
+        }
+
+        @GetMapping(SecurityConfiguration.PUBLIC_PUBLICATION_RULES_PATH)
+        String rules() {
             return "{}";
         }
 

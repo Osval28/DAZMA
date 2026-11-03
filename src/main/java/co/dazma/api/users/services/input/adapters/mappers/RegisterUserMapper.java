@@ -10,17 +10,24 @@ import co.dazma.api.users.domain.User;
 import co.dazma.api.users.domain.UserRegistration;
 import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
 import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
+import co.dazma.api.users.services.output.ports.PhoneRulesPort;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RegisterUserMapper
         implements InputMapper<RegisterUserInputDto, UserRegistration>, OutputMapper<User, RegisterUserOutputDto> {
 
+    private final PhoneRulesPort phoneRules;
+
+    public RegisterUserMapper(PhoneRulesPort phoneRules) {
+        this.phoneRules = phoneRules;
+    }
+
     @Override
     public UserRegistration toDomain(RegisterUserInputDto input) {
         return new UserRegistration(
                 new Name(input.name()),
-                new Phone(input.phone()),
+                Phone.fromInput(input.phone(), phoneRules.current()),
                 new Municipality(input.municipality()),
                 input.externalId(),
                 new Email(input.email())

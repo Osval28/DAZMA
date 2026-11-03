@@ -49,4 +49,15 @@ class PostgresPublicationOwnerRepositoryIntegrationTest {
 
         assertEquals(Optional.of(owner), ownerRepository.findByExternalId(externalId));
     }
+
+    @Test
+    void shouldTreatAnInjectionPayloadAsAnExactExternalId() {
+        UUID userId = UUID.randomUUID();
+        String externalId = "firebase-" + userId;
+        PublicationOwner owner = new PublicationOwner(userId, "Ana", externalId, PublicationOwnerState.ACTIVE);
+        ownerRepository.save(owner);
+
+        assertEquals(Optional.empty(), ownerRepository.findByExternalId("' OR '1'='1"));
+        assertEquals(Optional.of(owner), ownerRepository.findByExternalId(externalId));
+    }
 }
