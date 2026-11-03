@@ -40,7 +40,6 @@ public class PublicationPhotoUploadController {
                         request.contentLength()
                 )
         );
-
         return PublicationPhotoUploadAuthorizationResponseDto.fromModel(authorization);
     }
 }

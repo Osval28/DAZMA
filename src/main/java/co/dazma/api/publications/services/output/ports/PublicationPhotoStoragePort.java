@@ -19,16 +19,9 @@ public interface PublicationPhotoStoragePort {
             Duration validity
     );
 
-    /**
-     * Confirma que la fotografía fue subida y la mueve de la zona temporal a la definitiva.
-     * Devuelve vacío si el propietario nunca subió esa fotografía.
-     */
     Optional<StoredPublicationPhoto> promoteUploadedPhoto(UUID ownerId, UUID photoId);
 
     void discardPhotos(List<String> objectKeys);
 
-    /**
-     * Genera una URL temporal de solo lectura para una fotografía ya publicada.
-     */
     URI authorizeDownload(String objectKey, Duration validity);
 }

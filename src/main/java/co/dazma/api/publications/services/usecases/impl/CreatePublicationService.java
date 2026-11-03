@@ -59,7 +59,6 @@ public class CreatePublicationService implements CreatePublicationUseCase {
         if (!draft.ownerEmailVerified()) {
             throw new PublicationOwnerEmailNotVerifiedException();
         }
-
         if (!municipalityCatalog.exists(draft.municipality())) {
             throw new InvalidMunicipalityException(MunicipalityErrorCode.MUNICIPALITY_NOT_FOUND);
         }
@@ -69,11 +68,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
         List<String> promotedObjectKeys = new ArrayList<>();
         Publication savedPublication;
         try {
-            List<PublicationPhoto> photos = promotePhotos(
-                    ownerId,
-                    draft.photoIds(),
-                    promotedObjectKeys
-            );
+            List<PublicationPhoto> photos = promotePhotos(ownerId, draft.photoIds(), promotedObjectKeys);
 
             Publication publication = Publication.publish(
                     ownerId,
@@ -98,7 +93,6 @@ public class CreatePublicationService implements CreatePublicationUseCase {
                 .addKeyValue("publication.id", savedPublication.getId())
                 .addKeyValue("publication.status", savedPublication.getStatus().name())
                 .log("Publicación creada");
-
         return savedPublication;
     }
 

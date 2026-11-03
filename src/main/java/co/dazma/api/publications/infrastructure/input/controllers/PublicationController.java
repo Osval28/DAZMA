@@ -52,8 +52,7 @@ public class PublicationController {
     }
 
     @PostMapping
-    public ResponseEntity<CreatePublicationResponseDto> create(
-            @RequestBody @Valid CreatePublicationRequestDto request,
+    public ResponseEntity<CreatePublicationResponseDto> create(@RequestBody @Valid CreatePublicationRequestDto request,
             @AuthenticationPrincipal CurrentUser currentUser,
             UriComponentsBuilder uriBuilder
     ) {

@@ -9,8 +9,7 @@ import co.dazma.api.shared.services.input.mappers.OutputMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PhotoUploadMapper implements
-        InputMapper<AuthorizePublicationPhotoUploadInputDto, PhotoUploadRequest>,
+public class PhotoUploadMapper implements InputMapper<AuthorizePublicationPhotoUploadInputDto, PhotoUploadRequest>,
         OutputMapper<PhotoUploadGrant, AuthorizePublicationPhotoUploadOutputDto> {
 
     @Override
