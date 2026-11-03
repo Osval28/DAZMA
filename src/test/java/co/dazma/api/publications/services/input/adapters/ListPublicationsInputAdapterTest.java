@@ -5,9 +5,11 @@ import co.dazma.api.publications.domain.Name;
 import co.dazma.api.publications.domain.Price;
 import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.domain.PublicationPhoto;
+import co.dazma.api.publications.domain.PublicationRules;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.services.input.adapters.mappers.ListPublicationsMapper;
+import co.dazma.api.publications.services.output.ports.PublicationRulesPort;
 import co.dazma.api.publications.services.input.dto.ListPublicationsInputDto;
 import co.dazma.api.publications.services.input.dto.ListPublicationsOutputDto;
 import co.dazma.api.publications.services.usecases.contract.ListPublicationsUseCase;
@@ -41,13 +43,15 @@ class ListPublicationsInputAdapterTest {
     @BeforeEach
     void setUp() {
         useCase = mock(ListPublicationsUseCase.class);
-        adapter = new ListPublicationsInputAdapter(useCase, new ListPublicationsMapper());
+        PublicationRulesPort rules = mock(PublicationRulesPort.class);
+        when(rules.current()).thenReturn(new PublicationRules(5, 50, 20));
+        adapter = new ListPublicationsInputAdapter(useCase, new ListPublicationsMapper(rules));
         when(useCase.execute(any())).thenReturn(new PublicationSummaryPage(List.of(), 0, 20, false));
     }
 
     @Test
     void shouldFilterByMunicipalityWhenOneIsSent() {
-        adapter.execute(new ListPublicationsInputDto(Optional.of("05615"), 1, 5));
+        adapter.execute(new ListPublicationsInputDto(Optional.of("05615"), 1, Optional.of(5)));
 
         ArgumentCaptor<PublicationSearchCriteria> criteria = ArgumentCaptor.forClass(PublicationSearchCriteria.class);
         verify(useCase).execute(criteria.capture());
@@ -57,8 +61,18 @@ class ListPublicationsInputAdapterTest {
     }
 
     @Test
+    void shouldUseTheConfiguredDefaultWhenSizeIsOmitted() {
+        adapter.execute(new ListPublicationsInputDto(Optional.empty(), 0, Optional.empty()));
+
+        ArgumentCaptor<PublicationSearchCriteria> criteria = ArgumentCaptor.forClass(PublicationSearchCriteria.class);
+        verify(useCase).execute(criteria.capture());
+        assertEquals(20, criteria.getValue().size());
+        assertEquals(50, criteria.getValue().maximumSize());
+    }
+
+    @Test
     void shouldTreatABlankMunicipalityAsNoFilter() {
-        adapter.execute(new ListPublicationsInputDto(Optional.of("  "), 0, 20));
+        adapter.execute(new ListPublicationsInputDto(Optional.of("  "), 0, Optional.of(20)));
 
         ArgumentCaptor<PublicationSearchCriteria> criteria = ArgumentCaptor.forClass(PublicationSearchCriteria.class);
         verify(useCase).execute(criteria.capture());
@@ -89,7 +103,7 @@ class ListPublicationsInputAdapterTest {
                 true
         ));
 
-        ListPublicationsOutputDto output = adapter.execute(new ListPublicationsInputDto(Optional.empty(), 3, 20));
+        ListPublicationsOutputDto output = adapter.execute(new ListPublicationsInputDto(Optional.empty(), 3, Optional.of(20)));
 
         assertEquals(3, output.page());
         assertEquals(20, output.size());

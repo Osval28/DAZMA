@@ -4,14 +4,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api/errors";
 import { renderWithIntl, t } from "@/test/intl";
 
-const { replace, registerUser, listMunicipalities } = vi.hoisted(() => ({
+const { replace, registerUser, getPhoneRules, listMunicipalities } = vi.hoisted(() => ({
   replace: vi.fn(),
   registerUser: vi.fn(),
+  getPhoneRules: vi.fn(),
   listMunicipalities: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }) }));
-vi.mock("@/lib/api/users", () => ({ registerUser }));
+vi.mock("@/lib/api/users", () => ({ registerUser, getPhoneRules }));
 vi.mock("@/lib/api/municipalities", () => ({ listMunicipalities }));
 
 import { ProfileForm } from "./ProfileForm";
@@ -27,6 +28,7 @@ describe("ProfileForm", () => {
   beforeEach(() => {
     replace.mockReset();
     registerUser.mockReset();
+    getPhoneRules.mockResolvedValue({ countryCode: "57", nationalLength: 10, mobilePrefix: "3" });
     listMunicipalities.mockResolvedValue([{ code: "05615", name: "Rionegro", department: "Antioquia" }]);
   });
 

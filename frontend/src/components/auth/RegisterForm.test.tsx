@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => {
     signInWithGoogle: vi.fn(),
     isPopupDismissed: vi.fn(),
     registerUser: vi.fn(),
+    getPhoneRules: vi.fn(),
     listMunicipalities: vi.fn(),
   };
 });
@@ -25,7 +26,7 @@ vi.mock("@/lib/auth/sign-in", () => ({
   signInWithGoogle: mocks.signInWithGoogle,
   isPopupDismissed: mocks.isPopupDismissed,
 }));
-vi.mock("@/lib/api/users", () => ({ registerUser: mocks.registerUser }));
+vi.mock("@/lib/api/users", () => ({ registerUser: mocks.registerUser, getPhoneRules: mocks.getPhoneRules }));
 vi.mock("@/lib/api/municipalities", () => ({ listMunicipalities: mocks.listMunicipalities }));
 
 import { RegisterForm } from "./RegisterForm";
@@ -47,6 +48,7 @@ describe("RegisterForm", () => {
     mocks.replace.mockReset();
     mocks.createAccount.mockReset();
     mocks.registerUser.mockReset();
+    mocks.getPhoneRules.mockResolvedValue({ countryCode: "57", nationalLength: 10, mobilePrefix: "3" });
     mocks.signInWithGoogle.mockReset();
     mocks.isPopupDismissed.mockReturnValue(false);
     mocks.listMunicipalities.mockResolvedValue([{ code: "05615", name: "Rionegro", department: "Antioquia" }]);

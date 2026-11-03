@@ -79,6 +79,21 @@ describe("usePhotoDrafts", () => {
     await waitFor(() => expect(result.current.uploadingCount).toBe(0));
   });
 
+  it("applies the rules received from the backend before uploading", async () => {
+    uploadPhoto.mockResolvedValue("photo");
+    const rules = {
+      maximumPhotos: 2, maximumPageSize: 50, defaultPageSize: 20,
+      allowedPhotoContentTypes: ["image/png"], maximumPhotoBytes: 2,
+    };
+    const { result } = renderHook(() => usePhotoDrafts(rules));
+
+    act(() => result.current.add([image("one.png"), image("two.png"), image("three.png")]));
+
+    expect(result.current.photos).toHaveLength(2);
+    expect(result.current.issue).toBe("Publications.create.errors.photosLimitReached");
+    expect(uploadPhoto).toHaveBeenCalledTimes(2);
+  });
+
   it("clears the previous issue when new files are added", async () => {
     uploadPhoto.mockRejectedValueOnce(new ApiError(400, "PUBLICATION_PHOTO_CONTENT_TYPE_NOT_ALLOWED")).mockResolvedValueOnce("photo-1");
     const { result } = renderHook(() => usePhotoDrafts());

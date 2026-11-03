@@ -108,11 +108,14 @@ describe("PhotoPicker", () => {
     expect(click).toHaveBeenCalled();
   });
 
-  it("leaves photo count validation to the backend", () => {
+  it("disables adding photos when the configured limit is reached", () => {
     const photos = Array.from({ length: 5 }, (_, index) => photo(`p${index}`, { status: "uploaded", photoId: `id${index}` }));
-    renderWithIntl(<PhotoPicker drafts={draftsWith(photos)} disabled={false} />);
+    renderWithIntl(<PhotoPicker drafts={draftsWith(photos)} disabled={false} rules={{
+      maximumPhotos: 5, maximumPageSize: 50, defaultPageSize: 20,
+      allowedPhotoContentTypes: ["image/png"], maximumPhotoBytes: 5242880,
+    }} />);
 
-    expect(screen.getByRole("button", { name: t("Publications.create.photos.add") })).toBeEnabled();
+    expect(screen.getByRole("button", { name: t("Publications.create.photos.add") })).toBeDisabled();
   });
 
   it("disables every action while the form is submitting", () => {

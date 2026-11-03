@@ -122,7 +122,8 @@ class PostgresPublicationRepositoryIntegrationTest {
                 new Municipality("05615"),
                 List.of(new PublicationPhoto(UUID.randomUUID(), objectKey, 0)),
                 Instant.parse("2026-10-18T12:00:00Z"),
-                new Price(850_000)
+                new Price(850_000),
+                5
         );
     }
 
@@ -136,7 +137,8 @@ class PostgresPublicationRepositoryIntegrationTest {
                 new Municipality(municipalityCode),
                 List.of(new PublicationPhoto(UUID.randomUUID(), objectKey, 0)),
                 Instant.parse(createdAt),
-                new Price(850_000)
+                new Price(850_000),
+                5
         );
     }
 }

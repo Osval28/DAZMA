@@ -1,3 +1,5 @@
+import type { PhoneRules } from "@/lib/api/users";
+
 export type ValidationIssue =
   | "EMAIL_INVALID"
   | "PASSWORD_REQUIRED"
@@ -15,8 +17,8 @@ export type ProfileInput = {
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_SEPARATORS = /[\s\-()+]/g;
-const COLOMBIAN_MOBILE_PATTERN = /^3\d{9}$/;
+const PHONE_SEPARATORS = /[\s\-().+]/g;
+const DIGITS_ONLY = /^[0-9]+$/;
 const MINIMUM_PASSWORD_LENGTH = 8;
 const MAXIMUM_NAME_LENGTH = 255;
 
@@ -39,14 +41,17 @@ export function validateNewPassword(password: string, confirmation: string): Val
   return password === confirmation ? undefined : "PASSWORD_MISMATCH";
 }
 
-export function validateProfile({ name, phone, municipality }: ProfileInput): ValidationIssue | undefined {
+export function validateProfile({ name, phone, municipality }: ProfileInput, rules: PhoneRules): ValidationIssue | undefined {
   if (name.length === 0) {
     return "NAME_REQUIRED";
   }
   if (name.length > MAXIMUM_NAME_LENGTH) {
     return "NAME_TOO_LONG";
   }
-  if (!COLOMBIAN_MOBILE_PATTERN.test(phone)) {
+  const national = phone.length === rules.countryCode.length + rules.nationalLength && phone.startsWith(rules.countryCode)
+    ? phone.slice(rules.countryCode.length)
+    : phone;
+  if (national.length !== rules.nationalLength || !national.startsWith(rules.mobilePrefix) || !DIGITS_ONLY.test(national)) {
     return "PHONE_INVALID";
   }
   return municipality.length === 0 ? "MUNICIPALITY_REQUIRED" : undefined;

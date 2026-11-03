@@ -10,13 +10,14 @@ const mocks = vi.hoisted(() => {
     replace,
     router: { replace },
     createPublication: vi.fn(),
+    getPublicationRules: vi.fn(),
     listMunicipalities: vi.fn(),
     drafts: { photos: [], uploadedIds: ["photo-1"], uploadingCount: 0, failedCount: 0, issue: undefined },
   };
 });
 
 vi.mock("next/navigation", () => ({ useRouter: () => mocks.router }));
-vi.mock("@/lib/api/publications", () => ({ createPublication: mocks.createPublication }));
+vi.mock("@/lib/api/publications", () => ({ createPublication: mocks.createPublication, getPublicationRules: mocks.getPublicationRules }));
 vi.mock("@/lib/api/municipalities", () => ({ listMunicipalities: mocks.listMunicipalities }));
 vi.mock("./usePhotoDrafts", () => ({ usePhotoDrafts: () => mocks.drafts }));
 vi.mock("./PhotoPicker", () => ({ PhotoPicker: () => <p>selector de fotos</p> }));
@@ -35,6 +36,13 @@ describe("PublicationForm", () => {
   beforeEach(() => {
     mocks.replace.mockReset();
     mocks.createPublication.mockReset();
+    mocks.getPublicationRules.mockResolvedValue({
+      maximumPhotos: 5,
+      maximumPageSize: 50,
+      defaultPageSize: 20,
+      allowedPhotoContentTypes: ["image/png", "image/jpeg", "image/webp"],
+      maximumPhotoBytes: 5242880,
+    });
     mocks.drafts.uploadedIds = ["photo-1"];
     mocks.drafts.uploadingCount = 0;
     mocks.drafts.failedCount = 0;

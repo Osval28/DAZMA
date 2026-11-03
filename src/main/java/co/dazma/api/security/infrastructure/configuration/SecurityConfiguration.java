@@ -28,6 +28,8 @@ public class SecurityConfiguration {
     static final String API_PATH_PATTERN = "/*/api/v1/**";
     static final String PUBLIC_PUBLICATION_DETAIL_PATH = "/publications/api/v1/publications/{publicationId}";
     static final String PUBLIC_PUBLICATION_LIST_PATH = "/publications/api/v1/publications";
+    static final String PUBLIC_PUBLICATION_RULES_PATH = "/publications/api/v1/publications/rules";
+    static final String PUBLIC_USER_RULES_PATH = "/users/api/v1/users/rules";
     static final String PUBLIC_MUNICIPALITY_LIST_PATH = "/shared/api/v1/municipalities";
 
     @Bean
@@ -62,6 +64,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, SessionController.PATH).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_PUBLICATION_DETAIL_PATH).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_PUBLICATION_LIST_PATH).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_PUBLICATION_RULES_PATH).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_USER_RULES_PATH).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_MUNICIPALITY_LIST_PATH).permitAll()
                         .requestMatchers(API_PATH_PATTERN).authenticated()
                         .anyRequest().denyAll()

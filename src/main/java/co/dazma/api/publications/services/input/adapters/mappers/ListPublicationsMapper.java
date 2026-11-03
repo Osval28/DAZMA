@@ -4,6 +4,7 @@ import co.dazma.api.publications.domain.Publication;
 import co.dazma.api.publications.services.input.dto.ListPublicationsInputDto;
 import co.dazma.api.publications.services.input.dto.ListPublicationsOutputDto;
 import co.dazma.api.publications.services.input.dto.PublicationSummaryOutputDto;
+import co.dazma.api.publications.services.output.ports.PublicationRulesPort;
 import co.dazma.api.publications.services.usecases.models.PublicationSearchCriteria;
 import co.dazma.api.publications.services.usecases.models.PublicationSummary;
 import co.dazma.api.publications.services.usecases.models.PublicationSummaryPage;
@@ -17,14 +18,22 @@ public class ListPublicationsMapper implements
         InputMapper<ListPublicationsInputDto, PublicationSearchCriteria>,
         OutputMapper<PublicationSummaryPage, ListPublicationsOutputDto> {
 
+    private final PublicationRulesPort publicationRules;
+
+    public ListPublicationsMapper(PublicationRulesPort publicationRules) {
+        this.publicationRules = publicationRules;
+    }
+
     @Override
     public PublicationSearchCriteria toDomain(ListPublicationsInputDto input) {
+        var rules = publicationRules.current();
         return new PublicationSearchCriteria(
                 input.municipality()
                         .filter(code -> !code.isBlank())
                         .map(Municipality::new),
                 input.page(),
-                input.size()
+                input.size().orElse(rules.defaultPageSize()),
+                rules.maximumPageSize()
         );
     }
 

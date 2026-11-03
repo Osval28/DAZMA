@@ -6,6 +6,7 @@ import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
+import co.dazma.api.publications.services.output.ports.PublicationRulesPort;
 import co.dazma.api.publications.services.usecases.contract.CreatePublicationUseCase;
 import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
 import co.dazma.api.shared.domain.errors.MunicipalityErrorCode;
@@ -30,6 +31,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
     private final PublicationRepositoryPort publicationRepository;
     private final PublicationPhotoStoragePort photoStorage;
     private final PublicationEventsPort publicationEvents;
+    private final PublicationRulesPort publicationRules;
     private final TransactionOperations transaction;
     private final Clock clock;
 
@@ -39,6 +41,7 @@ public class CreatePublicationService implements CreatePublicationUseCase {
             PublicationRepositoryPort publicationRepository,
             PublicationPhotoStoragePort photoStorage,
             PublicationEventsPort publicationEvents,
+            PublicationRulesPort publicationRules,
             TransactionOperations transaction,
             Clock clock
     ) {
@@ -47,14 +50,16 @@ public class CreatePublicationService implements CreatePublicationUseCase {
         this.publicationRepository = publicationRepository;
         this.photoStorage = photoStorage;
         this.publicationEvents = publicationEvents;
+        this.publicationRules = publicationRules;
         this.transaction = transaction;
         this.clock = clock;
     }
 
     @Override
     public Publication execute(PublicationDraft draft) {
-        if (draft.photoIds().size() > Publication.MAX_PHOTOS) {
-            throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_LIMIT_EXCEEDED, Publication.MAX_PHOTOS);
+        int maximumPhotos = publicationRules.current().maximumPhotos();
+        if (draft.photoIds().size() > maximumPhotos) {
+            throw new InvalidPublicationException(PublicationErrorCode.PHOTOS_LIMIT_EXCEEDED, maximumPhotos);
         }
         if (!draft.ownerEmailVerified()) {
             throw new PublicationOwnerEmailNotVerifiedException();
@@ -84,7 +89,8 @@ public class CreatePublicationService implements CreatePublicationUseCase {
                     draft.municipality(),
                     photos,
                     clock.instant(),
-                    draft.price()
+                    draft.price(),
+                    maximumPhotos
             );
 
             savedPublication = transaction.execute(status -> saveAndAnnounce(publication));

@@ -17,10 +17,20 @@ export type RegisterUserInput = {
   municipality: string;
 };
 
+export type PhoneRules = {
+  countryCode: string;
+  nationalLength: number;
+  mobilePrefix: string;
+};
+
 const USERS_PATH = "/users/api/v1/users";
 
 export function getMyProfile(): Promise<MyProfile> {
   return apiJson<MyProfile>(`${USERS_PATH}/me`);
+}
+
+export function getPhoneRules(): Promise<PhoneRules> {
+  return apiJson<PhoneRules>(`${USERS_PATH}/rules`);
 }
 
 export function registerUser(input: RegisterUserInput): Promise<void> {

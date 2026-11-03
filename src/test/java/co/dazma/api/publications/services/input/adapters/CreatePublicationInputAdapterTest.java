@@ -62,7 +62,8 @@ class CreatePublicationInputAdapterTest {
                 new Municipality("05615"),
                 List.of(new PublicationPhoto(photoId, "publications/photo-0.jpg", 0)),
                 NOW,
-                new Price(900_000)
+                new Price(900_000),
+                5
         );
         when(useCase.execute(expectedDraft)).thenReturn(created);
 

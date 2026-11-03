@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { AuthErrorKey } from "@/i18n/message-keys";
-import { registerUser } from "@/lib/api/users";
+import { getPhoneRules, registerUser, type PhoneRules } from "@/lib/api/users";
 import { errorKey, validationIssueKey } from "@/lib/auth/errors";
 import { readProfileInput } from "@/lib/auth/profile-input";
 import { ACCOUNT_PATH, HOME_PATH, createAccount } from "@/lib/auth/sign-in";
@@ -22,6 +22,15 @@ export function RegisterForm() {
   const router = useRouter();
   const [failure, setFailure] = useState<AuthErrorKey>();
   const [submitting, setSubmitting] = useState(false);
+  const [phoneRules, setPhoneRules] = useState<PhoneRules>();
+
+  useEffect(() => {
+    let active = true;
+    getPhoneRules()
+      .then((rules) => { if (active) setPhoneRules(rules); })
+      .catch((error) => { if (active) setFailure(errorKey(error)); });
+    return () => { active = false; };
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,7 +40,9 @@ export function RegisterForm() {
     const confirmation = String(form.get("confirmPassword"));
     const profile = readProfileInput(form);
 
-    const issue = validateEmail(email) ?? validateNewPassword(password, confirmation) ?? validateProfile(profile);
+    if (phoneRules === undefined) return;
+
+    const issue = validateEmail(email) ?? validateNewPassword(password, confirmation) ?? validateProfile(profile, phoneRules);
     if (issue !== undefined) {
       setFailure(validationIssueKey(issue));
       return;
@@ -62,7 +73,7 @@ export function RegisterForm() {
       <PasswordField id="register-password" name="password" label={t("Auth.register.passwordLabel")} placeholder={t("Auth.register.passwordPlaceholder")} autoComplete="new-password" />
       <PasswordField id="register-confirm-password" name="confirmPassword" label={t("Auth.register.confirmPasswordLabel")} placeholder={t("Auth.register.confirmPasswordPlaceholder")} autoComplete="new-password" />
       <ProfileFields idPrefix="register" />
-      <Button type="submit" disabled={submitting}>
+      <Button type="submit" disabled={submitting || phoneRules === undefined}>
         {submitting ? t("Auth.register.submitting") : t("Auth.register.submit")}
       </Button>
       <GoogleButton

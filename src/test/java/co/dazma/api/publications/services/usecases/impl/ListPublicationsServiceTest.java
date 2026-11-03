@@ -60,7 +60,7 @@ class ListPublicationsServiceTest {
         when(publicationRepository.findPublished(municipality, 2, 10))
                 .thenReturn(new PublishedPublicationsSlice(List.of(), false));
 
-        PublicationSummaryPage page = service.execute(new PublicationSearchCriteria(municipality, 2, 10));
+        PublicationSummaryPage page = service.execute(new PublicationSearchCriteria(municipality, 2, 10, 50));
 
         verify(publicationRepository).findPublished(municipality, 2, 10);
         assertEquals(2, page.page());
@@ -78,7 +78,7 @@ class ListPublicationsServiceTest {
         when(publicationRepository.findPublished(Optional.empty(), 0, 20))
                 .thenReturn(new PublishedPublicationsSlice(List.of(publication), true));
 
-        PublicationSummaryPage page = service.execute(new PublicationSearchCriteria(Optional.empty(), 0, 20));
+        PublicationSummaryPage page = service.execute(new PublicationSearchCriteria(Optional.empty(), 0, 20, 50));
 
         assertEquals(1, page.items().size());
         assertSame(publication, page.items().get(0).publication());
@@ -97,7 +97,7 @@ class ListPublicationsServiceTest {
                         false
                 ));
 
-        PublicationSummaryPage page = service.execute(new PublicationSearchCriteria(Optional.empty(), 0, 20));
+        PublicationSummaryPage page = service.execute(new PublicationSearchCriteria(Optional.empty(), 0, 20, 50));
 
         assertFalse(page.hasNext());
     }

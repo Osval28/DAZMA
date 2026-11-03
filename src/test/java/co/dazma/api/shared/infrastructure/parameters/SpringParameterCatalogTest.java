@@ -16,6 +16,7 @@ class SpringParameterCatalogTest {
     private static final ParameterKey TYPES = () -> "test.types";
     private static final ParameterKey SIZE = () -> "test.size";
     private static final ParameterKey VALIDITY = () -> "test.validity";
+    private static final ParameterKey COUNT = () -> "test.count";
     private static final ParameterKey MISSING = () -> "test.missing";
 
     private final SpringParameterCatalog catalog = new SpringParameterCatalog(environment());
@@ -25,6 +26,18 @@ class SpringParameterCatalogTest {
         assertEquals(Set.of("image/jpeg", "image/png"), catalog.getTextSet(TYPES));
         assertEquals(5L * 1024 * 1024, catalog.getBytes(SIZE));
         assertEquals(Duration.ofMinutes(5), catalog.getDuration(VALIDITY));
+        assertEquals(5, catalog.getInt(COUNT));
+    }
+
+    @Test
+    void shouldReadTheUpdatedEnvironmentValue() {
+        MockEnvironment environment = environment();
+        SpringParameterCatalog changingCatalog = new SpringParameterCatalog(environment);
+        assertEquals(5, changingCatalog.getInt(COUNT));
+
+        environment.withProperty("test.count", "7");
+
+        assertEquals(7, changingCatalog.getInt(COUNT));
     }
 
     @Test
@@ -36,6 +49,7 @@ class SpringParameterCatalogTest {
         MockEnvironment environment = new MockEnvironment()
                 .withProperty("test.types", "image/jpeg, image/png")
                 .withProperty("test.size", "5MB")
+                .withProperty("test.count", "5")
                 .withProperty("test.validity", "5m");
         environment.setConversionService(new ApplicationConversionService());
         return environment;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PAGE_SIZE, listingHref, parseListingQuery } from "./listing-query";
+import { listingHref, parseListingQuery } from "./listing-query";
 
 describe("parseListingQuery", () => {
   it("uses the first page and no filter by default", () => {
@@ -25,9 +25,6 @@ describe("parseListingQuery", () => {
     expect(parseListingQuery({ page }).page).toBe(0);
   });
 
-  it("exposes the page size", () => {
-    expect(PAGE_SIZE).toBe(20);
-  });
 });
 
 describe("listingHref", () => {

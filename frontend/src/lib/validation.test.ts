@@ -43,25 +43,32 @@ describe("validateNewPassword", () => {
 
 describe("validateProfile", () => {
   const valid = { name: "Ana", phone: "3001234567", municipality: "05615" };
+  const rules = { countryCode: "57", nationalLength: 10, mobilePrefix: "3" };
 
   it("accepts a complete profile", () => {
-    expect(validateProfile(valid)).toBeUndefined();
+    expect(validateProfile(valid, rules)).toBeUndefined();
   });
 
   it("requires a name", () => {
-    expect(validateProfile({ ...valid, name: "" })).toBe("NAME_REQUIRED");
+    expect(validateProfile({ ...valid, name: "" }, rules)).toBe("NAME_REQUIRED");
   });
 
   it("limits the name length", () => {
-    expect(validateProfile({ ...valid, name: "x".repeat(255) })).toBeUndefined();
-    expect(validateProfile({ ...valid, name: "x".repeat(256) })).toBe("NAME_TOO_LONG");
+    expect(validateProfile({ ...valid, name: "x".repeat(255) }, rules)).toBeUndefined();
+    expect(validateProfile({ ...valid, name: "x".repeat(256) }, rules)).toBe("NAME_TOO_LONG");
   });
 
   it.each(["", "2001234567", "300123456", "30012345678", "abcdefghij"])("rejects the phone %j", (phone) => {
-    expect(validateProfile({ ...valid, phone })).toBe("PHONE_INVALID");
+    expect(validateProfile({ ...valid, phone }, rules)).toBe("PHONE_INVALID");
   });
 
   it("requires a municipality", () => {
-    expect(validateProfile({ ...valid, municipality: "" })).toBe("MUNICIPALITY_REQUIRED");
+    expect(validateProfile({ ...valid, municipality: "" }, rules)).toBe("MUNICIPALITY_REQUIRED");
+  });
+
+  it("uses changed rules and accepts a configured international prefix", () => {
+    const changed = { countryCode: "58", nationalLength: 9, mobilePrefix: "4" };
+    expect(validateProfile({ ...valid, phone: "58400123456" }, changed)).toBeUndefined();
+    expect(validateProfile(valid, changed)).toBe("PHONE_INVALID");
   });
 });

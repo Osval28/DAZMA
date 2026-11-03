@@ -4,15 +4,17 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import type { ChangeEvent } from "react";
+import type { PublicationRules } from "@/lib/api/publications";
 import { Button } from "@/components/ui/Button";
 import type { PhotoDrafts } from "./usePhotoDrafts";
 
 type PhotoPickerProps = {
   drafts: PhotoDrafts;
   disabled: boolean;
+  rules?: PublicationRules;
 };
 
-export function PhotoPicker({ drafts, disabled }: PhotoPickerProps) {
+export function PhotoPicker({ drafts, disabled, rules }: PhotoPickerProps) {
   const t = useTranslations();
   const input = useRef<HTMLInputElement>(null);
   const { photos } = drafts;
@@ -26,7 +28,7 @@ export function PhotoPicker({ drafts, disabled }: PhotoPickerProps) {
     <div className="photo-picker">
       <div className="photo-picker__header">
         <p className="photo-picker__hint">{t("Publications.create.photos.hint")}</p>
-        <span className="photo-picker__counter">{photos.length}</span>
+        <span className="photo-picker__counter">{rules === undefined ? photos.length : `${photos.length}/${rules.maximumPhotos}`}</span>
       </div>
       {drafts.issue !== undefined && (
         <p className="photo-picker__issue" role="alert">
@@ -60,8 +62,8 @@ export function PhotoPicker({ drafts, disabled }: PhotoPickerProps) {
           </li>
         ))}
       </ul>
-      <input ref={input} type="file" accept="image/*" multiple hidden onChange={handleChange} />
-      <Button variant="secondary" onClick={() => input.current?.click()} disabled={disabled}>
+      <input ref={input} type="file" accept={rules?.allowedPhotoContentTypes.join(",") ?? "image/*"} multiple hidden onChange={handleChange} />
+      <Button variant="secondary" onClick={() => input.current?.click()} disabled={disabled || (rules !== undefined && photos.length >= rules.maximumPhotos)}>
         {t("Publications.create.photos.add")}
       </Button>
     </div>

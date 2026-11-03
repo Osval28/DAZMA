@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("./http", () => ({ apiJson: vi.fn() }));
 
 import { apiJson } from "./http";
-import { authorizePhotoUpload, createPublication, getPublication, listPublications } from "./publications";
+import { authorizePhotoUpload, createPublication, getPublication, getPublicationRules, listPublications } from "./publications";
 
 describe("publications API", () => {
   it("creates a publication", async () => {
@@ -36,15 +36,20 @@ describe("publications API", () => {
     expect(apiJson).toHaveBeenCalledWith("/publications/api/v1/publications/a%2Fb");
   });
 
+  it("reads publication rules from the backend", async () => {
+    await getPublicationRules();
+    expect(apiJson).toHaveBeenCalledWith("/publications/api/v1/publications/rules");
+  });
+
   it("lists a page without municipality filter", async () => {
     await listPublications({ page: 2 });
 
-    expect(apiJson).toHaveBeenCalledWith("/publications/api/v1/publications?page=2&size=20");
+    expect(apiJson).toHaveBeenCalledWith("/publications/api/v1/publications?page=2");
   });
 
   it("lists a page filtered by municipality", async () => {
     await listPublications({ municipality: "05615", page: 0 });
 
-    expect(apiJson).toHaveBeenCalledWith("/publications/api/v1/publications?page=0&size=20&municipality=05615");
+    expect(apiJson).toHaveBeenCalledWith("/publications/api/v1/publications?page=0&municipality=05615");
   });
 });
