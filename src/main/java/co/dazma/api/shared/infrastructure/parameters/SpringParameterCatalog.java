@@ -3,6 +3,7 @@ package co.dazma.api.shared.infrastructure.parameters;
 import co.dazma.api.shared.services.output.ports.ParameterCatalog;
 import co.dazma.api.shared.services.output.ports.ParameterKey;
 import org.springframework.core.env.Environment;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@RefreshScope
 public class SpringParameterCatalog implements ParameterCatalog {
 
     private final Environment environment;
@@ -35,6 +37,11 @@ public class SpringParameterCatalog implements ParameterCatalog {
     @Override
     public long getBytes(ParameterKey key) {
         return environment.getRequiredProperty(key.key(), DataSize.class).toBytes();
+    }
+
+    @Override
+    public int getInt(ParameterKey key) {
+        return environment.getRequiredProperty(key.key(), Integer.class);
     }
 
     @Override

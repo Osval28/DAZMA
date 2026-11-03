@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { ErrorMessageKey } from "@/i18n/message-keys";
-import { createPublication, type PublicationType } from "@/lib/api/publications";
+import { createPublication, getPublicationRules, type PublicationRules, type PublicationType } from "@/lib/api/publications";
 import { MAXIMUM_DESCRIPTION_LENGTH, MAXIMUM_NAME_LENGTH, parsePrice, validateDraft } from "@/lib/publications/draft-validation";
 import { draftIssueKey, publicationErrorKey } from "@/lib/publications/errors";
 import { publicationPath } from "@/lib/publications/paths";
@@ -23,10 +23,23 @@ export function PublicationForm() {
   const t = useTranslations("Publications.create");
   const translate = useTranslations();
   const router = useRouter();
-  const drafts = usePhotoDrafts();
+  const [rules, setRules] = useState<PublicationRules>();
+  const drafts = usePhotoDrafts(rules);
   const [type, setType] = useState<PublicationType>("PURCHASE");
   const [failure, setFailure] = useState<ErrorMessageKey>();
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getPublicationRules()
+      .then((loaded) => {
+        if (active) setRules(loaded);
+      })
+      .catch((error) => {
+        if (active) setFailure(publicationErrorKey(error));
+      });
+    return () => { active = false; };
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -68,7 +81,7 @@ export function PublicationForm() {
       {failure !== undefined && <Alert>{translate(failure)}</Alert>}
       <section className="form-section">
         <h2 className="form-section__title">{t("sections.photos")}</h2>
-        <PhotoPicker drafts={drafts} disabled={submitting} />
+        <PhotoPicker drafts={drafts} rules={rules} disabled={submitting || rules === undefined} />
       </section>
       <section className="form-section">
         <h2 className="form-section__title">{t("sections.offer")}</h2>
@@ -117,7 +130,7 @@ export function PublicationForm() {
         </div>
         <p className="form__hint">{t("priceHint")}</p>
       </section>
-      <Button type="submit" disabled={submitting}>
+      <Button type="submit" disabled={submitting || rules === undefined}>
         {submitting ? t("submitting") : t("submit")}
       </Button>
     </form>

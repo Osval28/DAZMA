@@ -15,6 +15,8 @@ import co.dazma.api.publications.domain.PublicationNotFoundException;
 import co.dazma.api.publications.services.input.ports.CreatePublicationInputPort;
 import co.dazma.api.publications.services.input.ports.GetPublicationInputPort;
 import co.dazma.api.publications.services.input.ports.ListPublicationsInputPort;
+import co.dazma.api.publications.services.input.dto.PublicationRulesOutputDto;
+import co.dazma.api.publications.services.input.ports.GetPublicationRulesInputPort;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;
@@ -60,6 +62,8 @@ class PublicationControllerTest {
         createPublicationInputPort = mock(CreatePublicationInputPort.class);
         getPublicationInputPort = mock(GetPublicationInputPort.class);
         listPublicationsInputPort = mock(ListPublicationsInputPort.class);
+        GetPublicationRulesInputPort rulesInputPort = mock(GetPublicationRulesInputPort.class);
+        when(rulesInputPort.execute()).thenReturn(new PublicationRulesOutputDto(5, 50, 20, java.util.Set.of("image/png"), 5242880));
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
@@ -72,7 +76,8 @@ class PublicationControllerTest {
                                 createPublicationInputPort,
                                 getPublicationInputPort,
                                 listPublicationsInputPort,
-                                Mappers.getMapper(PublicationWebMapper.class)
+                                Mappers.getMapper(PublicationWebMapper.class),
+                                rulesInputPort
                         )
                 )
                 .setControllerAdvice(exceptionHandler)
@@ -84,6 +89,15 @@ class PublicationControllerTest {
     @AfterEach
     void clearSecurityContext() {
         SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    void shouldExposeCurrentPublicationRules() throws Exception {
+        mockMvc.perform(get("/publications/api/v1/publications/rules"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.maximumPhotos").value(5))
+                .andExpect(jsonPath("$.defaultPageSize").value(20))
+                .andExpect(jsonPath("$.allowedPhotoContentTypes[0]").value("image/png"));
     }
 
     @Test
@@ -232,7 +246,7 @@ class PublicationControllerTest {
 
     @Test
     void shouldListPublicationsWithDefaultPagingWhenNoParametersAreSent() throws Exception {
-        when(listPublicationsInputPort.execute(new ListPublicationsInputDto(Optional.empty(), 0, 20)))
+        when(listPublicationsInputPort.execute(new ListPublicationsInputDto(Optional.empty(), 0, Optional.empty())))
                 .thenReturn(new ListPublicationsOutputDto(List.of(), 0, 20, false));
 
         mockMvc.perform(get("/publications/api/v1/publications"))
@@ -246,7 +260,7 @@ class PublicationControllerTest {
     @Test
     void shouldListPublicationsOfAMunicipalityWithoutExposingTheSeller() throws Exception {
         UUID publicationId = UUID.randomUUID();
-        when(listPublicationsInputPort.execute(new ListPublicationsInputDto(Optional.of("05615"), 1, 5)))
+        when(listPublicationsInputPort.execute(new ListPublicationsInputDto(Optional.of("05615"), 1, Optional.of(5))))
                 .thenReturn(new ListPublicationsOutputDto(
                         List.of(new PublicationSummaryOutputDto(
                                 publicationId,
@@ -281,7 +295,7 @@ class PublicationControllerTest {
 
     @Test
     void shouldRejectAPageSizeAboveTheMaximum() throws Exception {
-        when(listPublicationsInputPort.execute(new ListPublicationsInputDto(Optional.empty(), 0, 500)))
+        when(listPublicationsInputPort.execute(new ListPublicationsInputDto(Optional.empty(), 0, Optional.of(500))))
                 .thenThrow(new co.dazma.api.publications.domain.InvalidPublicationException(
                         co.dazma.api.publications.domain.PublicationErrorCode.PAGE_SIZE_INVALID, 50));
 

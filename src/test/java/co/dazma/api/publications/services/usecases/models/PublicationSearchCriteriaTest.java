@@ -11,16 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PublicationSearchCriteriaTest {
 
+    private static final int MAX_SIZE = 50;
+
     @Test
     void shouldAcceptTheFirstPageAndTheMaximumSize() {
-        assertDoesNotThrow(() -> new PublicationSearchCriteria(Optional.empty(), 0, PublicationSearchCriteria.MAX_SIZE));
+        assertDoesNotThrow(() -> new PublicationSearchCriteria(Optional.empty(), 0, MAX_SIZE, MAX_SIZE));
     }
 
     @Test
     void shouldRejectANegativePage() {
         InvalidPublicationException exception = assertThrows(
                 InvalidPublicationException.class,
-                () -> new PublicationSearchCriteria(Optional.empty(), -1, 20)
+                () -> new PublicationSearchCriteria(Optional.empty(), -1, 20, MAX_SIZE)
         );
 
         assertEquals("PUBLICATION_PAGE_INVALID", exception.code());
@@ -28,14 +30,14 @@ class PublicationSearchCriteriaTest {
 
     @Test
     void shouldRejectASizeOutsideTheAllowedRange() {
-        for (int invalidSize : new int[]{0, -5, PublicationSearchCriteria.MAX_SIZE + 1}) {
+        for (int invalidSize : new int[]{0, -5, MAX_SIZE + 1}) {
             InvalidPublicationException exception = assertThrows(
                     InvalidPublicationException.class,
-                    () -> new PublicationSearchCriteria(Optional.empty(), 0, invalidSize)
+                    () -> new PublicationSearchCriteria(Optional.empty(), 0, invalidSize, MAX_SIZE)
             );
 
             assertEquals("PUBLICATION_PAGE_SIZE_INVALID", exception.code());
-            assertEquals(PublicationSearchCriteria.MAX_SIZE, exception.arguments()[0]);
+            assertEquals(MAX_SIZE, exception.arguments()[0]);
         }
     }
 }

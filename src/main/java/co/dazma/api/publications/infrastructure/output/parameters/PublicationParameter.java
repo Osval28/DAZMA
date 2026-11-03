@@ -7,7 +7,10 @@ public enum PublicationParameter implements ParameterKey {
     PHOTO_ALLOWED_CONTENT_TYPES("dazma.publications.photo-upload.allowed-content-types"),
     PHOTO_MAXIMUM_SIZE("dazma.publications.photo-upload.maximum-size"),
     PHOTO_UPLOAD_VALIDITY("dazma.publications.photo-upload.validity"),
-    PHOTO_DOWNLOAD_VALIDITY("dazma.publications.photo-download.validity");
+    PHOTO_DOWNLOAD_VALIDITY("dazma.publications.photo-download.validity"),
+    MAXIMUM_PHOTOS("dazma.publications.rules.maximum-photos"),
+    MAXIMUM_PAGE_SIZE("dazma.publications.rules.maximum-page-size"),
+    DEFAULT_PAGE_SIZE("dazma.publications.rules.default-page-size");
 
     private final String key;
 

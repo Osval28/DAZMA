@@ -109,7 +109,8 @@ class PostgresqlPublicationAdapterTest {
                 new Municipality(municipalityCode),
                 List.of(new PublicationPhoto(UUID.randomUUID(), "publications/a.jpg", 0)),
                 Instant.parse("2026-10-18T12:00:00Z"),
-                new Price(850_000)
+                new Price(850_000),
+                5
         );
     }
 }

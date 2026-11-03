@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ErrorMessageKey } from "@/i18n/message-keys";
+import type { PublicationRules } from "@/lib/api/publications";
 import { publicationErrorKey } from "@/lib/publications/errors";
 import { uploadPhoto } from "@/lib/publications/photo-upload";
 
@@ -26,7 +27,7 @@ export type PhotoDrafts = {
   retry: (key: string) => void;
 };
 
-export function usePhotoDrafts(): PhotoDrafts {
+export function usePhotoDrafts(rules?: PublicationRules): PhotoDrafts {
   const [photos, setPhotos] = useState<DraftPhoto[]>([]);
   const [issue, setIssue] = useState<ErrorMessageKey>();
   const latestPhotos = useRef<DraftPhoto[]>([]);
@@ -62,19 +63,35 @@ export function usePhotoDrafts(): PhotoDrafts {
   const add = useCallback(
     (files: File[]) => {
       setIssue(undefined);
+      const remaining = rules === undefined ? files.length : Math.max(0, rules.maximumPhotos - latestPhotos.current.length);
+      const allowed = files.slice(0, remaining).filter((file) => {
+        if (rules === undefined) return true;
+        if (!rules.allowedPhotoContentTypes.includes(file.type)) {
+          setIssue("Publications.create.errors.photoTypeInvalid");
+          return false;
+        }
+        if (file.size > rules.maximumPhotoBytes) {
+          setIssue("Publications.create.errors.photoTooLarge");
+          return false;
+        }
+        return true;
+      });
+      if (files.length > remaining) setIssue("Publications.create.errors.photosLimitReached");
       const accepted: DraftPhoto[] = [];
-      for (const file of files) {
+      for (const file of allowed) {
         accepted.push({ key: crypto.randomUUID(), file, previewUrl: URL.createObjectURL(file), upload: { status: "uploading" } });
       }
+      latestPhotos.current = [...latestPhotos.current, ...accepted];
       setPhotos((current) => [...current, ...accepted]);
       accepted.forEach((photo) => startUpload(photo.key, photo.file));
     },
-    [startUpload],
+    [rules, startUpload],
   );
 
   const remove = useCallback((key: string) => {
     setIssue(undefined);
     latestPhotos.current.filter((photo) => photo.key === key).forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
+    latestPhotos.current = latestPhotos.current.filter((photo) => photo.key !== key);
     setPhotos((current) => current.filter((photo) => photo.key !== key));
   }, []);
 

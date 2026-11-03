@@ -30,7 +30,8 @@ class PublicationTest {
                 new Municipality("  05615  "),
                 List.of(photo),
                 CREATED_AT,
-                new Price(PRICE)
+                new Price(PRICE),
+                5
         );
 
         assertNotNull(publication.getId());
@@ -61,7 +62,8 @@ class PublicationTest {
                         new Municipality("05615"),
                         List.of(photo(0)),
                         CREATED_AT,
-                        new Price(PRICE)
+                        new Price(PRICE),
+                        5
                 )
         );
         assertThrows(
@@ -75,7 +77,8 @@ class PublicationTest {
                         new Municipality("05615"),
                         List.of(photo(0)),
                         CREATED_AT,
-                        new Price(PRICE)
+                        new Price(PRICE),
+                        5
                 )
         );
     }
@@ -113,6 +116,21 @@ class PublicationTest {
                 () -> validPublication(photos)
         );
         assertEquals("PUBLICATION_PHOTOS_LIMIT_EXCEEDED", exception.code());
+    }
+
+    @Test
+    void shouldRestoreAnExistingPublicationAfterTheCreationLimitIsReduced() {
+        List<PublicationPhoto> photos = java.util.stream.IntStream.range(0, 6)
+                .mapToObj(this::photo)
+                .toList();
+
+        Publication restored = Publication.restore(
+                UUID.randomUUID(), UUID.randomUUID(), "Ana", new Name("Bicicleta"),
+                PublicationType.EXCHANGE, new Description("Descripción"), new Municipality("05615"),
+                PublicationStatus.PUBLISHED, photos, CREATED_AT, new Price(PRICE)
+        );
+
+        assertEquals(6, restored.getPhotos().size());
     }
 
     @Test
@@ -184,7 +202,8 @@ class PublicationTest {
                 new Municipality("05615"),
                 photos,
                 CREATED_AT,
-                new Price(PRICE)
+                new Price(PRICE),
+                5
         );
     }
 

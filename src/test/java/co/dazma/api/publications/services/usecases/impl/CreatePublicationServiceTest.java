@@ -14,6 +14,7 @@ import co.dazma.api.publications.domain.PublicationOwnerNotReadyException;
 import co.dazma.api.publications.domain.PublicationOwnerState;
 import co.dazma.api.publications.domain.PublicationStatus;
 import co.dazma.api.publications.domain.PublicationDraft;
+import co.dazma.api.publications.domain.PublicationRules;
 import co.dazma.api.publications.domain.PublicationType;
 import co.dazma.api.publications.events.PublicationCreated;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
@@ -21,6 +22,7 @@ import co.dazma.api.publications.services.output.ports.PublicationEventsPort;
 import co.dazma.api.publications.services.output.ports.PublicationOwnerRepositoryPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
+import co.dazma.api.publications.services.output.ports.PublicationRulesPort;
 import co.dazma.api.shared.domain.Municipality;
 import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
 import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
@@ -64,6 +66,7 @@ class CreatePublicationServiceTest {
     private PublicationRepositoryPort publicationRepository;
     private PublicationPhotoStoragePort photoStorage;
     private PublicationEventsPort publicationEvents;
+    private PublicationRulesPort publicationRules;
     private RecordingTransaction transaction;
     private CreatePublicationService service;
 
@@ -78,6 +81,8 @@ class CreatePublicationServiceTest {
         publicationRepository = mock(PublicationRepositoryPort.class);
         photoStorage = mock(PublicationPhotoStoragePort.class);
         publicationEvents = mock(PublicationEventsPort.class);
+        publicationRules = mock(PublicationRulesPort.class);
+        when(publicationRules.current()).thenReturn(new PublicationRules(5, 50, 20));
         transaction = new RecordingTransaction();
         service = new CreatePublicationService(
                 new OperatingOwnerResolver(ownerRepository),
@@ -85,6 +90,7 @@ class CreatePublicationServiceTest {
                 publicationRepository,
                 photoStorage,
                 publicationEvents,
+                publicationRules,
                 transaction,
                 Clock.fixed(NOW, ZoneOffset.UTC)
         );
@@ -282,7 +288,7 @@ class CreatePublicationServiceTest {
 
     @Test
     void shouldRejectTooManyPhotosBeforeAnySideEffect() {
-        List<UUID> photoIds = IntStream.range(0, Publication.MAX_PHOTOS + 1)
+        List<UUID> photoIds = IntStream.range(0, publicationRules.current().maximumPhotos() + 1)
                 .mapToObj(index -> UUID.randomUUID())
                 .toList();
 
@@ -300,6 +306,20 @@ class CreatePublicationServiceTest {
                 publicationEvents
         );
         assertFalse(transaction.active);
+    }
+
+    @Test
+    void shouldApplyAChangedPhotoLimitBeforeUploading() {
+        when(publicationRules.current()).thenReturn(new PublicationRules(2, 50, 20));
+        List<UUID> photoIds = IntStream.range(0, 3).mapToObj(index -> UUID.randomUUID()).toList();
+
+        InvalidPublicationException exception = assertThrows(
+                InvalidPublicationException.class,
+                () -> service.execute(draft(photoIds))
+        );
+
+        assertEquals(2, exception.arguments()[0]);
+        verifyNoInteractions(photoStorage, publicationRepository, publicationEvents);
     }
 
     @Test

@@ -4,19 +4,17 @@ import java.util.regex.Pattern;
 
 public record Phone(String number) {
 
-    private static final String COUNTRY_CODE = "57";
-    private static final int NATIONAL_LENGTH = 10;
     private static final Pattern FORMATTING_CHARACTERS = Pattern.compile("[\\s\\-().+]");
-    private static final Pattern COLOMBIAN_MOBILE = Pattern.compile("3\\d{9}");
+    private static final Pattern DIGITS = Pattern.compile("[0-9]+");
 
     public Phone {
         if (number.isBlank()) {
             throw new InvalidUserException(UserErrorCode.PHONE_REQUIRED);
         }
 
-        number = removeCountryCode(removeFormatting(number));
+        number = removeFormatting(number);
 
-        if (!COLOMBIAN_MOBILE.matcher(number).matches()) {
+        if (!DIGITS.matcher(number).matches()) {
             throw new InvalidUserException(UserErrorCode.PHONE_INVALID);
         }
     }
@@ -25,10 +23,19 @@ public record Phone(String number) {
         return FORMATTING_CHARACTERS.matcher(rawNumber).replaceAll("");
     }
 
-    private static String removeCountryCode(String digits) {
-        boolean hasCountryCode = digits.length() == COUNTRY_CODE.length() + NATIONAL_LENGTH
-                && digits.startsWith(COUNTRY_CODE);
+    public static Phone fromInput(String rawNumber, PhoneRules rules) {
+        if (rawNumber == null || rawNumber.isBlank()) {
+            throw new InvalidUserException(UserErrorCode.PHONE_REQUIRED);
+        }
+        String digits = removeFormatting(rawNumber);
+        boolean hasCountryCode = digits.length() == rules.countryCode().length() + rules.nationalLength()
+                && digits.startsWith(rules.countryCode());
 
-        return hasCountryCode ? digits.substring(COUNTRY_CODE.length()) : digits;
+        String national = hasCountryCode ? digits.substring(rules.countryCode().length()) : digits;
+        if (national.length() != rules.nationalLength() || !national.startsWith(rules.mobilePrefix())) {
+            throw new InvalidUserException(UserErrorCode.PHONE_INVALID);
+        }
+
+        return new Phone(national);
     }
 }
