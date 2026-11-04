@@ -2,6 +2,7 @@
   "name": "dazma-photo-safety",
   "main": "src/index.js",
   "compatibility_date": "2026-10-01",
+  "workers_dev": false,
   "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "dazmaimages" }],
   "images": { "binding": "IMAGES" },
   "queues": {
