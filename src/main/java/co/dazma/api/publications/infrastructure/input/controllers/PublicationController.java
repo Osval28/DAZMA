@@ -32,10 +32,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(PublicationController.PATH)
+@RequestMapping("/publications/api/v1/publications")
 public class PublicationController {
-
-    public static final String PATH = "/publications/api/v1/publications";
 
     private final CreatePublicationInputPort createPublicationInputPort;
     private final GetPublicationInputPort getPublicationInputPort;
@@ -77,7 +75,7 @@ public class PublicationController {
         );
 
         URI location = uriBuilder
-                .path(PATH + "/{publicationId}")
+                .path("/publications/api/v1/publications/{publicationId}")
                 .buildAndExpand(publication.id())
                 .toUri();
 
