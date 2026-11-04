@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.notifications.infrastructure.output.repositories.structured.entities.RecipientEntity;
+import co.dazma.api.notifications.infrastructure.output.repositories.entities.RecipientEntity;
 import co.dazma.api.notifications.infrastructure.output.repositories.structured.jpa.entities.RecipientEntityJPA;
 import co.dazma.api.shared.infrastructure.JpaMapper;
 import org.mapstruct.Mapper;

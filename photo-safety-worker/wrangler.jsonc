@@ -1,0 +1,17 @@
+{
+  "name": "dazma-photo-safety",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "dazmaimages" }],
+  "images": { "binding": "IMAGES" },
+  "queues": {
+    "consumers": [{ "queue": "dazma-photo-uploads", "max_batch_size": 1, "max_retries": 5,
+      "dead_letter_queue": "dazma-photo-uploads-failed" }]
+  },
+  "vars": {
+    "BUCKET_NAME": "dazmaimages",
+    "ATTACHMENTAV_API_URL": "https://us.developer.attachmentav.com",
+    "MAX_IMAGE_BYTES": 5242880,
+    "MAX_IMAGE_DIMENSION": 1600
+  }
+}

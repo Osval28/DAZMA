@@ -6,7 +6,7 @@ import co.dazma.api.publications.domain.models.Price;
 import co.dazma.api.publications.domain.models.Publication;
 import co.dazma.api.publications.domain.models.PublicationPhoto;
 import co.dazma.api.publications.domain.enums.PublicationType;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationStatusEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationEntityJPA;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.repository.SpringDataPublicationRepository;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructDomainMapper;

@@ -1,6 +1,7 @@
 package co.dazma.api.publications.infrastructure.output.storage.r2;
 
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
+import co.dazma.api.publications.domain.enums.PhotoInspectionStatus;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
@@ -27,6 +28,8 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
         implements PublicationPhotoStoragePort {
 
     private static final String PENDING_PREFIX = "pending";
+    private static final String READY_PREFIX = "ready";
+    private static final String REJECTED_PREFIX = "rejected";
     private static final String PUBLICATIONS_PREFIX = "publications";
 
     private final S3Client s3Client;
@@ -82,10 +85,11 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
 
     @Override
     public Optional<StoredPublicationPhoto> promoteUploadedPhoto(UUID ownerId, UUID photoId) {
-        String pendingKey = createPendingObjectKey(ownerId, photoId);
+        // Only the scanner can create ready objects. Pending uploads are never publishable.
+        String readyKey = READY_PREFIX + "/" + ownerId + "/" + photoId;
         HeadObjectRequest headRequest = HeadObjectRequest.builder()
                 .bucket(bucketName)
-                .key(pendingKey)
+                .key(readyKey)
                 .build();
 
         HeadObjectResponse response;
@@ -108,7 +112,7 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
                 "copy_object",
                 () -> s3Client.copyObject(CopyObjectRequest.builder()
                         .sourceBucket(bucketName)
-                        .sourceKey(pendingKey)
+                        .sourceKey(readyKey)
                         .destinationBucket(bucketName)
                         .destinationKey(publishedKey)
                         .build())
@@ -120,6 +124,26 @@ public final class CloudflareR2PublicationPhotoStorageAdapter
                 response.contentType(),
                 response.contentLength()
         ));
+    }
+
+    @Override
+    public PhotoInspectionStatus inspectionStatus(UUID ownerId, UUID photoId) {
+        if (exists(READY_PREFIX, ownerId, photoId)) return PhotoInspectionStatus.READY;
+        if (exists(REJECTED_PREFIX, ownerId, photoId)) return PhotoInspectionStatus.REJECTED;
+        if (exists(PENDING_PREFIX, ownerId, photoId)) return PhotoInspectionStatus.PENDING;
+        return PhotoInspectionStatus.MISSING;
+    }
+
+    private boolean exists(String prefix, UUID ownerId, UUID photoId) {
+        HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucketName)
+                .key(prefix + "/" + ownerId + "/" + photoId).build();
+        try {
+            observations.observe("cloudflare_r2", "head_object", () -> s3Client.headObject(request));
+            return true;
+        } catch (S3Exception exception) {
+            if (exception.statusCode() == 404) return false;
+            throw exception;
+        }
     }
 
     @Override

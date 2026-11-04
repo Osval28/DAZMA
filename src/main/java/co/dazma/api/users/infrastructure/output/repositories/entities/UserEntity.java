@@ -1,4 +1,4 @@
-package co.dazma.api.users.infrastructure.output.repositories.structured.entities;
+package co.dazma.api.users.infrastructure.output.repositories.entities;
 
 import co.dazma.api.users.domain.enums.Role;
 import co.dazma.api.users.domain.enums.State;

@@ -1,7 +1,7 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured.mapper;
 
 import co.dazma.api.shared.infrastructure.JpaMapper;
-import co.dazma.api.users.infrastructure.output.repositories.structured.entities.UserEntity;
+import co.dazma.api.users.infrastructure.output.repositories.entities.UserEntity;
 import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities.UserEntityJPA;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

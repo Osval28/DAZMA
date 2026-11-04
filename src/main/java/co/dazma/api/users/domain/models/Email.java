@@ -17,5 +17,4 @@ public record Email(String value) {
             throw new InvalidUserException(UserErrorCode.EMAIL_INVALID);
         }
     }
-
 }

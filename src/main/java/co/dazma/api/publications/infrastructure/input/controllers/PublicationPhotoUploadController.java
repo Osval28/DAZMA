@@ -1,30 +1,47 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
 import co.dazma.api.publications.infrastructure.input.dto.AuthorizePublicationPhotoUploadRequestDto;
+import co.dazma.api.publications.infrastructure.input.dto.PhotoInspectionStatusResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.PublicationPhotoUploadAuthorizationResponseDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadInputPort;
+import co.dazma.api.publications.services.input.ports.GetPhotoInspectionStatusInputPort;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/publications/api/v1/photos")
 public class PublicationPhotoUploadController {
 
     private final AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort;
+    private final GetPhotoInspectionStatusInputPort inspectionStatusInputPort;
 
     public PublicationPhotoUploadController(
-            AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort
+            AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort,
+            GetPhotoInspectionStatusInputPort inspectionStatusInputPort
     ) {
         this.authorizeUploadInputPort = authorizeUploadInputPort;
+        this.inspectionStatusInputPort = inspectionStatusInputPort;
+    }
+
+    @GetMapping("/{photoId}/status")
+    public ResponseEntity<PhotoInspectionStatusResponseDto> status(@PathVariable UUID photoId, Principal principal) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .body(new PhotoInspectionStatusResponseDto(inspectionStatusInputPort.execute(principal.getName(), photoId)));
     }
 
     @PostMapping("/upload-authorizations")

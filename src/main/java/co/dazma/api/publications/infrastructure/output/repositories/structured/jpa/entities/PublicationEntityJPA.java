@@ -1,7 +1,7 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities;
 
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationTypeEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationStatusEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationTypeEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.BatchSize;
 

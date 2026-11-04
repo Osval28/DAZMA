@@ -262,7 +262,7 @@
         "makeCover": "Make cover",
         "remove": "Remove",
         "retry": "Try again",
-        "uploading": "Uploading…",
+        "uploading": "Uploading and checking…",
         "failed": "Not uploaded",
         "previewAlt": "Listing photo {position}"
       },
@@ -279,7 +279,7 @@
         "photoTypeInvalid": "Only JPEG, PNG or WebP photos are accepted.",
         "photoTooLarge": "The photo exceeds the maximum allowed size.",
         "photosLimitReached": "You've reached the maximum number of photos.",
-        "photoUploadFailed": "We couldn't upload the photo. Please try again.",
+        "photoUploadFailed": "We couldn't verify the photo. Check its format and try again.",
         "emailNotVerified": "Verify your email to be able to publish.",
         "ownerNotReady": "Your account is still being set up. Try again in a few seconds.",
         "photoUploadNotAvailable": "A photo expired or didn't finish uploading. Remove it and add it again."

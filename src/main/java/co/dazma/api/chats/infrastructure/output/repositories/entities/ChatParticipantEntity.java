@@ -1,4 +1,4 @@
-package co.dazma.api.chats.infrastructure.output.repositories.structured.entities;
+package co.dazma.api.chats.infrastructure.output.repositories.entities;
 
 import java.util.UUID;
 

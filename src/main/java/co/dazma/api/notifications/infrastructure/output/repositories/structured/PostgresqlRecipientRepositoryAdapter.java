@@ -1,7 +1,7 @@
 package co.dazma.api.notifications.infrastructure.output.repositories.structured;
 
 import co.dazma.api.notifications.domain.models.Recipient;
-import co.dazma.api.notifications.infrastructure.output.repositories.structured.entities.RecipientEntity;
+import co.dazma.api.notifications.infrastructure.output.repositories.entities.RecipientEntity;
 import co.dazma.api.notifications.infrastructure.output.repositories.structured.jpa.entities.RecipientEntityJPA;
 import co.dazma.api.notifications.infrastructure.output.repositories.structured.jpa.repositories.SpringDataRecipientRepository;
 import co.dazma.api.notifications.services.output.ports.RecipientRepositoryPort;
