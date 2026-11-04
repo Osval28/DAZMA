@@ -2,6 +2,7 @@ package co.dazma.api.security.infrastructure.output.firebase;
 
 import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
 import co.dazma.api.security.domain.exceptions.SessionRevocationException;
+import co.dazma.api.security.infrastructure.output.identityProvider.FirebaseSessionTokenIssuer;
 import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuth;

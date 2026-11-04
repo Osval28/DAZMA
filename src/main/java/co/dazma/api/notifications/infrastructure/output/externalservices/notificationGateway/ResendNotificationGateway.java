@@ -1,7 +1,8 @@
-package co.dazma.api.notifications.infrastructure.output.externalservices.resend;
+package co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway;
 
 import co.dazma.api.notifications.domain.models.EmailMessage;
 import co.dazma.api.notifications.infrastructure.configuration.ResendProperties;
+import co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway.exceptions.NotificationDeliveryException;
 import co.dazma.api.notifications.services.output.ports.NotificationGateway;
 import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.resend.Resend;
@@ -84,8 +85,6 @@ public class ResendNotificationGateway implements NotificationGateway {
     }
 
     private static boolean isRetryable(Integer statusCode) {
-        return statusCode == null
-                || statusCode == TOO_MANY_REQUESTS
-                || statusCode >= FIRST_SERVER_ERROR;
+        return statusCode == null || statusCode == TOO_MANY_REQUESTS || statusCode >= FIRST_SERVER_ERROR;
     }
 }
