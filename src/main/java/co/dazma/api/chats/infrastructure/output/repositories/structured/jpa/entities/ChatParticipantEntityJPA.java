@@ -1,6 +1,6 @@
 package co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.entities;
 
-import co.dazma.api.chats.infrastructure.output.repositories.structured.entities.ChatParticipantStateEntity;
+import co.dazma.api.chats.infrastructure.output.repositories.entities.ChatParticipantStateEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

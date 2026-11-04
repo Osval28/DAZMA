@@ -17,7 +17,8 @@ paths:
         La carga debe realizarse mediante una solicitud PUT a `uploadUrl`, antes de
         `expiresAt` y usando el mismo `Content-Type` enviado en esta solicitud. El
         cliente debe conservar `photoId`, pues lo utilizará después al crear la
-        publicación.
+        publicación. Tras el PUT, debe consultar el estado de verificación; solo `READY`
+        permite usar la foto en una publicación.
       operationId: authorizePublicationPhotoUpload
       security:
         - sessionCookie: []
@@ -40,6 +41,40 @@ paths:
                 $ref: '#/components/schemas/PublicationPhotoUploadAuthorization'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/AuthenticatedUserNotFound'
+
+  /publications/api/v1/photos/{photoId}/status:
+    get:
+      tags: [Publication photos]
+      summary: Consultar la verificación de una fotografía cargada
+      description: El estado se consulta para el propietario autenticado y no se almacena en caché.
+      operationId: getPublicationPhotoInspectionStatus
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: photoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Estado actual del análisis.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoInspectionStatus'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -108,7 +143,8 @@ paths:
         Crea una publicación para el usuario autenticado. El propietario se obtiene
         de la sesión (cookie `dazma_session`); el cliente no puede escogerlo en el cuerpo de la solicitud.
         Cada identificador de foto debe corresponder a una carga previamente autorizada,
-        completada y perteneciente al mismo usuario.
+        verificada y perteneciente al mismo usuario. Solo se aceptan fotos cuyo análisis
+        terminó correctamente y que fueron convertidas a WebP.
 
         Requiere correo verificado (`PUBLICATION_OWNER_EMAIL_NOT_VERIFIED`, 403) y un municipio que exista
         en el catálogo (`MUNICIPALITY_NOT_FOUND`, 400).
@@ -347,6 +383,16 @@ components:
           type: string
           format: date-time
           description: Momento a partir del cual la dirección de carga deja de ser válida.
+
+    PhotoInspectionStatus:
+      type: object
+      additionalProperties: false
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [PENDING, READY, REJECTED, MISSING]
+          description: Resultado del análisis para la foto del propietario autenticado.
 
     CreatePublicationRequest:
       type: object

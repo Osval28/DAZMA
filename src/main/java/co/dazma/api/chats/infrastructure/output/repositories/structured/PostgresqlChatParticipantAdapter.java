@@ -1,7 +1,7 @@
 package co.dazma.api.chats.infrastructure.output.repositories.structured;
 
 import co.dazma.api.chats.domain.models.ChatParticipant;
-import co.dazma.api.chats.infrastructure.output.repositories.structured.entities.ChatParticipantEntity;
+import co.dazma.api.chats.infrastructure.output.repositories.entities.ChatParticipantEntity;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.entities.ChatParticipantEntityJPA;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.repositories.SpringDataChatParticipantRepository;
 import co.dazma.api.chats.services.output.ports.ChatParticipantRepositoryPort;

@@ -1,4 +1,4 @@
-package co.dazma.api.publications.infrastructure.output.repositories.structured.entities;
+package co.dazma.api.publications.infrastructure.output.repositories.entities;
 
 import java.time.Instant;
 import java.util.List;

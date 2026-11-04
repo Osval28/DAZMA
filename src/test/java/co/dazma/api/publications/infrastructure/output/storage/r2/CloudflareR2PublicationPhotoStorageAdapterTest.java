@@ -1,6 +1,7 @@
 package co.dazma.api.publications.infrastructure.output.storage.r2;
 
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
+import co.dazma.api.publications.domain.enums.PhotoInspectionStatus;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import io.micrometer.observation.ObservationRegistry;
@@ -118,13 +119,13 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
     }
 
     @Test
-    void shouldPromoteAnUploadedPhotoFromPendingToPublished() {
+    void shouldPromoteOnlyAnApprovedPhotoToPublished() {
         UUID ownerId = UUID.randomUUID();
         UUID photoId = UUID.randomUUID();
         when(s3Client.headObject(any(HeadObjectRequest.class)))
                 .thenReturn(HeadObjectResponse.builder()
-                        .contentType("image/jpeg")
-                        .contentLength(2_000_000L)
+                        .contentType("image/webp")
+                        .contentLength(900_000L)
                         .build());
 
         StoredPublicationPhoto storedPhoto = adapter
@@ -134,19 +135,19 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
         ArgumentCaptor<HeadObjectRequest> head = ArgumentCaptor.forClass(HeadObjectRequest.class);
         verify(s3Client).headObject(head.capture());
         assertEquals(BUCKET_NAME, head.getValue().bucket());
-        assertEquals("pending/" + ownerId + "/" + photoId, head.getValue().key());
+        assertEquals("ready/" + ownerId + "/" + photoId, head.getValue().key());
 
         ArgumentCaptor<CopyObjectRequest> copy = ArgumentCaptor.forClass(CopyObjectRequest.class);
         verify(s3Client).copyObject(copy.capture());
         assertEquals(BUCKET_NAME, copy.getValue().sourceBucket());
-        assertEquals("pending/" + ownerId + "/" + photoId, copy.getValue().sourceKey());
+        assertEquals("ready/" + ownerId + "/" + photoId, copy.getValue().sourceKey());
         assertEquals(BUCKET_NAME, copy.getValue().destinationBucket());
         assertTrue(copy.getValue().destinationKey().startsWith("publications/" + ownerId + "/"));
 
         assertEquals(photoId, storedPhoto.photoId());
         assertEquals(copy.getValue().destinationKey(), storedPhoto.objectKey());
-        assertEquals("image/jpeg", storedPhoto.contentType());
-        assertEquals(2_000_000L, storedPhoto.contentLength());
+        assertEquals("image/webp", storedPhoto.contentType());
+        assertEquals(900_000L, storedPhoto.contentLength());
     }
 
     @Test
@@ -176,6 +177,24 @@ class CloudflareR2PublicationPhotoStorageAdapterTest {
 
         assertTrue(adapter.promoteUploadedPhoto(ownerId, photoId).isEmpty());
 
+        verify(s3Client, never()).copyObject(any(CopyObjectRequest.class));
+    }
+
+    @Test
+    void shouldReportRejectedWithoutPublishing() {
+        UUID ownerId = UUID.randomUUID();
+        UUID photoId = UUID.randomUUID();
+        S3Exception missing = mock(S3Exception.class);
+        when(missing.statusCode()).thenReturn(404);
+        when(s3Client.headObject(any(HeadObjectRequest.class)))
+                .thenThrow(missing)
+                .thenReturn(HeadObjectResponse.builder().build());
+
+        assertEquals(PhotoInspectionStatus.REJECTED, adapter.inspectionStatus(ownerId, photoId));
+        ArgumentCaptor<HeadObjectRequest> requests = ArgumentCaptor.forClass(HeadObjectRequest.class);
+        verify(s3Client, times(2)).headObject(requests.capture());
+        assertEquals("ready/" + ownerId + "/" + photoId, requests.getAllValues().get(0).key());
+        assertEquals("rejected/" + ownerId + "/" + photoId, requests.getAllValues().get(1).key());
         verify(s3Client, never()).copyObject(any(CopyObjectRequest.class));
     }
 

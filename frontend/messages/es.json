@@ -262,7 +262,7 @@
         "makeCover": "Hacer portada",
         "remove": "Quitar",
         "retry": "Reintentar",
-        "uploading": "Subiendo…",
+        "uploading": "Subiendo y verificando…",
         "failed": "No se subió",
         "previewAlt": "Fotografía {position} de la publicación"
       },
@@ -279,7 +279,7 @@
         "photoTypeInvalid": "Solo se aceptan fotografías JPEG, PNG o WebP.",
         "photoTooLarge": "La fotografía supera el tamaño máximo permitido.",
         "photosLimitReached": "Ya alcanzaste el máximo de fotografías.",
-        "photoUploadFailed": "No pudimos subir la fotografía. Inténtalo de nuevo.",
+        "photoUploadFailed": "No pudimos verificar la fotografía. Revisa el formato e inténtalo de nuevo.",
         "emailNotVerified": "Verifica tu correo para poder publicar.",
         "ownerNotReady": "Tu cuenta todavía se está preparando. Inténtalo en unos segundos.",
         "photoUploadNotAvailable": "Alguna fotografía venció o no se completó. Quítala y vuelve a agregarla."

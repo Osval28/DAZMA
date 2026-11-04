@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationOwnerEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationOwnerEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationOwnerEntityJPA;
 import co.dazma.api.shared.infrastructure.JpaMapper;
 import org.mapstruct.Mapper;

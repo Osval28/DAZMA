@@ -1,7 +1,7 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationEntity;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationPhotoEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationPhotoEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationEntityJPA;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationPhotoEntityJPA;
 import co.dazma.api.shared.infrastructure.JpaMapper;

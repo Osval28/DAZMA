@@ -1,10 +1,10 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured;
 
 import co.dazma.api.publications.domain.models.Publication;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationEntityJPA;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.repository.SpringDataPublicationRepository;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationStatusEntity;
 import co.dazma.api.publications.services.output.models.PublishedPublicationsSlice;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.shared.domain.models.Municipality;

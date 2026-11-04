@@ -2,7 +2,7 @@ package co.dazma.api.chats.infrastructure.output.repositories.structured;
 
 import co.dazma.api.chats.domain.models.ChatParticipant;
 import co.dazma.api.chats.domain.enums.ChatParticipantState;
-import co.dazma.api.chats.infrastructure.output.repositories.structured.entities.ChatParticipantStateEntity;
+import co.dazma.api.chats.infrastructure.output.repositories.entities.ChatParticipantStateEntity;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.entities.ChatParticipantEntityJPA;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.repositories.SpringDataChatParticipantRepository;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.mapper.ChatParticipantMapStructDomainMapper;

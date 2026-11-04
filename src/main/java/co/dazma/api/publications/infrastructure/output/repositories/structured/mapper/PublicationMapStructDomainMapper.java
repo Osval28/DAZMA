@@ -3,9 +3,9 @@ package co.dazma.api.publications.infrastructure.output.repositories.structured.
 import co.dazma.api.publications.domain.enums.PublicationStatus;
 import co.dazma.api.publications.domain.enums.PublicationType;
 import co.dazma.api.publications.domain.models.*;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationEntity;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationTypeEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationStatusEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationTypeEntity;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

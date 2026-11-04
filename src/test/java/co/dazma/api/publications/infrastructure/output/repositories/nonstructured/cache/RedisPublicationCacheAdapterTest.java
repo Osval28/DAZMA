@@ -7,7 +7,7 @@ import co.dazma.api.publications.domain.models.Publication;
 import co.dazma.api.publications.domain.models.PublicationPhoto;
 import co.dazma.api.publications.domain.enums.PublicationStatus;
 import co.dazma.api.publications.domain.enums.PublicationType;
-import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.mapper.PublicationMapStructCacheMapper;
+import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructDomainMapper;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
@@ -61,7 +61,7 @@ class RedisPublicationCacheAdapterTest {
         adapter = new RedisPublicationCacheAdapter(
                 redisTemplate,
                 JsonMapper.builder().build(),
-                Mappers.getMapper(PublicationMapStructCacheMapper.class),
+                Mappers.getMapper(PublicationMapStructDomainMapper.class),
                 new PublicationCacheProperties(KEY_PREFIX, TTL),
                 new ExternalDependencyObservation(ObservationRegistry.NOOP)
         );

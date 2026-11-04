@@ -1,7 +1,7 @@
 package co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache;
 
 import co.dazma.api.publications.domain.models.Publication;
-import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.entities.PublicationCacheEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationEntity;
 import co.dazma.api.publications.services.output.ports.PublicationCachePort;
 import co.dazma.api.shared.domain.errors.DomainInvalidException;
 import co.dazma.api.shared.infrastructure.DomainMapper;
@@ -24,18 +24,18 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
 
     private final StringRedisTemplate redisTemplate;
     private final JsonMapper jsonMapper;
-    private final DomainMapper<PublicationCacheEntity, Publication> cacheMapper;
+    private final DomainMapper<PublicationEntity, Publication> domainMapper;
     private final PublicationCacheProperties properties;
     private final ExternalDependencyObservation observations;
 
     public RedisPublicationCacheAdapter(StringRedisTemplate redisTemplate,
                                         JsonMapper jsonMapper,
-                                        DomainMapper<PublicationCacheEntity, Publication> cacheMapper,
+                                        DomainMapper<PublicationEntity, Publication> domainMapper,
                                         PublicationCacheProperties properties,
                                         ExternalDependencyObservation observations) {
         this.redisTemplate = redisTemplate;
         this.jsonMapper = jsonMapper;
-        this.cacheMapper = cacheMapper;
+        this.domainMapper = domainMapper;
         this.properties = properties;
         this.observations = observations;
     }
@@ -52,8 +52,8 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
             if (json == null) {
                 return Optional.empty();
             }
-            PublicationCacheEntity entity = jsonMapper.readValue(json, PublicationCacheEntity.class);
-            return Optional.of(cacheMapper.toDomain(entity));
+            PublicationEntity entity = jsonMapper.readValue(json, PublicationEntity.class);
+            return Optional.of(domainMapper.toDomain(entity));
         } catch (DataAccessException | JacksonException exception) {
             log.warn("No se pudo leer la publicación de la caché; se usará la base de datos. key={}, causa={}",
                     key, describe(exception));
@@ -70,7 +70,7 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
     public void save(Publication publication) {
         String key = properties.keyFor(publication.getId());
         try {
-            String json = jsonMapper.writeValueAsString(cacheMapper.toEntity(publication));
+            String json = jsonMapper.writeValueAsString(domainMapper.toEntity(publication));
             observations.observe(
                     "redis",
                     "save_publication",
