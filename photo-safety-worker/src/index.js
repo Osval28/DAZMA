@@ -47,7 +47,7 @@ export async function processUpload(event, env) {
     return;
   }
   if (result.status !== "clean") throw new Error("Antivirus returned no conclusive result");
-  const optimized = (await env.IMAGES.input(bytes)
+  const optimized = (await env.IMAGES.input(new Response(bytes).body)
     .transform({ width: Number(env.MAX_IMAGE_DIMENSION), height: Number(env.MAX_IMAGE_DIMENSION), fit: "scale-down" })
     .output({ format: "image/webp", quality: 80, anim: false })).response();
   if (!optimized.ok) throw new Error(`Image conversion failed: ${optimized.status}`);
