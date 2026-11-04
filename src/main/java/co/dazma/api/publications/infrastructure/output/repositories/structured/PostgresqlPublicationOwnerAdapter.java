@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured;
 
-import co.dazma.api.publications.domain.PublicationOwner;
+import co.dazma.api.publications.domain.models.PublicationOwner;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationOwnerEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationOwnerEntityJPA;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.repository.SpringDataPublicationOwnerRepository;

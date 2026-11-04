@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.input.adapters.mappers;
 
-import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.domain.models.Publication;
 import co.dazma.api.publications.services.input.dto.ListPublicationsInputDto;
 import co.dazma.api.publications.services.input.dto.ListPublicationsOutputDto;
 import co.dazma.api.publications.services.input.dto.PublicationSummaryOutputDto;
@@ -8,7 +8,7 @@ import co.dazma.api.publications.services.output.ports.PublicationRulesPort;
 import co.dazma.api.publications.services.usecases.models.PublicationSearchCriteria;
 import co.dazma.api.publications.services.usecases.models.PublicationSummary;
 import co.dazma.api.publications.services.usecases.models.PublicationSummaryPage;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import co.dazma.api.shared.services.input.mappers.InputMapper;
 import co.dazma.api.shared.services.input.mappers.OutputMapper;
 import org.springframework.stereotype.Component;

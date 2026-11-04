@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.notifications.domain.Recipient;
+import co.dazma.api.notifications.domain.models.Recipient;
 import co.dazma.api.notifications.infrastructure.output.repositories.structured.entities.RecipientEntity;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;

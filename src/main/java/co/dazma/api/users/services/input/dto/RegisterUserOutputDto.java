@@ -1,7 +1,7 @@
 package co.dazma.api.users.services.input.dto;
 
-import co.dazma.api.users.domain.Role;
-import co.dazma.api.users.domain.State;
+import co.dazma.api.users.domain.enums.Role;
+import co.dazma.api.users.domain.enums.State;
 
 import java.util.UUID;
 

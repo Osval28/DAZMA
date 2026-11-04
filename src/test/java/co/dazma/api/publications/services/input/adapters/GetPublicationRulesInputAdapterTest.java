@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.input.adapters;
 
-import co.dazma.api.publications.domain.PublicationRules;
+import co.dazma.api.publications.domain.models.PublicationRules;
 import co.dazma.api.publications.services.input.dto.PublicationRulesOutputDto;
 import co.dazma.api.publications.services.output.ports.PhotoUploadParametersPort;
 import co.dazma.api.publications.services.output.ports.PublicationRulesPort;

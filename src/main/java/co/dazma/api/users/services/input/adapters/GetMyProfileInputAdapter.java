@@ -1,6 +1,6 @@
 package co.dazma.api.users.services.input.adapters;
 
-import co.dazma.api.users.domain.User;
+import co.dazma.api.users.domain.models.User;
 import co.dazma.api.users.services.input.adapters.mappers.MyProfileMapper;
 import co.dazma.api.users.services.input.dto.GetMyProfileInputDto;
 import co.dazma.api.users.services.input.dto.GetMyProfileOutputDto;

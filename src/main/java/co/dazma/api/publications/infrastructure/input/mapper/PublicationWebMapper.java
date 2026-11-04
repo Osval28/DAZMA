@@ -1,7 +1,7 @@
 package co.dazma.api.publications.infrastructure.input.mapper;
 
-import co.dazma.api.publications.domain.PublicationStatus;
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationType;
 import co.dazma.api.publications.infrastructure.input.dto.CreatePublicationResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.GetPublicationResponseDto;
 import co.dazma.api.publications.infrastructure.input.dto.ListPublicationsResponseDto;

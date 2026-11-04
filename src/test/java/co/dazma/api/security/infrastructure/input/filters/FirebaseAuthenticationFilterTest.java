@@ -1,6 +1,6 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
-import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
 import co.dazma.api.shared.infrastructure.security.CurrentUser;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.services.input.dto.AuthenticateIdentityInputDto;

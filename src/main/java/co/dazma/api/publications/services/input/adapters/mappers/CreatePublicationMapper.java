@@ -1,13 +1,13 @@
 package co.dazma.api.publications.services.input.adapters.mappers;
 
-import co.dazma.api.publications.domain.Description;
-import co.dazma.api.publications.domain.Name;
-import co.dazma.api.publications.domain.Price;
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.PublicationDraft;
+import co.dazma.api.publications.domain.models.Description;
+import co.dazma.api.publications.domain.models.Name;
+import co.dazma.api.publications.domain.models.Price;
+import co.dazma.api.publications.domain.models.Publication;
+import co.dazma.api.publications.domain.models.PublicationDraft;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import co.dazma.api.shared.services.input.mappers.InputMapper;
 import co.dazma.api.shared.services.input.mappers.OutputMapper;
 import org.springframework.stereotype.Component;

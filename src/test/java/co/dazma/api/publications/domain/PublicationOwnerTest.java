@@ -1,5 +1,8 @@
 package co.dazma.api.publications.domain;
 
+import co.dazma.api.publications.domain.enums.PublicationOwnerState;
+import co.dazma.api.publications.domain.exceptions.InvalidPublicationException;
+import co.dazma.api.publications.domain.models.PublicationOwner;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

@@ -1,5 +1,6 @@
 package co.dazma.api.security.domain;
 
+import co.dazma.api.security.domain.enums.SecurityErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 

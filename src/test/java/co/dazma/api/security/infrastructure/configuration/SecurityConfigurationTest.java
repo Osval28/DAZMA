@@ -1,6 +1,6 @@
 package co.dazma.api.security.infrastructure.configuration;
 
-import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
 import co.dazma.api.security.infrastructure.input.errors.ApiAccessDeniedHandler;
 import co.dazma.api.security.infrastructure.input.errors.ApiAuthenticationEntryPoint;
 import co.dazma.api.security.infrastructure.input.errors.SecurityProblemWriter;
@@ -8,8 +8,8 @@ import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthentication
 import co.dazma.api.security.services.input.dto.AuthenticateIdentityInputDto;
 import co.dazma.api.security.services.input.dto.AuthenticateIdentityOutputDto;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityInputPort;
-import co.dazma.api.users.domain.Role;
-import co.dazma.api.users.domain.State;
+import co.dazma.api.users.domain.enums.Role;
+import co.dazma.api.users.domain.enums.State;
 import co.dazma.api.users.infrastructure.input.controllers.UserController;
 import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
 import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;

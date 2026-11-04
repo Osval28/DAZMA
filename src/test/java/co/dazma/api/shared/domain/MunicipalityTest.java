@@ -1,6 +1,7 @@
 package co.dazma.api.shared.domain;
 
 import co.dazma.api.shared.domain.errors.InvalidMunicipalityException;
+import co.dazma.api.shared.domain.models.Municipality;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

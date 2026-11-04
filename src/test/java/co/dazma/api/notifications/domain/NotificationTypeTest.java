@@ -1,5 +1,6 @@
 package co.dazma.api.notifications.domain;
 
+import co.dazma.api.notifications.domain.enums.NotificationType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

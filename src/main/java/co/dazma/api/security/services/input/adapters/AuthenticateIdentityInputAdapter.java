@@ -1,6 +1,6 @@
 package co.dazma.api.security.services.input.adapters;
 
-import co.dazma.api.security.domain.AuthenticatedIdentity;
+import co.dazma.api.security.domain.models.AuthenticatedIdentity;
 import co.dazma.api.security.services.input.adapters.mappers.AuthenticatedIdentityMapper;
 import co.dazma.api.security.services.input.dto.AuthenticateIdentityInputDto;
 import co.dazma.api.security.services.input.dto.AuthenticateIdentityOutputDto;

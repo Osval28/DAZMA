@@ -1,5 +1,7 @@
 package co.dazma.api.users.domain;
 
+import co.dazma.api.users.domain.exceptions.InvalidUserException;
+import co.dazma.api.users.domain.models.Name;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

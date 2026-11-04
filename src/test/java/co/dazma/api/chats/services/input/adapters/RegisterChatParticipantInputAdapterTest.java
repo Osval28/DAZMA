@@ -1,7 +1,7 @@
 package co.dazma.api.chats.services.input.adapters;
 
-import co.dazma.api.chats.domain.ChatParticipant;
-import co.dazma.api.chats.domain.ChatParticipantState;
+import co.dazma.api.chats.domain.models.ChatParticipant;
+import co.dazma.api.chats.domain.enums.ChatParticipantState;
 import co.dazma.api.chats.services.input.adapters.mappers.ChatParticipantMapper;
 import co.dazma.api.chats.services.input.dto.RegisterChatParticipantInputDto;
 import co.dazma.api.chats.services.usecases.contract.RegisterChatParticipantUseCase;

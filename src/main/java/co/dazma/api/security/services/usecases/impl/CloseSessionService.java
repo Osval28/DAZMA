@@ -1,6 +1,6 @@
 package co.dazma.api.security.services.usecases.impl;
 
-import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
 import co.dazma.api.security.services.output.ports.SessionTokenIssuer;
 import co.dazma.api.security.services.usecases.contract.CloseSessionUseCase;

@@ -1,8 +1,8 @@
 package co.dazma.api.security.services.usecases.impl;
 
-import co.dazma.api.security.domain.InvalidIdentityTokenException;
-import co.dazma.api.security.domain.RecentSignInRequiredException;
-import co.dazma.api.security.domain.Session;
+import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
+import co.dazma.api.security.domain.exceptions.RecentSignInRequiredException;
+import co.dazma.api.security.domain.models.Session;
 import co.dazma.api.security.services.output.ports.SessionTokenIssuer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

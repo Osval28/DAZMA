@@ -1,7 +1,7 @@
 package co.dazma.api.chats.infrastructure.output.repositories.structured;
 
 import co.dazma.api.TestcontainersConfiguration;
-import co.dazma.api.chats.domain.ChatRoom;
+import co.dazma.api.chats.domain.models.ChatRoom;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.entities.ChatRoomEntityJPA;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.repositories.SpringDataChatRoomRepository;
 import co.dazma.api.chats.services.output.ports.ChatRoomRepositoryPort;

@@ -1,6 +1,6 @@
 package co.dazma.api.shared.services.usecases.impl;
 
-import co.dazma.api.shared.domain.CatalogedMunicipality;
+import co.dazma.api.shared.domain.models.CatalogedMunicipality;
 import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
 import co.dazma.api.shared.services.usecases.contract.ListMunicipalitiesUseCase;
 import org.springframework.stereotype.Service;

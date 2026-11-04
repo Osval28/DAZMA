@@ -1,15 +1,15 @@
 package co.dazma.api.users.services.input.adapters;
 
-import co.dazma.api.shared.domain.Municipality;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.InvalidUserException;
-import co.dazma.api.users.domain.Name;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.PhoneRules;
-import co.dazma.api.users.domain.Role;
-import co.dazma.api.users.domain.State;
-import co.dazma.api.users.domain.User;
-import co.dazma.api.users.domain.UserRegistration;
+import co.dazma.api.shared.domain.models.Municipality;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.exceptions.InvalidUserException;
+import co.dazma.api.users.domain.models.Name;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.models.PhoneRules;
+import co.dazma.api.users.domain.enums.Role;
+import co.dazma.api.users.domain.enums.State;
+import co.dazma.api.users.domain.models.User;
+import co.dazma.api.users.domain.models.UserRegistration;
 import co.dazma.api.users.services.input.adapters.mappers.RegisterUserMapper;
 import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
 import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;

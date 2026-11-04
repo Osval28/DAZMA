@@ -1,5 +1,6 @@
 package co.dazma.api.publications.domain;
 
+import co.dazma.api.publications.domain.exceptions.PublicationNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

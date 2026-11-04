@@ -1,6 +1,6 @@
 package co.dazma.api.security.infrastructure.input.controllers;
 
-import co.dazma.api.security.domain.SessionRevocationException;
+import co.dazma.api.security.domain.exceptions.SessionRevocationException;
 import co.dazma.api.security.services.input.dto.CloseSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionOutputDto;

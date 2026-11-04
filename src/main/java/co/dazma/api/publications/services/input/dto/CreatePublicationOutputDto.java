@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.input.dto;
 
-import co.dazma.api.publications.domain.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
 
 import java.time.Instant;
 import java.util.UUID;

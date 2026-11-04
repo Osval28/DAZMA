@@ -1,7 +1,7 @@
 package co.dazma.api.chats.services.usecases.impl;
 
-import co.dazma.api.chats.domain.ChatParticipant;
-import co.dazma.api.chats.domain.ChatParticipantState;
+import co.dazma.api.chats.domain.models.ChatParticipant;
+import co.dazma.api.chats.domain.enums.ChatParticipantState;
 import co.dazma.api.chats.services.output.ports.ChatParticipantRepositoryPort;
 import org.junit.jupiter.api.Test;
 

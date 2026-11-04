@@ -1,6 +1,6 @@
 package co.dazma.api.security.services.input.adapters;
 
-import co.dazma.api.security.domain.Session;
+import co.dazma.api.security.domain.models.Session;
 import co.dazma.api.security.services.input.adapters.mappers.SessionMapper;
 import co.dazma.api.security.services.input.dto.OpenSessionInputDto;
 import co.dazma.api.security.services.input.dto.OpenSessionOutputDto;

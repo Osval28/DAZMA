@@ -1,5 +1,6 @@
 package co.dazma.api.users.domain;
 
+import co.dazma.api.users.domain.enums.UserErrorCode;
 import org.junit.jupiter.api.Test;
 
 import java.text.MessageFormat;

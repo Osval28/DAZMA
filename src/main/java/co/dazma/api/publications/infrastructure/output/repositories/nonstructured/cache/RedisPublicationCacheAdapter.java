@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache;
 
-import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.domain.models.Publication;
 import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.entities.PublicationCacheEntity;
 import co.dazma.api.publications.services.output.ports.PublicationCachePort;
 import co.dazma.api.shared.domain.errors.DomainInvalidException;

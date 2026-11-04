@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.input.dto;
 
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.enums.PublicationType;
 
 import java.util.List;
 import java.util.UUID;

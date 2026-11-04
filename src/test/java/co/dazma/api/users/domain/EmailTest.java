@@ -1,5 +1,8 @@
 package co.dazma.api.users.domain;
 
+import co.dazma.api.users.domain.enums.UserErrorCode;
+import co.dazma.api.users.domain.exceptions.InvalidUserException;
+import co.dazma.api.users.domain.models.Email;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

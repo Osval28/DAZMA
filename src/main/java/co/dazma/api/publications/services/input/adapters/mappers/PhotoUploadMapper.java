@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.input.adapters.mappers;
 
-import co.dazma.api.publications.domain.PhotoUploadRequest;
+import co.dazma.api.publications.domain.models.PhotoUploadRequest;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.usecases.models.PhotoUploadGrant;

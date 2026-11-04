@@ -1,6 +1,6 @@
 package co.dazma.api.security.infrastructure.input.filters;
 
-import co.dazma.api.security.domain.SecurityErrorCode;
+import co.dazma.api.security.domain.enums.SecurityErrorCode;
 import co.dazma.api.security.infrastructure.input.errors.SecurityProblemWriter;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.BeforeEach;

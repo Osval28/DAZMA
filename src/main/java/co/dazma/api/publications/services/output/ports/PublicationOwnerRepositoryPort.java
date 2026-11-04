@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.output.ports;
 
-import co.dazma.api.publications.domain.PublicationOwner;
+import co.dazma.api.publications.domain.models.PublicationOwner;
 
 import java.util.Optional;
 

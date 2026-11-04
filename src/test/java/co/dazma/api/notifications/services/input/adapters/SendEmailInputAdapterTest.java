@@ -1,7 +1,7 @@
 package co.dazma.api.notifications.services.input.adapters;
 
-import co.dazma.api.notifications.domain.EmailNotification;
-import co.dazma.api.notifications.domain.NotificationType;
+import co.dazma.api.notifications.domain.models.EmailNotification;
+import co.dazma.api.notifications.domain.enums.NotificationType;
 import co.dazma.api.notifications.services.input.adapters.mappers.EmailNotificationMapper;
 import co.dazma.api.notifications.services.input.dto.SendEmailInputDto;
 import co.dazma.api.notifications.services.usecases.contract.SendEmailUseCase;
