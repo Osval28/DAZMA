@@ -2,6 +2,7 @@
   "name": "dazma-photo-safety",
   "main": "src/index.js",
   "compatibility_date": "2026-10-01",
+  "workers_dev": false,
   "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "dazmaimages" }],
   "images": { "binding": "IMAGES" },
   "queues": {
@@ -10,7 +11,7 @@
   },
   "vars": {
     "BUCKET_NAME": "dazmaimages",
-    "ATTACHMENTAV_API_URL": "https://us.developer.attachmentav.com",
+    "ATTACHMENTAV_API_URL": "https://eu.developer.attachmentav.com",
     "MAX_IMAGE_BYTES": 5242880,
     "MAX_IMAGE_DIMENSION": 1600
   }

@@ -3,6 +3,7 @@ package co.dazma.api.notifications.infrastructure.output.externalservices.resend
 import co.dazma.api.notifications.domain.models.EmailMessage;
 import co.dazma.api.notifications.infrastructure.configuration.ResendConfiguration;
 import co.dazma.api.notifications.infrastructure.configuration.ResendProperties;
+import co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway.ResendNotificationGateway;
 import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;

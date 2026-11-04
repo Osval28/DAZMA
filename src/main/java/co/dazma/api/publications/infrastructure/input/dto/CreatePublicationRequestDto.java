@@ -6,16 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 public record CreatePublicationRequestDto(
-        @NotNull
-        String name,
-        @NotNull
-        PublicationTypeDto type,
-        @NotNull
-        String description,
-        @NotNull
-        String municipality,
-        @NotNull
-        Integer price,
-        @NotNull List<@NotNull UUID> photoUploadIds
-) {
+        @NotNull(message = "{publication.name.required}") String name,
+        @NotNull(message = "{publication.type.required}") PublicationTypeDto type,
+        @NotNull(message = "{publication.description.required}") String description,
+        @NotNull(message = "{publication.municipality.required}") String municipality,
+        @NotNull(message = "{publication.price.required}") Integer price,
+        @NotNull(message = "{publication.photos.required}") List<@NotNull UUID> photoUploadIds) {
 }

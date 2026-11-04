@@ -1,5 +1,7 @@
 package co.dazma.api.notifications.infrastructure.output.externalservices.resend;
 
+import co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway.exceptions.NotificationDeliveryException;
+import co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway.TransientNotificationFailurePredicate;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

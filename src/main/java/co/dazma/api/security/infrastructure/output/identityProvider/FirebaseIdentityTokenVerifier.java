@@ -1,4 +1,4 @@
-package co.dazma.api.security.infrastructure.output.firebase;
+package co.dazma.api.security.infrastructure.output.identityProvider;
 
 import co.dazma.api.security.domain.models.AuthenticatedIdentity;
 import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
