@@ -1,4 +1,6 @@
-package co.dazma.api.notifications.infrastructure.output.externalservices.resend;
+package co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway;
+
+import co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway.exceptions.NotificationDeliveryException;
 
 import java.util.function.Predicate;
 

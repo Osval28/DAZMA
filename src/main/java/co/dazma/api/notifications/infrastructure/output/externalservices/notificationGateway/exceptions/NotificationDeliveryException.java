@@ -1,4 +1,4 @@
-package co.dazma.api.notifications.infrastructure.output.externalservices.resend;
+package co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway.exceptions;
 
 import co.dazma.api.notifications.domain.enums.NotificationErrorCode;
 import co.dazma.api.shared.domain.errors.TechnicalException;

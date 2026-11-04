@@ -97,10 +97,7 @@ public class RedisPublicationCacheAdapter implements PublicationCachePort {
         }
     }
 
-    /**
-     * Includes the root cause (for example, a timeout or an authentication error) so connection
-     * problems can be diagnosed. Lettuce messages do not contain the password.
-     */
+
     private static String describe(Exception exception) {
         Throwable rootCause = exception;
         while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {

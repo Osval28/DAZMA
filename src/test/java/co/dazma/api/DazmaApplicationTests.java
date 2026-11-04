@@ -1,7 +1,7 @@
 package co.dazma.api;
 
 import co.dazma.api.notifications.domain.models.EmailMessage;
-import co.dazma.api.notifications.infrastructure.output.externalservices.resend.NotificationDeliveryException;
+import co.dazma.api.notifications.infrastructure.output.externalservices.notificationGateway.exceptions.NotificationDeliveryException;
 import co.dazma.api.notifications.services.output.ports.NotificationGateway;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;

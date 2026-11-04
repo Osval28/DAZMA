@@ -1,7 +1,8 @@
 package co.dazma.api.security.infrastructure.firebase;
 
+import co.dazma.api.security.infrastructure.configuration.FirebaseConfiguration;
 import co.dazma.api.security.infrastructure.input.filters.FirebaseAuthenticationFilter;
-import co.dazma.api.security.infrastructure.output.firebase.FirebaseIdentityTokenVerifier;
+import co.dazma.api.security.infrastructure.output.identityProvider.FirebaseIdentityTokenVerifier;
 import co.dazma.api.security.services.input.adapters.AuthenticateIdentityInputAdapter;
 import co.dazma.api.security.services.input.ports.AuthenticateIdentityInputPort;
 import co.dazma.api.security.services.usecases.contract.AuthenticateIdentityUseCase;
