@@ -1,7 +1,7 @@
 package co.dazma.api.shared.services.usecases.impl;
 
-import co.dazma.api.shared.domain.CatalogedMunicipality;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.CatalogedMunicipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import co.dazma.api.shared.services.output.ports.MunicipalityCatalogPort;
 import org.junit.jupiter.api.Test;
 

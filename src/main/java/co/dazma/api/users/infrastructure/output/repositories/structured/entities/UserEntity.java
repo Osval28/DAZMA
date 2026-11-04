@@ -1,7 +1,7 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured.entities;
 
-import co.dazma.api.users.domain.Role;
-import co.dazma.api.users.domain.State;
+import co.dazma.api.users.domain.enums.Role;
+import co.dazma.api.users.domain.enums.State;
 
 import java.util.UUID;
 

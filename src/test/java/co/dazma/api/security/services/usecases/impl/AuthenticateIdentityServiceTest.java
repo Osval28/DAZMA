@@ -1,8 +1,8 @@
 package co.dazma.api.security.services.usecases.impl;
 
-import co.dazma.api.security.domain.AuthenticatedIdentity;
-import co.dazma.api.security.domain.InvalidIdentityTokenException;
-import co.dazma.api.security.domain.TokenVerification;
+import co.dazma.api.security.domain.models.AuthenticatedIdentity;
+import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
+import co.dazma.api.security.domain.models.TokenVerification;
 import co.dazma.api.security.services.output.ports.IdentityTokenVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,6 @@
 package co.dazma.api.publications.domain;
 
+import co.dazma.api.publications.domain.models.PublicationRules;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

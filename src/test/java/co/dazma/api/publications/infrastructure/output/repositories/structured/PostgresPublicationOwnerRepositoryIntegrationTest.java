@@ -1,8 +1,8 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured;
 
 import co.dazma.api.TestcontainersConfiguration;
-import co.dazma.api.publications.domain.PublicationOwner;
-import co.dazma.api.publications.domain.PublicationOwnerState;
+import co.dazma.api.publications.domain.models.PublicationOwner;
+import co.dazma.api.publications.domain.enums.PublicationOwnerState;
 import co.dazma.api.publications.services.output.ports.PublicationOwnerRepositoryPort;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

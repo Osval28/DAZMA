@@ -1,13 +1,13 @@
 package co.dazma.api.users.services.input.adapters.mappers;
 
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import co.dazma.api.shared.services.input.mappers.InputMapper;
 import co.dazma.api.shared.services.input.mappers.OutputMapper;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Name;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.User;
-import co.dazma.api.users.domain.UserRegistration;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.models.Name;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.models.User;
+import co.dazma.api.users.domain.models.UserRegistration;
 import co.dazma.api.users.services.input.dto.RegisterUserInputDto;
 import co.dazma.api.users.services.input.dto.RegisterUserOutputDto;
 import co.dazma.api.users.services.output.ports.PhoneRulesPort;

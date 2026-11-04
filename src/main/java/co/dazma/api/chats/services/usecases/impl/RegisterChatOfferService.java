@@ -1,6 +1,6 @@
 package co.dazma.api.chats.services.usecases.impl;
 
-import co.dazma.api.chats.domain.ChatOffer;
+import co.dazma.api.chats.domain.models.ChatOffer;
 import co.dazma.api.chats.services.output.ports.ChatOfferRepositoryPort;
 import co.dazma.api.chats.services.usecases.contract.RegisterChatOfferUseCase;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package co.dazma.api.shared.infrastructure.input.errors;
 
-import co.dazma.api.publications.domain.PublicationNotFoundException;
+import co.dazma.api.publications.domain.exceptions.PublicationNotFoundException;
 import co.dazma.api.shared.infrastructure.parameters.InvalidParameterException;
 import co.dazma.api.shared.infrastructure.parameters.ParameterErrorCode;
 import org.junit.jupiter.api.Test;

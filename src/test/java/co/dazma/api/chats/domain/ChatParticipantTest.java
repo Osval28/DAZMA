@@ -1,5 +1,8 @@
 package co.dazma.api.chats.domain;
 
+import co.dazma.api.chats.domain.enums.ChatParticipantState;
+import co.dazma.api.chats.domain.exceptions.InvalidChatParticipantException;
+import co.dazma.api.chats.domain.models.ChatParticipant;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

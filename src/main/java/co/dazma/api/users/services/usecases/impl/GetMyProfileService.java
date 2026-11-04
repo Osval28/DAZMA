@@ -1,7 +1,7 @@
 package co.dazma.api.users.services.usecases.impl;
 
-import co.dazma.api.users.domain.User;
-import co.dazma.api.users.domain.UserNotFoundException;
+import co.dazma.api.users.domain.models.User;
+import co.dazma.api.users.domain.exceptions.UserNotFoundException;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
 import co.dazma.api.users.services.usecases.contract.GetMyProfileUseCase;
 import org.springframework.stereotype.Service;

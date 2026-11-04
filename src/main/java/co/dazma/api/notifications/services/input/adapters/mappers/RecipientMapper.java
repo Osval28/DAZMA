@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.services.input.adapters.mappers;
 
-import co.dazma.api.notifications.domain.Recipient;
+import co.dazma.api.notifications.domain.models.Recipient;
 import co.dazma.api.notifications.services.input.dto.RegisterRecipientInputDto;
 import co.dazma.api.shared.services.input.mappers.InputMapper;
 import org.springframework.stereotype.Component;

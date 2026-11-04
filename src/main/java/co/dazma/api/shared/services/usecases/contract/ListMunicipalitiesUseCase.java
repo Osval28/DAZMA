@@ -1,6 +1,6 @@
 package co.dazma.api.shared.services.usecases.contract;
 
-import co.dazma.api.shared.domain.CatalogedMunicipality;
+import co.dazma.api.shared.domain.models.CatalogedMunicipality;
 
 import java.util.List;
 

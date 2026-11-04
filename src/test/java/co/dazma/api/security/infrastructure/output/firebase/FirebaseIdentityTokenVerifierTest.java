@@ -1,7 +1,7 @@
 package co.dazma.api.security.infrastructure.output.firebase;
 
-import co.dazma.api.security.domain.AuthenticatedIdentity;
-import co.dazma.api.security.domain.InvalidIdentityTokenException;
+import co.dazma.api.security.domain.models.AuthenticatedIdentity;
+import co.dazma.api.security.domain.exceptions.InvalidIdentityTokenException;
 import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;

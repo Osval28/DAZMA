@@ -1,6 +1,6 @@
 package co.dazma.api.chats.services.output.ports;
 
-import co.dazma.api.chats.domain.ChatParticipant;
+import co.dazma.api.chats.domain.models.ChatParticipant;
 
 import java.util.Collection;
 import java.util.List;

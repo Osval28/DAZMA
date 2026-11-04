@@ -1,6 +1,6 @@
 package co.dazma.api.security.infrastructure.input.errors;
 
-import co.dazma.api.security.domain.SecurityErrorCode;
+import co.dazma.api.security.domain.enums.SecurityErrorCode;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

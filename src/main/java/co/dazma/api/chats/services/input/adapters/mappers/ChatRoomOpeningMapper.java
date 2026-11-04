@@ -1,7 +1,7 @@
 package co.dazma.api.chats.services.input.adapters.mappers;
 
-import co.dazma.api.chats.domain.ChatRoom;
-import co.dazma.api.chats.domain.ChatRoomOpening;
+import co.dazma.api.chats.domain.models.ChatRoom;
+import co.dazma.api.chats.domain.models.ChatRoomOpening;
 import co.dazma.api.chats.services.input.dto.OpenChatRoomInputDto;
 import co.dazma.api.chats.services.input.dto.OpenChatRoomOutputDto;
 import co.dazma.api.shared.services.input.mappers.InputMapper;

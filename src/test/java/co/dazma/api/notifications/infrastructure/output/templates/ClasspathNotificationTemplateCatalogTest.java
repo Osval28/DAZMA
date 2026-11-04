@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.infrastructure.output.templates;
 
-import co.dazma.api.notifications.domain.NotificationType;
+import co.dazma.api.notifications.domain.enums.NotificationType;
 import co.dazma.api.notifications.services.output.models.NotificationContent;
 import org.junit.jupiter.api.Test;
 

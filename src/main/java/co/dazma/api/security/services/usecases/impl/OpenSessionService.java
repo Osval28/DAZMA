@@ -1,7 +1,7 @@
 package co.dazma.api.security.services.usecases.impl;
 
-import co.dazma.api.security.domain.RecentSignInRequiredException;
-import co.dazma.api.security.domain.Session;
+import co.dazma.api.security.domain.exceptions.RecentSignInRequiredException;
+import co.dazma.api.security.domain.models.Session;
 import co.dazma.api.security.services.output.ports.SessionTokenIssuer;
 import co.dazma.api.security.services.usecases.contract.OpenSessionUseCase;
 

@@ -1,19 +1,19 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured;
 
 import co.dazma.api.TestcontainersConfiguration;
-import co.dazma.api.publications.domain.Description;
-import co.dazma.api.publications.domain.Price;
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.Name;
-import co.dazma.api.publications.domain.PublicationPhoto;
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.models.Description;
+import co.dazma.api.publications.domain.models.Price;
+import co.dazma.api.publications.domain.models.Publication;
+import co.dazma.api.publications.domain.models.Name;
+import co.dazma.api.publications.domain.models.PublicationPhoto;
+import co.dazma.api.publications.domain.enums.PublicationType;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationStatusEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationTypeEntity;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities.PublicationEntityJPA;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.repository.SpringDataPublicationRepository;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructDomainMapper;
 import co.dazma.api.publications.infrastructure.output.repositories.structured.mapper.PublicationMapStructJpaMapper;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;

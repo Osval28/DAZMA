@@ -1,7 +1,7 @@
 package co.dazma.api.users.infrastructure.output.parameters;
 
 import co.dazma.api.shared.services.output.ports.ParameterCatalog;
-import co.dazma.api.users.domain.PhoneRules;
+import co.dazma.api.users.domain.models.PhoneRules;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

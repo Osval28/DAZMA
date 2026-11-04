@@ -1,6 +1,10 @@
 package co.dazma.api.publications.domain;
 
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationType;
+import co.dazma.api.publications.domain.exceptions.InvalidPublicationException;
+import co.dazma.api.publications.domain.models.*;
+import co.dazma.api.shared.domain.models.Municipality;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

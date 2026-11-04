@@ -1,12 +1,12 @@
 package co.dazma.api.users.services.input.adapters;
 
-import co.dazma.api.shared.domain.Municipality;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Name;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.Role;
-import co.dazma.api.users.domain.State;
-import co.dazma.api.users.domain.User;
+import co.dazma.api.shared.domain.models.Municipality;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.models.Name;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.enums.Role;
+import co.dazma.api.users.domain.enums.State;
+import co.dazma.api.users.domain.models.User;
 import co.dazma.api.users.services.input.adapters.mappers.MyProfileMapper;
 import co.dazma.api.users.services.input.dto.GetMyProfileInputDto;
 import co.dazma.api.users.services.input.dto.GetMyProfileOutputDto;

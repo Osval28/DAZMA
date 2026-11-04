@@ -1,19 +1,19 @@
 package co.dazma.api.publications.services.usecases.impl;
 
-import co.dazma.api.publications.domain.Description;
-import co.dazma.api.publications.domain.Name;
-import co.dazma.api.publications.domain.Price;
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.PublicationPhoto;
-import co.dazma.api.publications.domain.PublicationStatus;
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.models.Description;
+import co.dazma.api.publications.domain.models.Name;
+import co.dazma.api.publications.domain.models.Price;
+import co.dazma.api.publications.domain.models.Publication;
+import co.dazma.api.publications.domain.models.PublicationPhoto;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationType;
 import co.dazma.api.publications.services.output.models.PublishedPublicationsSlice;
 import co.dazma.api.publications.services.output.ports.PhotoDownloadParametersPort;
 import co.dazma.api.publications.services.output.ports.PublicationPhotoStoragePort;
 import co.dazma.api.publications.services.output.ports.PublicationRepositoryPort;
 import co.dazma.api.publications.services.usecases.models.PublicationSearchCriteria;
 import co.dazma.api.publications.services.usecases.models.PublicationSummaryPage;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

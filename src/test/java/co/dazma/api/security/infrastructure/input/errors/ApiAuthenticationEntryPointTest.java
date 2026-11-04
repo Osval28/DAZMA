@@ -1,6 +1,6 @@
 package co.dazma.api.security.infrastructure.input.errors;
 
-import co.dazma.api.security.domain.SecurityErrorCode;
+import co.dazma.api.security.domain.enums.SecurityErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;

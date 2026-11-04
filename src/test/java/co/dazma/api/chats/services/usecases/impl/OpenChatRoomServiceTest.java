@@ -1,14 +1,14 @@
 package co.dazma.api.chats.services.usecases.impl;
 
-import co.dazma.api.chats.domain.ChatEmailNotVerifiedException;
-import co.dazma.api.chats.domain.ChatOffer;
-import co.dazma.api.chats.domain.ChatOfferNotFoundException;
-import co.dazma.api.chats.domain.ChatParticipant;
-import co.dazma.api.chats.domain.ChatParticipantCannotOperateException;
-import co.dazma.api.chats.domain.ChatParticipantState;
-import co.dazma.api.chats.domain.ChatRoom;
-import co.dazma.api.chats.domain.ChatRoomOpening;
-import co.dazma.api.chats.domain.SelfChatNotAllowedException;
+import co.dazma.api.chats.domain.exceptions.ChatEmailNotVerifiedException;
+import co.dazma.api.chats.domain.models.ChatOffer;
+import co.dazma.api.chats.domain.exceptions.ChatOfferNotFoundException;
+import co.dazma.api.chats.domain.models.ChatParticipant;
+import co.dazma.api.chats.domain.exceptions.ChatParticipantCannotOperateException;
+import co.dazma.api.chats.domain.enums.ChatParticipantState;
+import co.dazma.api.chats.domain.models.ChatRoom;
+import co.dazma.api.chats.domain.models.ChatRoomOpening;
+import co.dazma.api.chats.domain.exceptions.SelfChatNotAllowedException;
 import co.dazma.api.chats.services.output.ports.ChatOfferRepositoryPort;
 import co.dazma.api.chats.services.output.ports.ChatParticipantRepositoryPort;
 import co.dazma.api.chats.services.output.ports.ChatRoomRepositoryPort;

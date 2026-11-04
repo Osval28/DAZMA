@@ -1,11 +1,11 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.shared.domain.Municipality;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.Name;
+import co.dazma.api.shared.domain.models.Municipality;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.models.Name;
 import co.dazma.api.shared.infrastructure.DomainMapper;
-import co.dazma.api.users.domain.User;
+import co.dazma.api.users.domain.models.User;
 import co.dazma.api.users.infrastructure.output.repositories.structured.entities.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

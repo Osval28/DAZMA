@@ -1,6 +1,6 @@
 package co.dazma.api.publications.services.input.adapters;
 
-import co.dazma.api.publications.domain.Publication;
+import co.dazma.api.publications.domain.models.Publication;
 import co.dazma.api.publications.services.input.adapters.mappers.CreatePublicationMapper;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;

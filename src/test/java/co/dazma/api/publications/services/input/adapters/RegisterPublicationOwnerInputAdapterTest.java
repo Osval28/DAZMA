@@ -1,7 +1,7 @@
 package co.dazma.api.publications.services.input.adapters;
 
-import co.dazma.api.publications.domain.PublicationOwner;
-import co.dazma.api.publications.domain.PublicationOwnerState;
+import co.dazma.api.publications.domain.models.PublicationOwner;
+import co.dazma.api.publications.domain.enums.PublicationOwnerState;
 import co.dazma.api.publications.services.input.adapters.mappers.PublicationOwnerMapper;
 import co.dazma.api.publications.services.input.dto.RegisterPublicationOwnerInputDto;
 import co.dazma.api.publications.services.usecases.contract.RegisterPublicationOwnerUseCase;

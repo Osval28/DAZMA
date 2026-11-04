@@ -1,6 +1,6 @@
 package co.dazma.api.notifications.services.input.dto;
 
-import co.dazma.api.notifications.domain.NotificationType;
+import co.dazma.api.notifications.domain.enums.NotificationType;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,5 +1,6 @@
 package co.dazma.api.publications.domain;
 
+import co.dazma.api.publications.domain.enums.PublicationErrorCode;
 import org.junit.jupiter.api.Test;
 
 import java.text.MessageFormat;

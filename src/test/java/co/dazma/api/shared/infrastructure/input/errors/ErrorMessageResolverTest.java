@@ -1,6 +1,6 @@
 package co.dazma.api.shared.infrastructure.input.errors;
 
-import co.dazma.api.publications.domain.PublicationNotFoundException;
+import co.dazma.api.publications.domain.exceptions.PublicationNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 

@@ -1,7 +1,7 @@
 package co.dazma.api.chats.infrastructure.output.repositories.structured;
 
 import co.dazma.api.TestcontainersConfiguration;
-import co.dazma.api.chats.domain.ChatOffer;
+import co.dazma.api.chats.domain.models.ChatOffer;
 import co.dazma.api.chats.services.output.ports.ChatOfferRepositoryPort;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

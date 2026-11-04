@@ -1,13 +1,13 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
-import co.dazma.api.shared.domain.Municipality;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.Name;
+import co.dazma.api.shared.domain.models.Municipality;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.models.Name;
 import co.dazma.api.TestcontainersConfiguration;
-import co.dazma.api.users.domain.Role;
-import co.dazma.api.users.domain.State;
-import co.dazma.api.users.domain.User;
+import co.dazma.api.users.domain.enums.Role;
+import co.dazma.api.users.domain.enums.State;
+import co.dazma.api.users.domain.models.User;
 import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities.UserEntityJPA;
 import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.repositories.SpringDataUserRepository;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;

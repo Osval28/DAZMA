@@ -1,6 +1,6 @@
 package co.dazma.api.security.services.output.ports;
 
-import co.dazma.api.security.domain.AuthenticatedIdentity;
+import co.dazma.api.security.domain.models.AuthenticatedIdentity;
 
 public interface IdentityTokenVerifier {
 

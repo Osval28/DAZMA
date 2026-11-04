@@ -1,5 +1,8 @@
 package co.dazma.api.users.domain;
 
+import co.dazma.api.users.domain.exceptions.InvalidUserException;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.models.PhoneRules;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

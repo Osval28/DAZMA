@@ -1,6 +1,6 @@
 package co.dazma.api.users.infrastructure.output.repositories.structured;
 
-import co.dazma.api.users.domain.User;
+import co.dazma.api.users.domain.models.User;
 import co.dazma.api.users.infrastructure.output.repositories.structured.entities.UserEntity;
 import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.entities.UserEntityJPA;
 import co.dazma.api.users.infrastructure.output.repositories.structured.jpa.repositories.SpringDataUserRepository;

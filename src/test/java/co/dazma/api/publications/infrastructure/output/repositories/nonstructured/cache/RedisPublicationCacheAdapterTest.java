@@ -1,17 +1,17 @@
 package co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache;
 
-import co.dazma.api.publications.domain.Description;
-import co.dazma.api.publications.domain.Name;
-import co.dazma.api.publications.domain.Price;
-import co.dazma.api.publications.domain.Publication;
-import co.dazma.api.publications.domain.PublicationPhoto;
-import co.dazma.api.publications.domain.PublicationStatus;
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.models.Description;
+import co.dazma.api.publications.domain.models.Name;
+import co.dazma.api.publications.domain.models.Price;
+import co.dazma.api.publications.domain.models.Publication;
+import co.dazma.api.publications.domain.models.PublicationPhoto;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationType;
 import co.dazma.api.publications.infrastructure.output.repositories.nonstructured.cache.mapper.PublicationMapStructCacheMapper;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import co.dazma.api.shared.infrastructure.observability.ExternalDependencyObservation;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.AfterEach;

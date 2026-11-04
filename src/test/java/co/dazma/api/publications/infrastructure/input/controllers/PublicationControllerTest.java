@@ -1,8 +1,10 @@
 package co.dazma.api.publications.infrastructure.input.controllers;
 
+import co.dazma.api.publications.domain.enums.PublicationErrorCode;
+import co.dazma.api.publications.domain.exceptions.InvalidPublicationException;
 import co.dazma.api.shared.infrastructure.security.CurrentUser;
-import co.dazma.api.publications.domain.PublicationStatus;
-import co.dazma.api.publications.domain.PublicationType;
+import co.dazma.api.publications.domain.enums.PublicationStatus;
+import co.dazma.api.publications.domain.enums.PublicationType;
 import co.dazma.api.publications.infrastructure.input.mapper.PublicationWebMapper;
 import co.dazma.api.publications.services.input.dto.CreatePublicationInputDto;
 import co.dazma.api.publications.services.input.dto.CreatePublicationOutputDto;
@@ -11,7 +13,7 @@ import co.dazma.api.publications.services.input.dto.GetPublicationPhotoOutputDto
 import co.dazma.api.publications.services.input.dto.ListPublicationsInputDto;
 import co.dazma.api.publications.services.input.dto.ListPublicationsOutputDto;
 import co.dazma.api.publications.services.input.dto.PublicationSummaryOutputDto;
-import co.dazma.api.publications.domain.PublicationNotFoundException;
+import co.dazma.api.publications.domain.exceptions.PublicationNotFoundException;
 import co.dazma.api.publications.services.input.ports.CreatePublicationInputPort;
 import co.dazma.api.publications.services.input.ports.GetPublicationInputPort;
 import co.dazma.api.publications.services.input.ports.ListPublicationsInputPort;
@@ -296,8 +298,8 @@ class PublicationControllerTest {
     @Test
     void shouldRejectAPageSizeAboveTheMaximum() throws Exception {
         when(listPublicationsInputPort.execute(new ListPublicationsInputDto(Optional.empty(), 0, Optional.of(500))))
-                .thenThrow(new co.dazma.api.publications.domain.InvalidPublicationException(
-                        co.dazma.api.publications.domain.PublicationErrorCode.PAGE_SIZE_INVALID, 50));
+                .thenThrow(new InvalidPublicationException(
+                        PublicationErrorCode.PAGE_SIZE_INVALID, 50));
 
         mockMvc.perform(get("/publications/api/v1/publications").param("size", "500"))
                 .andExpect(status().isBadRequest());

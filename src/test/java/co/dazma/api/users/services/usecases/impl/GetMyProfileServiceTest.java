@@ -1,12 +1,12 @@
 package co.dazma.api.users.services.usecases.impl;
 
-import co.dazma.api.shared.domain.Municipality;
-import co.dazma.api.users.domain.Email;
-import co.dazma.api.users.domain.Name;
-import co.dazma.api.users.domain.Phone;
-import co.dazma.api.users.domain.State;
-import co.dazma.api.users.domain.User;
-import co.dazma.api.users.domain.UserNotFoundException;
+import co.dazma.api.shared.domain.models.Municipality;
+import co.dazma.api.users.domain.models.Email;
+import co.dazma.api.users.domain.models.Name;
+import co.dazma.api.users.domain.models.Phone;
+import co.dazma.api.users.domain.enums.State;
+import co.dazma.api.users.domain.models.User;
+import co.dazma.api.users.domain.exceptions.UserNotFoundException;
 import co.dazma.api.users.services.output.ports.UserRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

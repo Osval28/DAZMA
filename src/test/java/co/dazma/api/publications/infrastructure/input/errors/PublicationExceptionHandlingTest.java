@@ -1,10 +1,10 @@
 package co.dazma.api.publications.infrastructure.input.errors;
 
-import co.dazma.api.publications.domain.InvalidPublicationException;
-import co.dazma.api.publications.domain.PublicationErrorCode;
-import co.dazma.api.publications.domain.PublicationNotFoundException;
-import co.dazma.api.publications.domain.PublicationPhotoNotAvailableException;
-import co.dazma.api.publications.domain.PublicationOwnerEmailNotVerifiedException;
+import co.dazma.api.publications.domain.exceptions.InvalidPublicationException;
+import co.dazma.api.publications.domain.enums.PublicationErrorCode;
+import co.dazma.api.publications.domain.exceptions.PublicationNotFoundException;
+import co.dazma.api.publications.domain.exceptions.PublicationPhotoNotAvailableException;
+import co.dazma.api.publications.domain.exceptions.PublicationOwnerEmailNotVerifiedException;
 import co.dazma.api.shared.infrastructure.input.errors.ApiProblemFactory;
 import co.dazma.api.shared.infrastructure.input.errors.ErrorMessageResolver;
 import co.dazma.api.shared.infrastructure.input.errors.GlobalExceptionHandler;

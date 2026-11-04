@@ -1,7 +1,7 @@
 package co.dazma.api.shared.infrastructure.output.repositories;
 
 import co.dazma.api.TestcontainersConfiguration;
-import co.dazma.api.shared.domain.Municipality;
+import co.dazma.api.shared.domain.models.Municipality;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
