@@ -70,6 +70,13 @@ export type PublicationRules = {
 
 const PUBLICATIONS_PATH = "/publications/api/v1/publications";
 const PHOTO_AUTHORIZATIONS_PATH = "/publications/api/v1/photos/upload-authorizations";
+const PHOTOS_PATH = "/publications/api/v1/photos";
+
+export type PhotoInspectionStatus = "PENDING" | "READY" | "REJECTED" | "MISSING";
+
+export function getPhotoInspectionStatus(photoId: string): Promise<{ status: PhotoInspectionStatus }> {
+  return apiJson<{ status: PhotoInspectionStatus }>(`${PHOTOS_PATH}/${encodeURIComponent(photoId)}/status`);
+}
 
 export function createPublication(input: CreatePublicationInput): Promise<CreatedPublication> {
   return apiJson<CreatedPublication>(PUBLICATIONS_PATH, { method: "POST", body: input });

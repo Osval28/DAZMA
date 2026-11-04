@@ -3,6 +3,8 @@ package co.dazma.api.publications.infrastructure.input.controllers;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadInputDto;
 import co.dazma.api.publications.services.input.dto.AuthorizePublicationPhotoUploadOutputDto;
 import co.dazma.api.publications.services.input.ports.AuthorizePublicationPhotoUploadInputPort;
+import co.dazma.api.publications.services.input.ports.GetPhotoInspectionStatusInputPort;
+import co.dazma.api.publications.domain.enums.PhotoInspectionStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -17,21 +19,37 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PublicationPhotoUploadControllerTest {
 
     private AuthorizePublicationPhotoUploadInputPort authorizeUploadInputPort;
+    private GetPhotoInspectionStatusInputPort inspectionStatusInputPort;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         authorizeUploadInputPort = mock(AuthorizePublicationPhotoUploadInputPort.class);
+        inspectionStatusInputPort = mock(GetPhotoInspectionStatusInputPort.class);
         PublicationPhotoUploadController controller = new PublicationPhotoUploadController(
-                authorizeUploadInputPort
+                authorizeUploadInputPort, inspectionStatusInputPort
         );
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    }
+
+    @Test
+    void shouldReturnPhotoStatusForTheAuthenticatedOwner() throws Exception {
+        UUID photoId = UUID.randomUUID();
+        when(inspectionStatusInputPort.execute("firebase-123", photoId)).thenReturn(PhotoInspectionStatus.READY);
+        mockMvc.perform(get("/publications/api/v1/photos/{photoId}/status", photoId)
+                        .principal(() -> "firebase-123"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Cache-Control", "no-store"))
+                .andExpect(jsonPath("$.status").value("READY"));
+        verify(inspectionStatusInputPort).execute("firebase-123", photoId);
     }
 
     @Test

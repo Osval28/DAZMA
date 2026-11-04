@@ -26,8 +26,9 @@ Contrato completo en `docs/openapi/*.yaml`. Esta guía resume el orden de las ll
 1. Verificar que `emailVerified` sea `true` (si no, mostrar el aviso; ver más abajo).
 2. Por cada foto: `POST /publications/api/v1/photos/upload-authorizations` → `{ photoId, uploadUrl, expiresAt }`.
 3. `PUT uploadUrl` con el archivo y **el mismo `Content-Type`** que declaraste (directo al almacenamiento, sin cookie ni CSRF).
-4. `POST /publications/api/v1/publications` con `photoUploadIds` en el orden deseado (la primera es la portada).
-5. 201 con `Location` hacia el detalle.
+4. Consultar `GET /publications/api/v1/photos/{photoId}/status` hasta recibir `READY`. `PENDING` o `MISSING` significan esperar; `REJECTED` exige quitar la foto y cargar otra. Si la verificación tarda demasiado, mostrar un error. No repetir el POST de creación por este motivo.
+5. `POST /publications/api/v1/publications` con `photoUploadIds` ya verificados en el orden deseado (la primera es la portada).
+6. 201 con `Location` hacia el detalle.
 
 Errores que debes manejar: `PUBLICATION_OWNER_EMAIL_NOT_VERIFIED` (403), `MUNICIPALITY_NOT_FOUND` (400),
 `PUBLICATION_OWNER_NOT_READY` (409: reintentar en unos segundos), `PUBLICATION_PHOTO_UPLOAD_NOT_AVAILABLE` (409:

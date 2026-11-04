@@ -1,6 +1,7 @@
 package co.dazma.api.publications.services.output.ports;
 
 import co.dazma.api.publications.services.output.models.PhotoStorageUploadAuthorization;
+import co.dazma.api.publications.domain.enums.PhotoInspectionStatus;
 import co.dazma.api.publications.services.output.models.StoredPublicationPhoto;
 
 import java.net.URI;
@@ -20,10 +21,12 @@ public interface PublicationPhotoStoragePort {
     );
 
     /**
-     * Confirma que la fotografía fue subida y la mueve de la zona temporal a la definitiva.
-     * Devuelve vacío si el propietario nunca subió esa fotografía.
+     * Copia a la zona definitiva únicamente una fotografía verificada por el escáner.
+     * Devuelve vacío si la fotografía aún no fue aprobada.
      */
     Optional<StoredPublicationPhoto> promoteUploadedPhoto(UUID ownerId, UUID photoId);
+
+    PhotoInspectionStatus inspectionStatus(UUID ownerId, UUID photoId);
 
     void discardPhotos(List<String> objectKeys);
 
