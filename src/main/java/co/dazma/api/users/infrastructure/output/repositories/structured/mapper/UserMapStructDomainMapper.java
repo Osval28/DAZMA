@@ -6,7 +6,7 @@ import co.dazma.api.users.domain.models.Phone;
 import co.dazma.api.users.domain.models.Name;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import co.dazma.api.users.domain.models.User;
-import co.dazma.api.users.infrastructure.output.repositories.structured.entities.UserEntity;
+import co.dazma.api.users.infrastructure.output.repositories.entities.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

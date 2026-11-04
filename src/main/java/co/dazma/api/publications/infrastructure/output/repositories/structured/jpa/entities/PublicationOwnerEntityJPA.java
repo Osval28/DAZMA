@@ -1,6 +1,6 @@
 package co.dazma.api.publications.infrastructure.output.repositories.structured.jpa.entities;
 
-import co.dazma.api.publications.infrastructure.output.repositories.structured.entities.PublicationOwnerStateEntity;
+import co.dazma.api.publications.infrastructure.output.repositories.entities.PublicationOwnerStateEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

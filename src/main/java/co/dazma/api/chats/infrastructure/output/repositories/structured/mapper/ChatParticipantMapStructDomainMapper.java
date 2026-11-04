@@ -1,7 +1,7 @@
 package co.dazma.api.chats.infrastructure.output.repositories.structured.mapper;
 
 import co.dazma.api.chats.domain.models.ChatParticipant;
-import co.dazma.api.chats.infrastructure.output.repositories.structured.entities.ChatParticipantEntity;
+import co.dazma.api.chats.infrastructure.output.repositories.entities.ChatParticipantEntity;
 import co.dazma.api.shared.infrastructure.DomainMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

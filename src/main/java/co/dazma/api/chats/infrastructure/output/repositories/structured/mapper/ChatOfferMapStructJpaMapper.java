@@ -1,6 +1,6 @@
 package co.dazma.api.chats.infrastructure.output.repositories.structured.mapper;
 
-import co.dazma.api.chats.infrastructure.output.repositories.structured.entities.ChatOfferEntity;
+import co.dazma.api.chats.infrastructure.output.repositories.entities.ChatOfferEntity;
 import co.dazma.api.chats.infrastructure.output.repositories.structured.jpa.entities.ChatOfferEntityJPA;
 import co.dazma.api.shared.infrastructure.JpaMapper;
 import org.mapstruct.Mapper;
