@@ -10,7 +10,7 @@
   },
   "vars": {
     "BUCKET_NAME": "dazmaimages",
-    "ATTACHMENTAV_API_URL": "https://us.developer.attachmentav.com",
+    "ATTACHMENTAV_API_URL": "https://eu.developer.attachmentav.com",
     "MAX_IMAGE_BYTES": 5242880,
     "MAX_IMAGE_DIMENSION": 1600
   }
