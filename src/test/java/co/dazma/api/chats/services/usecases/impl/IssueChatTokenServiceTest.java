@@ -1,6 +1,5 @@
 package co.dazma.api.chats.services.usecases.impl;
 
-import co.dazma.api.chats.infrastructure.input.dto.ChatAccessRequest;
 import co.dazma.api.chats.domain.models.ChatParticipant;
 import co.dazma.api.chats.domain.exceptions.ChatParticipantCannotOperateException;
 import co.dazma.api.chats.domain.enums.ChatParticipantState;
@@ -10,6 +9,7 @@ import co.dazma.api.chats.services.output.models.ChatTokenRequest;
 import co.dazma.api.chats.services.output.ports.ChatParticipantRepositoryPort;
 import co.dazma.api.chats.services.output.ports.ChatRoomRepositoryPort;
 import co.dazma.api.chats.services.output.ports.ChatTokenIssuerPort;
+import co.dazma.api.chats.services.usecases.models.IssueChatTokenCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ class IssueChatTokenServiceTest {
         ChatTokenRequest tokenRequest = new ChatTokenRequest("key", 3_600_000, 1L, "{}", "client", "nonce", "mac");
         when(tokenIssuer.issue(room, participant)).thenReturn(tokenRequest);
 
-        assertEquals(tokenRequest, service.execute(new ChatAccessRequest("firebase-123", room.getId())));
+        assertEquals(tokenRequest, service.execute(new IssueChatTokenCommand("firebase-123", room.getId())));
     }
 
     @Test
@@ -65,7 +65,7 @@ class IssueChatTokenServiceTest {
 
         assertThrows(
                 ChatRoomNotFoundException.class,
-                () -> service.execute(new ChatAccessRequest("firebase-123", foreignRoom.getId()))
+                () -> service.execute(new IssueChatTokenCommand("firebase-123", foreignRoom.getId()))
         );
         verify(tokenIssuer, never()).issue(any(ChatRoom.class), any(ChatParticipant.class));
     }
@@ -77,7 +77,7 @@ class IssueChatTokenServiceTest {
 
         assertThrows(
                 ChatRoomNotFoundException.class,
-                () -> service.execute(new ChatAccessRequest("firebase-123", unknownRoom))
+                () -> service.execute(new IssueChatTokenCommand("firebase-123", unknownRoom))
         );
     }
 
@@ -89,7 +89,7 @@ class IssueChatTokenServiceTest {
 
         assertThrows(
                 ChatParticipantCannotOperateException.class,
-                () -> service.execute(new ChatAccessRequest("firebase-123", room.getId()))
+                () -> service.execute(new IssueChatTokenCommand("firebase-123", room.getId()))
         );
         verify(tokenIssuer, never()).issue(any(ChatRoom.class), any(ChatParticipant.class));
     }

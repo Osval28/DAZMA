@@ -1,20 +1,20 @@
 package co.dazma.api.chats.services.input.adapters.mappers;
 
-import co.dazma.api.chats.infrastructure.input.dto.ChatAccessRequest;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenInputDto;
 import co.dazma.api.chats.services.input.dto.IssueChatTokenOutputDto;
 import co.dazma.api.chats.services.output.models.ChatTokenRequest;
+import co.dazma.api.chats.services.usecases.models.IssueChatTokenCommand;
 import co.dazma.api.shared.services.input.mappers.InputMapper;
 import co.dazma.api.shared.services.input.mappers.OutputMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ChatAccessMapper implements InputMapper<IssueChatTokenInputDto, ChatAccessRequest>,
+public class ChatAccessMapper implements InputMapper<IssueChatTokenInputDto, IssueChatTokenCommand>,
         OutputMapper<ChatTokenRequest, IssueChatTokenOutputDto> {
 
     @Override
-    public ChatAccessRequest toDomain(IssueChatTokenInputDto input) {
-        return new ChatAccessRequest(input.externalId(), input.roomId());
+    public IssueChatTokenCommand toDomain(IssueChatTokenInputDto input) {
+        return new IssueChatTokenCommand(input.externalId(), input.roomId());
     }
 
     @Override
