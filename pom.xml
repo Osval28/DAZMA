@@ -26,7 +26,7 @@
         <archunit-junit.version>1.5.1</archunit-junit.version>
         <spring-modulith.version>2.1.2</spring-modulith.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <aws.sdk.version>2.57.0</aws.sdk.version>
+        <aws.sdk.version>2.57.8</aws.sdk.version>
         <spring-cloud-aws.version>4.2.1</spring-cloud-aws.version>
         <spring-cloud.version>2025.1.4</spring-cloud.version>
         <opentelemetry.instrumentation.version>2.28.0-alpha</opentelemetry.instrumentation.version>
