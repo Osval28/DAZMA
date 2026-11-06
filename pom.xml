@@ -33,7 +33,7 @@
         <resilience4j.version>2.4.0</resilience4j.version>
         <guava.version>33.7.2-jre</guava.version>
         <sonar.cpd.exclusions>**/jpa/entities/**</sonar.cpd.exclusions>
-        <msgpack.version>0.9.11</msgpack.version>
+        <msgpack.version>0.9.12</msgpack.version>
     </properties>
 
     <dependencyManagement>
