@@ -104,7 +104,7 @@
         <dependency>
             <groupId>io.ably</groupId>
             <artifactId>ably-java</artifactId>
-            <version>1.2.53</version>
+            <version>1.8.2</version>
         </dependency>
         <dependency>
             <groupId>io.awspring.cloud</groupId>
